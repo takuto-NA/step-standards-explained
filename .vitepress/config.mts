@@ -5,6 +5,7 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 export default withMermaid(defineConfig({
   title: "STEP Standards Explained",
   description: "A practical guide to the STEP standard (ISO 10303)",
+  base: '/step-standards-explained/',
   srcDir: '.',
   cleanUrls: true,
   ignoreDeadLinks: true,
