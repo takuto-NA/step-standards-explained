@@ -52,28 +52,49 @@ graph LR
 
 [→ View full CAD Support Matrix](/comparison/cad-support-matrix)
 
-## Get started
+## Learning Path for Implementers
+
+### Step 1: Foundations
+* **[Glossary](./docs/glossary)** - Understand STEP-specific terminology.
+* **[Getting Started](./docs/getting-started)** - Quickly grasp the big picture.
+* **[FAQ](./docs/faq)** - Resolve common questions.
+
+### Step 2: Strategy
+* **[Which AP should I use?](./decision-guides/which-ap-should-i-use)** - Choose the right standard for your project.
+* **[Capability Matrix](./comparison/capability-matrix)** - Compare functional support across APs.
+
+### Step 3: Data & Geometry
+* **[File Basics](./format/step-file-basics)** - Syntax and structure fundamentals.
+* **[File Walkthrough](./examples/step-file-walkthrough)** - Understand real STEP files line-by-line.
+* **[Data Model Map](./format/data-model-map)** - Grasp the entity hierarchy.
+* **[Geometry & Topology](./format/geometry-and-topology)** - Deep dive into mathematical representation.
+
+### Step 4: Implementation
+* **[Common Pitfalls](./implementation/common-pitfalls)** - Implementation warnings and solutions.
+* **[Validation and CAx-IF](./implementation/validation-and-caxif)** - Methods for quality assurance.
+
+## Key Resources
 
 <div class="card-grid">
   <a href="./docs/getting-started" class="card">
     <div class="card-title">Getting Started</div>
     <div class="card-description">Quickly grasp the big picture of the STEP standard.</div>
   </a>
-  <a href="./docs/glossary" class="card">
-    <div class="card-title">Glossary</div>
-    <div class="card-description">Understand STEP-specific terminology and concepts.</div>
+  <a href="./format/step-file-basics" class="card">
+    <div class="card-title">File Basics</div>
+    <div class="card-description">Understand syntax and structure fundamentals.</div>
   </a>
-  <a href="./docs/faq" class="card">
-    <div class="card-title">FAQ</div>
-    <div class="card-description">Resolve common questions about STEP implementations.</div>
+  <a href="./format/data-model-map" class="card">
+    <div class="card-title">Data Model Map</div>
+    <div class="card-description">Visualize entity hierarchies and navigation paths.</div>
   </a>
-  <a href="./examples/step-file-walkthrough" class="card">
-    <div class="card-title">File Walkthrough</div>
-    <div class="card-description">Understand real STEP files line by line.</div>
+  <a href="./implementation/common-pitfalls" class="card">
+    <div class="card-title">Common Pitfalls</div>
+    <div class="card-description">Learn about units, precision, and orientation issues.</div>
   </a>
-  <a href="./format/geometry-and-topology" class="card">
-    <div class="card-title">Geometry & Topology</div>
-    <div class="card-description">Deep dive into NURBS, B-rep, and continuity.</div>
+  <a href="./decision-guides/which-ap-should-i-use" class="card">
+    <div class="card-title">AP Selection Guide</div>
+    <div class="card-description">Which AP (203, 214, 242) is right for you?</div>
   </a>
 </div>
 

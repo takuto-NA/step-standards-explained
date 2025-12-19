@@ -41,6 +41,7 @@ graph TD
 
 ---
 ## 📚 Next Steps
+- **[Which AP should I use?](../decision-guides/which-ap-should-i-use.md)** - Diagnostic flow for selecting an AP.
 - **[STEP File Walkthrough](../examples/step-file-walkthrough.md)** - Understand real files line by line.
 
 [Back to README](../README.md)

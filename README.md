@@ -28,24 +28,27 @@ Designed for implementers new to STEP to learn efficiently.
 1. **[⭐ Glossary](./docs/glossary.md)** - Understand STEP-specific terminology (Crucial!)
 2. **[Persistent IDs and Face Naming](./docs/persistent-ids.md)** - Critical for simulation (Ansys/Rhino)
 3. **[Getting Started Guide for Implementers](./docs/getting-started.md)** - Quickly grasp the big picture
-3. **[FAQ](./docs/faq.md)** - Resolve common questions
+4. **[FAQ](./docs/faq.md)** - Resolve common questions
 
 ### Step 2: Select the Right AP for Your Project (Time: 15 mins)
 
-4. **[Which AP should I use?](./decision-guides/which-ap-should-i-use.md)** - Decision guide
-5. **[Capability Matrix](./comparison/capability-matrix.md)** - Check detailed functional differences
+5. **[Which AP should I use?](./decision-guides/which-ap-should-i-use.md)** - Decision guide
+6. **[Capability Matrix](./comparison/capability-matrix.md)** - Check detailed functional differences
+7. **[Part 21 vs Part 28](./comparison/part21-vs-part28.md)** - Why .step is the standard
 
 ### Step 3: Understand Data Structures (Time: 1-2 hours)
 
-6. **[STEP File Walkthrough](./examples/step-file-walkthrough.md)** - Understand real files line by line
-7. **[Data Model Map](./format/data-model-map.md)** - Grasp the entity hierarchy
-8. **[Geometry and Topology](./format/geometry-and-topology.md)** - Deep dive into mathematical representation (NURBS, etc.)
-9. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
+8. **[STEP File Basics](./format/step-file-basics.md)** - Syntax and structure fundamentals
+9. **[STEP File Walkthrough](./examples/step-file-walkthrough.md)** - Understand real files line by line
+10. **[Data Model Map](./format/data-model-map.md)** - Grasp the entity hierarchy
+11. **[Geometry and Topology](./format/geometry-and-topology.md)** - Deep dive into mathematical representation
+12. **[Assembly Support](./comparison/assembly-support.md)** - Hierarchical structures and transformations
+13. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
 
 ### Step 4: Implementation & Troubleshooting (Reference as needed)
 
-10. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
-11. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
+14. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
+15. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
 
 ---
 
@@ -151,7 +154,7 @@ step-standards-explained/
 
 **Quick Links**:
 - 🛠️ **[Common Pitfalls](./implementation/common-pitfalls.md)** - Start here if you're stuck
-- 📐 **[AP242 ed2 Details](./versions/ap242-ed2.md)** - The current mainstream standard
+- 📐 **[AP242 ed3 Details](./versions/ap242-ed3.md)** - The latest version of the standard
 - 📖 **[Glossary](./docs/glossary.md)** - Check terminology if confused
 
 ---

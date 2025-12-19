@@ -10,8 +10,9 @@ This guide is a super-intro for implementers who have CAD experience but are new
 
 1. What STEP is (from an implementer's perspective)
 2. First step: Reading a STEP file
-3. Recommended tools and resources
-4. What to read next
+3. **[STEP File Basics](../format/step-file-basics.md)**: Understanding syntax and structure fundamentals
+4. Recommended tools and resources
+5. What to read next
 
 ---
 
@@ -272,7 +273,7 @@ See [Data Model Map](../format/data-model-map.md) for detailed implementation ex
 
 ---
 
-## 3. Recommended Tools
+## 4. Recommended Tools
 
 ### STEP Viewers (Free)
 
@@ -297,14 +298,15 @@ See [Data Model Map](../format/data-model-map.md) for detailed implementation ex
 
 ---
 
-## 4. What to Read Next
+## 5. What to Read Next
 
 After understanding the basics, proceed in this order:
 
 ### ① Deepen Your Understanding
 
-1. **[Glossary](./glossary.md)** - Memorize the Top 5 important terms.
-2. **[FAQ](./faq.md)** - Resolve common questions.
+1. **[STEP File Basics](../format/step-file-basics.md)** - Syntax and structure fundamentals.
+2. **[Glossary](./glossary.md)** - Memorize the Top 5 important terms.
+3. **[FAQ](./faq.md)** - Resolve common questions.
 
 ### ② Select an AP
 
