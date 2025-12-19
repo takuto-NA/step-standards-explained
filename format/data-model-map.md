@@ -66,7 +66,8 @@ Excerpt from [Minimal STEP Analysis](../examples/minimal-product.step.md):
 #100 = ADVANCED_FACE(...);  ← Geometry data starts here
 ```
 
-### Tips for Parser Implementation
+👉 Details: **[Geometry and Topology](./geometry-and-topology.md)**  
+👉 Details: **[Anatomy of Product Entities](./anatomy-of-product.md)**
 
 **Basic Traversal Pattern (Python-style Pseudocode)**:
 
@@ -216,10 +217,34 @@ def get_placement_transform(nauo):
     return identity_matrix()  # Default to identity
 ```
 
+**How Coordinate Transformation Works**:
+
+```mermaid
+graph TD
+    ParentCS["Parent Coordinate System<br/>(Assembly Origin)"] -->|"relating_product_definition"| NAUO["NEXT_ASSEMBLY_USAGE_OCCURRENCE<br/>Defines: Parent uses Child"]
+    NAUO -->|"related_product_definition"| ChildCS["Child Coordinate System<br/>(Part Origin)"]
+    NAUO -->|"via CDSR"| CDSR["CONTEXT_DEPENDENT_SHAPE_REPRESENTATION<br/>Links transformation"]
+    CDSR -->|"representation_relation"| RRWT["REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION<br/>Contains transformation"]
+    RRWT -->|"transformation_operator"| IDT["ITEM_DEFINED_TRANSFORMATION<br/>Transformation Matrix"]
+    IDT -->|"transform_item_1"| SourceAP["AXIS2_PLACEMENT_3D<br/>Source: Parent CS"]
+    IDT -->|"transform_item_2"| TargetAP["AXIS2_PLACEMENT_3D<br/>Target: Child CS Position"]
+    TargetAP -->|"Applied to"| ChildGeom["Child Geometry<br/>Transformed coordinates"]
+```
+
+**Transformation Process**:
+1. **Parent Coordinate System**: The assembly's origin and orientation
+2. **NAUO**: Defines the parent-child relationship
+3. **Transformation Matrix**: Calculated from `AXIS2_PLACEMENT_3D` (source and target)
+4. **Child Geometry**: All child part coordinates are transformed using this matrix
+5. **Result**: Child part appears in the correct position within the assembly
+
+**Example**: If a child part is defined at origin (0,0,0) but needs to be placed at (100, 50, 0) in the assembly, the transformation matrix translates all child coordinates by (100, 50, 0).
+
 **Implementation Considerations**:
 - **Cyclic References**: Watch for invalid files where a parent references a child and vice-versa.
 - **Multiple Instances**: The same child part can be used multiple times (multiple NAUOs).
 - **Missing Matrices**: Assume an identity matrix if CDSR is absent.
+- **Matrix Calculation**: Convert `AXIS2_PLACEMENT_3D` to a 4x4 transformation matrix for rendering.
 
 👉 Details: **[Assembly Support (Comparison Page)](../comparison/assembly-support.md)**
 

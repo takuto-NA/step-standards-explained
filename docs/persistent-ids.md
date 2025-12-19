@@ -11,6 +11,23 @@ For "Persistent IDs" that survive re-exports and work in tools like Ansys, the s
 - **Internal ID (#123)**: Volatile. Changes every time the file is saved.
 - **`SHAPE_ASPECT` Name**: Persistent. This is a string label (e.g., `'Inlet'`, `'FixedSupport'`) attached to the geometry.
 
+**Instance ID Lifecycle**:
+
+```mermaid
+graph LR
+    EXPORT1["CAD Export<br/>#100 = ADVANCED_FACE(...)<br/>#200 = SHAPE_ASPECT('Inlet', #100)"] --> FILE1["STEP File v1<br/>Face ID: #100<br/>Name: 'Inlet'"]
+    FILE1 -->|"Re-save in CAD"| EXPORT2["CAD Re-export<br/>#350 = ADVANCED_FACE(...)<br/>#200 = SHAPE_ASPECT('Inlet', #350)"]
+    EXPORT2 --> FILE2["STEP File v2<br/>Face ID: #350 (Changed!)<br/>Name: 'Inlet' (Same!)"]
+    
+    VOLATILE["Instance ID (#100 → #350)<br/>❌ Volatile<br/>Changes on re-save"]
+    PERSISTENT["SHAPE_ASPECT Name ('Inlet')<br/>✅ Persistent<br/>Survives re-save"]
+```
+
+**Key Insight**:
+- **Instance IDs** (`#100`, `#350`) are **file-internal references** that can change arbitrarily
+- **SHAPE_ASPECT names** (`'Inlet'`) are **semantic labels** that remain constant
+- For simulation tools (Ansys), always use `SHAPE_ASPECT` names, never Instance IDs
+
 ## 2. Technical Implementation (AP242)
 
 To name a face, the STEP file creates a link between the geometric face and a "Shape Aspect" entity.

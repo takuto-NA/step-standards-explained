@@ -55,6 +55,42 @@ Each line in the `DATA` section represents an **entity instance** and follows th
 - **Volatile Nature**: These numbers only need to be unique within the file. It is normal and expected for these numbers to change when a file is re-saved by CAD software.
 - **Numbering Convention**: You will often see IDs incremented by 10 (`#10, #20, #30`). This is a legacy practice to allow for manual insertion of entities (e.g., `#15`) without renumbering the whole file.
 
+### How Instance IDs Reference Each Other
+
+The following diagram shows how entities reference each other using Instance IDs:
+
+```mermaid
+graph LR
+    P10["#10 PRODUCT<br/>'Part1'"] -->|"frame_of_reference"| PC20["#20 PRODUCT_CONTEXT"]
+    PC20 -->|"frame_of_reference"| AC30["#30 APPLICATION_CONTEXT"]
+    PDF40["#40 PRODUCT_DEFINITION_FORMATION"] -->|"of_product"| P10
+    PD50["#50 PRODUCT_DEFINITION"] -->|"formation"| PDF40
+    PDS70["#70 PRODUCT_DEFINITION_SHAPE"] -->|"definition"| PD50
+    SDR200["#200 SHAPE_DEFINITION_REPRESENTATION"] -->|"definition"| PDS70
+    SDR200 -->|"used_representation"| SR210["#210 SHAPE_REPRESENTATION"]
+    SR210 -->|"items"| MSB220["#220 MANIFOLD_SOLID_BREP"]
+```
+
+**Key Points**:
+- Each arrow shows a reference from one entity to another using `#ID`.
+- `#10` references `#20` via the `frame_of_reference` attribute.
+- This creates a chain of references that connects product information to geometry.
+
+### Forward References Are Allowed
+
+STEP files allow **forward references**, meaning an entity can reference another entity that is defined later in the file:
+
+```mermaid
+graph TD
+    P10["#10 PRODUCT<br/>References #20"] -->|"Forward Reference"| PC20["#20 PRODUCT_CONTEXT<br/>Defined Later"]
+    PC20 -->|"References #30"| AC30["#30 APPLICATION_CONTEXT<br/>Defined Even Later"]
+```
+
+**Why This Matters**:
+- Parsers must use **two-pass processing**: First pass builds an instance map, second pass resolves references.
+- You cannot resolve references in a single pass because forward references exist.
+- This is why using a hash map (dictionary) to store all instances before resolving references is essential.
+
 ---
 ## 📚 Next Steps
 - **[Data Model Map](./data-model-map.md)** - Understand the entity hierarchy.

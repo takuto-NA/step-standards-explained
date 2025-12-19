@@ -39,12 +39,13 @@ Designed for implementers new to STEP to learn efficiently.
 
 6. **[STEP File Walkthrough](./examples/step-file-walkthrough.md)** - Understand real files line by line
 7. **[Data Model Map](./format/data-model-map.md)** - Grasp the entity hierarchy
-8. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
+8. **[Geometry and Topology](./format/geometry-and-topology.md)** - Deep dive into mathematical representation (NURBS, etc.)
+9. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
 
 ### Step 4: Implementation & Troubleshooting (Reference as needed)
 
-9. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
-10. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
+10. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
+11. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
 
 ---
 

@@ -210,6 +210,26 @@ SHAPE_REPRESENTATION (#90)
 REPRESENTATION_ITEM (#100-#500)  ← Geometry data is here
 ```
 
+**Visual Traversal Path**:
+
+```mermaid
+graph TD
+    P["#10 PRODUCT<br/>'Part_A'"] -->|"of_product"| PDF["#40 PRODUCT_DEFINITION_FORMATION"]
+    PDF -->|"formation"| PD["#50 PRODUCT_DEFINITION"]
+    PD -->|"definition"| PDS["#70 PRODUCT_DEFINITION_SHAPE"]
+    PDS -->|"definition"| SDR["#200 SHAPE_DEFINITION_REPRESENTATION"]
+    SDR -->|"used_representation"| SR["#210 SHAPE_REPRESENTATION"]
+    SR -->|"items"| RI["#220-#500 REPRESENTATION_ITEM<br/>ADVANCED_FACE, EDGE, VERTEX"]
+```
+
+**Traversal Steps**:
+1. Start with `PRODUCT` (#10) - the top-level part information
+2. Follow `PRODUCT_DEFINITION_FORMATION` to manage versions
+3. Follow `PRODUCT_DEFINITION` to get design context
+4. Follow `PRODUCT_DEFINITION_SHAPE` as the bridge to geometry
+5. Follow `SHAPE_REPRESENTATION` to reach the geometry container
+6. Extract `REPRESENTATION_ITEM` instances (faces, edges, vertices)
+
 See the [Data Model Map](../format/data-model-map.md) for details.
 
 ### Step 4: How to Reach Geometry Data (Overview)
@@ -230,6 +250,23 @@ shape_rep = traverse(product_def, 'SHAPE_REPRESENTATION')
 # 4. Get geometry elements (like FACES)
 faces = filter_items(shape_rep.items, 'ADVANCED_FACE')
 ```
+
+**Parser Processing Flow**:
+
+```mermaid
+graph TD
+    START["Start: Read STEP File"] --> HEADER["Phase 1: Parse HEADER<br/>Extract FILE_SCHEMA<br/>Identify AP Version"]
+    HEADER --> MAP["Phase 2: Build Instance Map<br/>Parse all #ID = ENTITY(...)<br/>Store in hash map"]
+    MAP --> RESOLVE["Phase 3: Resolve References<br/>Replace #ID references<br/>with actual instances"]
+    RESOLVE --> TRAVERSE["Phase 4: Traverse Hierarchy<br/>PRODUCT → PRODUCT_DEFINITION<br/>→ SHAPE_REPRESENTATION"]
+    TRAVERSE --> EXTRACT["Phase 5: Extract Geometry<br/>Get ADVANCED_FACE, EDGE, VERTEX<br/>Build B-rep structure"]
+    EXTRACT --> END["End: Geometry Ready"]
+```
+
+**Why Two-Pass Processing?**
+- **Pass 1**: Build instance map (all `#ID = ENTITY(...)` entries)
+- **Pass 2**: Resolve references (replace `#ID` with actual instance objects)
+- Forward references require this approach - you cannot resolve references until all instances are parsed.
 
 See [Data Model Map](../format/data-model-map.md) for detailed implementation examples.
 

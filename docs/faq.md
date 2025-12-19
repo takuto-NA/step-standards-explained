@@ -12,7 +12,8 @@ Answers to common questions from STEP beginners and implementers, covering **30+
 4. [Persistence and Simulation (IDs/Names)](#persistence-and-simulation-idsnames)
 5. [Implementation](#implementation)
 6. [Troubleshooting](#troubleshooting)
-7. [Tools and Resources](#tools-and-resources)
+7. [Geometry and Topology](#geometry-and-topology)
+8. [Tools and Resources](#tools-and-resources)
 
 ---
 
@@ -398,9 +399,53 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
+## Geometry and Topology
+
+### Q25: How do I check if a model is "water-tight" (closed)?
+
+**A:** A model is "water-tight" (a solid) if it uses `MANIFOLD_SOLID_BREP` and its `CLOSED_SHELL` is topologically sound.
+- Every **Edge** must be shared by exactly **two Faces**.
+- There are no "naked edges" (edges with only one face).
+- The orientation of faces must consistently point "out" from the volume.
+
+---
+
+### Q26: How are fillets and complex blends represented?
+
+**A:** In most STEP files exported from CAD, fillets and complex blends are converted into **NURBS patches** (`B_SPLINE_SURFACE`). 
+- Simple circular fillets might use `CYLINDRICAL_SURFACE` or `TOROIDAL_SURFACE`.
+- Complex blends (variable radius) are always NURBS.
+
+---
+
+### Q27: Does STEP support CSG (primitives like Blocks and Spheres)?
+
+**A:** **Yes**. STEP supports CSG (Constructive Solid Geometry) via entities like `BLOCK`, `CYLINDER`, `SPHERE`, and `TORUS`. 
+- However, most modern CAD systems export everything as **B-rep** (faces/edges) for maximum compatibility.
+- If you need CSG, check your CAD system's export settings for "Keep primitives".
+
+---
+
+### Q28: How do I handle doughnuts or "inverted" shapes?
+
+**A:** These use `TOROIDAL_SURFACE`.
+- A **Doughnut** is a torus where the major radius is larger than the minor radius.
+- **Inverted/Spindle Torus**: If the minor radius is larger, the shape self-intersects.
+- The orientation (normal) of the face determines which side is "solid".
+
+---
+
+### Q29: What is G2 continuity and does STEP support it?
+
+**A:** **G2 (Curvature) Continuity** means that at the junction of two surfaces, not only the tangent but also the curvature is identical.
+- STEP supports this by explicitly declaring continuity in `B_SPLINE_CURVE` or `B_SPLINE_SURFACE` entities.
+- Maintaining G2 is critical for high-end styling (Class-A surfaces) in automotive design.
+
+---
+
 ## Tools and Resources
 
-### Q25: Are there free STEP viewers?
+### Q30: Are there free STEP viewers?
 
 **A:**
 
@@ -415,7 +460,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q26: Where can I get a validator?
+### Q31: Where can I get a validator?
 
 **A:**
 
@@ -430,7 +475,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q27: Where is the official documentation?
+### Q32: Where is the official documentation?
 
 **A:**
 
@@ -444,7 +489,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q28: What is CAx-IF?
+### Q33: What is CAx-IF?
 
 **A:** **CAD-CAx Implementor Forum**: An international group that establishes STEP implementation guidelines between CAD vendors.
 
@@ -462,7 +507,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q29: What is LOTAR?
+### Q34: What is LOTAR?
 
 **A:** **Long Term Archiving and Retrieval**: A standard for long-term preservation and retrieval of digital STEP data.
 
@@ -474,7 +519,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q30: What is MBD?
+### Q35: What is MBD?
 
 **A:** **Model Based Definition**: A practice where the 3D model is the only "source of truth" (Master), containing all design and manufacturing information.
 
@@ -486,7 +531,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q31: Should I build my own parser or use a library?
+### Q36: Should I build my own parser or use a library?
 
 **A:**
 
@@ -505,7 +550,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q32: How do I generate STEP files programmatically?
+### Q37: How do I generate STEP files programmatically?
 
 **A:**
 
@@ -532,7 +577,7 @@ with open('output.step', 'w') as f:
 
 ---
 
-### Q33: What are the best sample files for learning?
+### Q38: What are the best sample files for learning?
 
 **A:**
 

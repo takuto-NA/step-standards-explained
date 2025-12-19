@@ -71,5 +71,9 @@ graph LR
     <div class="card-title">File Walkthrough</div>
     <div class="card-description">Understand real STEP files line by line.</div>
   </a>
+  <a href="./format/geometry-and-topology" class="card">
+    <div class="card-title">Geometry & Topology</div>
+    <div class="card-description">Deep dive into NURBS, B-rep, and continuity.</div>
+  </a>
 </div>
 
