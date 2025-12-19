@@ -208,6 +208,24 @@ END-ISO-10303-21;
 
 ---
 
+## 💡 Part 21 Syntax 101
+
+Before we dive into the line-by-line explanation, let's clarify the basic syntax of a STEP file (formally called "ISO 10303-21").
+
+### How to read `#10=PRODUCT(...);`
+
+Each line in the `DATA` section follows this basic pattern:
+**`#ID = ENTITY_NAME(Attribute1, Attribute2, ...);`**
+
+*   **`#` (Hash/Pound)**: The prefix for an **Instance ID**. It indicates that a unique ID follows.
+*   **`10` (The Number)**: A unique integer identifier for this specific piece of data in this file.
+    *   **Why "10, 20, 30..."?**: This is a legacy convention from when files were sometimes edited by hand (similar to BASIC line numbers). It allows for inserting entities later (e.g., `#15`) without renumbering. 
+    *   **Does the number matter?**: No. It only needs to be unique within the file. Tools use these to reference other entities (e.g., `#10` referencing `#20`).
+*   **`=` (Equals)**: The **Assignment Operator**. It means "The entity with ID #10 is defined as...".
+*   **`;` (Semicolon)**: Every statement in a STEP file must end with a semicolon.
+
+---
+
 ## 📖 Section-by-Section Explanation
 
 ### 1. File Header

@@ -23,10 +23,26 @@ ENDSEC;
 END-ISO-10303-21;
 ```
 
-## 2. Why Instance IDs (#10, #20...) Matter
-- STEP uses a **pointer (reference)** based structure.
-- When one entity references another, it uses these numbers.
-- **Note**: These numbers only need to be unique within the file and have no inherent meaning (IDs). It is normal for these numbers to change when a file is re-saved.
+## 2. Syntax Overview
+
+Each line in the `DATA` section represents an **entity instance** and follows this standard format:
+
+**`#ID = ENTITY_NAME(Attribute1, Attribute2, ...);`**
+
+| Symbol | Name | Meaning |
+| :--- | :--- | :--- |
+| `#` | Hash/Pound | Prefix indicating an **Instance ID** follows. |
+| `10` | Instance ID | A unique integer identifier for this object within this specific file. |
+| `=` | Assignment | Links the ID on the left to the data definition on the right. |
+| `ENTITY` | Entity Name | The type of data (defined in the EXPRESS schema, e.g., `PRODUCT`). |
+| `(...)` | Attributes | The data values or references to other IDs (e.g., `(#20)`). |
+| `;` | Semicolon | Mandatory terminator for every STEP statement. |
+
+## 3. Why Instance IDs (#10, #20...) Matter
+
+- **Reference System**: STEP uses a pointer-based structure. When one entity needs to use another, it refers to its `#ID`.
+- **Volatile Nature**: These numbers only need to be unique within the file. It is normal and expected for these numbers to change when a file is re-saved by CAD software.
+- **Numbering Convention**: You will often see IDs incremented by 10 (`#10, #20, #30`). This is a legacy practice to allow for manual insertion of entities (e.g., `#15`) without renumbering the whole file.
 
 ---
 ## 📚 Next Steps
