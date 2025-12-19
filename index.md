@@ -1,67 +1,57 @@
 ---
-layout: home
-
-hero:
-  name: "STEP Standards Explained"
-  text: "A Practical Guide to ISO 10303"
-  tagline: "Explaining versions, capabilities, and implementation methods for CAD engineers and developers."
-  image:
-    src: https://vitepress.dev/vitepress-logo-large.png
-    alt: VitePress
-  actions:
-    - theme: brand
-      text: Get Started
-      link: /docs/getting-started
-    - theme: alt
-      text: View on GitHub
-      link: https://github.com/takuto-NA/step-standards-explained
-
-features:
-  - title: Complete STEP Guide
-    details: From AP203 to AP242, understand the evolution and capabilities of the standard.
-  - title: Implementer Focus
-    details: Practical tips, common pitfalls, and line-by-line walkthroughs of real STEP files.
-  - title: Interactive Learning
-    details: Visualized entity structures and clear decision guides for selecting the right AP.
+title: STEP Standards Explained
 ---
 
-<style>
-:root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
-}
-</style>
+# Overview
 
-## 🚀 Why this guide?
+A simple, open guide for understanding and implementing the STEP standard (ISO 10303).
 
-Agents and engineers often don’t have the context they need to do real work reliably with STEP files. This guide solves this by giving you access to procedural knowledge and specific context you can load on demand.
+STEP (Standard for the Exchange of Product model data) is an international standard for the computer-interpretable representation and exchange of industrial product data. While powerful, it is notoriously complex. This guide provides the procedural knowledge and context needed to work with STEP files accurately and efficiently.
 
-## 📚 Learning Path
+## Why this guide?
 
-::: info Step 1: Foundational Knowledge
-Understand STEP-specific terminology and the big picture.
-- [Glossary](/docs/glossary)
-- [Persistent IDs and Face Naming](/docs/persistent-ids)
-- [Getting Started](/docs/getting-started)
-- [FAQ](/docs/faq)
-:::
+Engineers and developers often don’t have the context they need to implement STEP support reliably. This project solves this by giving you access to technical knowledge and specific implementation details that you can apply immediately.
 
-::: info Step 2: Select the Right AP
-Choose the right Application Protocol for your project.
-- [Which AP should I use?](/decision-guides/which-ap-should-i-use)
-- [Capability Matrix](/comparison/capability-matrix)
-:::
+* **Expert Knowledge**: Specialized knowledge from geometry definitions to PMI (Product and Manufacturing Information).
+* **Implementation Focus**: Practical tips for building parsers, exporters, and handling persistent IDs.
+* **Open Standard**: Based on ISO 10303, explaining the differences between AP203, AP214, and AP242.
 
-::: info Step 3: Understand Data Structures
-Dive into the entity hierarchy and EXPRESS language.
-- [STEP File Walkthrough](/examples/step-file-walkthrough)
-- [Data Model Map](/format/data-model-map)
-- [EXPRESS Language Basics](/format/express-overview)
-:::
+## What can this guide enable?
 
-::: info Step 4: Implementation
-Common pitfalls and quality assurance.
-- [Common Pitfalls](/implementation/common-pitfalls)
-- [Validation and CAx-IF](/implementation/validation-and-caxif)
-:::
+* **Domain expertise**: Understand the hierarchy of entities and the EXPRESS language used to define them.
+* **Accurate Data Exchange**: Learn how to preserve colors, layers, and semantic PMI across different CAD systems.
+* **Repeatable Workflows**: Turn complex STEP export/import tasks into consistent and reliable processes.
+
+## Adoption & Compatibility
+
+The STEP standard is supported by all major CAD and simulation tools. Understanding which version (AP) to use is critical for interoperability.
+
+| Application Protocol | Primary Focus | Use Case |
+| :--- | :--- | :--- |
+| **AP203** | Configuration Controlled Design | Legacy systems, basic geometry |
+| **AP214** | Automotive Mechanical Design | Mainstream CAD exchange (colors/layers) |
+| **AP242** | Managed Model Based 3D Engineering | Modern MBD, PMI, and simulation |
+
+[→ View full CAD Support Matrix](/comparison/cad-support-matrix)
+
+## Get started
+
+<div class="card-grid">
+  <a href="./docs/getting-started" class="card">
+    <div class="card-title">Getting Started</div>
+    <div class="card-description">Quickly grasp the big picture of the STEP standard.</div>
+  </a>
+  <a href="./docs/glossary" class="card">
+    <div class="card-title">Glossary</div>
+    <div class="card-description">Understand STEP-specific terminology and concepts.</div>
+  </a>
+  <a href="./docs/faq" class="card">
+    <div class="card-title">FAQ</div>
+    <div class="card-description">Resolve common questions about STEP implementations.</div>
+  </a>
+  <a href="./examples/step-file-walkthrough" class="card">
+    <div class="card-title">File Walkthrough</div>
+    <div class="card-description">Understand real STEP files line by line.</div>
+  </a>
+</div>
 
