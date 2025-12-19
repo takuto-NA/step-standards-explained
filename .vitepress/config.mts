@@ -33,7 +33,8 @@ export default withMermaid(defineConfig({
             items: [
               { text: 'Glossary', link: '/docs/glossary' },
               { text: 'Getting Started', link: '/docs/getting-started' },
-              { text: 'FAQ', link: '/docs/faq' }
+              { text: 'FAQ', link: '/docs/faq' },
+              { text: 'Persistent IDs', link: '/docs/persistent-ids' }
             ]
           },
           {
@@ -47,17 +48,20 @@ export default withMermaid(defineConfig({
             text: '3. Data Structures',
             items: [
               { text: 'STEP File Walkthrough', link: '/examples/step-file-walkthrough' },
+              { text: 'Minimal STEP Analysis', link: '/examples/minimal-product.step' },
               { text: 'Data Model Map', link: '/format/data-model-map' },
+              { text: 'Geometry and Topology', link: '/format/geometry-and-topology' },
               { text: 'EXPRESS Language Basics', link: '/format/express-overview' }
             ]
           },
           {
-            text: '4. Implementation',
-            items: [
-              { text: 'Common Pitfalls', link: '/implementation/common-pitfalls' },
-              { text: 'Validation and CAx-IF', link: '/implementation/validation-and-caxif' }
-            ]
-          }
+        text: '4. Implementation',
+        items: [
+          { text: 'Minimal Export Template', link: '/implementation/minimal-export' },
+          { text: 'Common Pitfalls', link: '/implementation/common-pitfalls' },
+          { text: 'Validation and CAx-IF', link: '/implementation/validation-and-caxif' }
+        ]
+      }
         ]
       },
       {
@@ -79,6 +83,7 @@ export default withMermaid(defineConfig({
             collapsed: true,
             items: [
               { text: 'Anatomy of Product', link: '/format/anatomy-of-product' },
+              { text: 'Geometry and Topology', link: '/format/geometry-and-topology' },
               { text: 'STEP File Basics', link: '/format/step-file-basics' }
             ]
           },

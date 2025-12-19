@@ -29,9 +29,9 @@ NURBS can represent both curves and surfaces.
 
 A NURBS curve is defined as:
 
-\[
+$$
 C(u) = \frac{\sum_{i=0}^n N_{i,p}(u) w_i P_i}{\sum_{i=0}^n N_{i,p}(u) w_i}
-\]
+$$
 
 *(In plain text: Sum of (Basis * Weight * ControlPoint) / Sum of (Basis * Weight))*
 
@@ -39,9 +39,9 @@ C(u) = \frac{\sum_{i=0}^n N_{i,p}(u) w_i P_i}{\sum_{i=0}^n N_{i,p}(u) w_i}
 
 A NURBS surface is defined as the bivariate extension:
 
-\[
+$$
 S(u, v) = \frac{\sum_{i=0}^n \sum_{j=0}^m N_{i,p}(u) N_{j,q}(v) w_{i,j} P_{i,j}}{\sum_{i=0}^n \sum_{j=0}^m N_{i,p}(u) N_{j,q}(v) w_{i,j}}
-\]
+$$
 
 *(In plain text: Sum of (Basis_u * Basis_v * Weight * ControlPoint) / Sum of (Basis_u * Basis_v * Weight))*
 
@@ -56,6 +56,21 @@ Where:
 The basis functions $N_{i,p}(u)$ are defined recursively:
 - **Degree 0**: $N_{i,0}(u) = 1$ if $u_i \le u < u_{i+1}$, else $0$.
 - **Degree $p$**: $N_{i,p}(u) = \frac{u - u_i}{u_{i+p} - u_i} N_{i,p-1}(u) + \frac{u_{i+p+1} - u}{u_{i+p+1} - u_{i+1}} N_{i+1,p-1}(u)$
+
+#### Matrix Representation (Implementation Perspective)
+
+In computer graphics and CAD kernels, B-splines can be evaluated using matrix forms. For a single segment:
+
+$$
+C(u) = \mathbf{U} \mathbf{M} \mathbf{P}
+$$
+
+Where:
+*   **$\mathbf{U}$**: The parameter vector $[u^p, u^{p-1}, \dots, u, 1]$.
+*   **$\mathbf{M}$**: The basis matrix (determined by the degree and knot vector).
+*   **$\mathbf{P}$**: The vector of control points.
+
+*Note: For NURBS, the same operation is performed on weighted control points in homogeneous coordinates $(w_i x_i, w_i y_i, w_i z_i, w_i)$, then projected back.*
 
 #### How is it uniquely determined?
 
@@ -162,6 +177,14 @@ STEP can store calculated physical data so that the receiving system can verify 
 ## 📚 Next Steps
 - **[Common Pitfalls](../implementation/common-pitfalls.md)** - Learn about tolerance issues.
 - **[Validation and CAx-IF](../implementation/validation-and-caxif.md)** - How to use validation properties.
+
+---
+## 🔗 Further Reading & References
+
+1.  **The NURBS Book** (Les Piegl and Wayne Tiller): The "Bible" of NURBS. Essential for anyone implementing geometry kernels.
+2.  **NURBS-Python (geomdl) Documentation**: Excellent practical examples and visual explanations of NURBS math.
+3.  **CAx-IF Recommended Practices**: Official guidelines on how to implement STEP geometry to ensure interoperability between CAD systems.
+4.  **ISO 10303-42**: The official part of the STEP standard that defines "Geometric and topological representation."
 
 [Back to README](../README.md)
 
