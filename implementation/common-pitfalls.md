@@ -14,6 +14,7 @@ This document explains problems frequently encountered during STEP implementatio
 6. [Missing Colors and Layers](#6-missing-colors-and-layers)
 7. [Encoding Issues](#7-encoding-issues)
 8. [Improper Forward Reference Handling](#8-improper-forward-reference-handling)
+9. [Persistence and Topology Risks](#9-persistence-and-topology-risks)
 
 ---
 
@@ -539,6 +540,38 @@ def validate_all_references(instance_map):
 - **Always implement two-pass processing.**
 - Check for duplicate instance IDs.
 - Detect cyclic references (rare but possible).
+
+---
+
+## 9. Persistence and Topology Risks
+
+**Difficulty**: ★★★ (Advanced)  
+**Frequency**: ★★☆ (Common in Simulation)  
+**Impact**: 🔴 High (Breakdown of automated simulation pipelines)
+
+### ❌ The Problem
+
+"Persistent IDs" (face names) assigned in CAD are lost or shifted when the model is modified and re-exported.
+
+**Example**:
+1. You name a face "Inlet" in Rhino and set up an Ansys simulation.
+2. You change the geometry (e.g., move a hole) and re-export the STEP.
+3. The new STEP file labels a **different face** as "Inlet" or the label disappears entirely.
+
+### ✅ Solutions
+
+#### 1. Use Semantic Labeling (SHAPE_ASPECT)
+Ensure you are using **AP242** for export, as it has the most robust support for attaching names to geometry.
+
+#### 2. Avoid Reliance on Instance IDs (#)
+Never write simulation scripts that rely on `#10`, `#500`, etc. These numbers are recalculated every time a file is saved.
+
+#### 3. Best Practices for Stability
+- **Name faces as late as possible** in the design process.
+- Use CAD-specific "Named Selection" or "Attribute" features that are known to map to `SHAPE_ASPECT`.
+
+### 🔍 Detection Methods
+- **Compare two versions of the STEP file**: Check if the `SHAPE_ASPECT` entity still points to the same `ADVANCED_FACE` (by checking its relative position or bounding box).
 
 ---
 

@@ -41,6 +41,7 @@ Agents and engineers often don’t have the context they need to do real work re
 ::: info Step 1: Foundational Knowledge
 Understand STEP-specific terminology and the big picture.
 - [Glossary](/docs/glossary)
+- [Persistent IDs and Face Naming](/docs/persistent-ids)
 - [Getting Started](/docs/getting-started)
 - [FAQ](/docs/faq)
 :::

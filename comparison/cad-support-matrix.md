@@ -52,7 +52,20 @@ Key milestones that significantly changed I/O capabilities.
 
 ---
 
-## 4. Implementation Notes
+## 4. Persistence and Simulation (Face Naming)
+
+Support for persistent face names (via `SHAPE_ASPECT`) which is critical for automated simulation workflows.
+
+| Software | Export Name | Import Name | Remarks |
+| :--- | :---: | :---: | :--- |
+| **Siemens NX** | ✅ | ✅ | Excellent support via AP242 and AP214. |
+| **SolidWorks** | ⚠ | ⚠ | Names often lost unless exported with specific "MBD" or "Face name" settings. |
+| **Rhino 8** | ✅ | ⚠ | Improved in Rhino 8; exports "Object Names" to AP242 `SHAPE_ASPECT`. |
+| **Ansys Workbench**| N/A | ✅ | Can import face labels as "Named Selections" (Requires AP242). |
+
+---
+
+## 5. Implementation Notes
 
 - **Licensing**: In many mid-range to high-end CAD systems, enabling AP242/PMI features requires dedicated packages (MBD, FTA, Extended STEP IF, etc.).
 - **Settings**: Many systems have the "Import PMI" option turned off by default, so verification is necessary.

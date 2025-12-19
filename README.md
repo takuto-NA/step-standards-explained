@@ -26,7 +26,8 @@ Designed for implementers new to STEP to learn efficiently.
 ### Step 1: Establish Foundational Knowledge (Time: 30 mins)
 
 1. **[⭐ Glossary](./docs/glossary.md)** - Understand STEP-specific terminology (Crucial!)
-2. **[Getting Started Guide for Implementers](./docs/getting-started.md)** - Quickly grasp the big picture
+2. **[Persistent IDs and Face Naming](./docs/persistent-ids.md)** - Critical for simulation (Ansys/Rhino)
+3. **[Getting Started Guide for Implementers](./docs/getting-started.md)** - Quickly grasp the big picture
 3. **[FAQ](./docs/faq.md)** - Resolve common questions
 
 ### Step 2: Select the Right AP for Your Project (Time: 15 mins)

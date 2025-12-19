@@ -9,9 +9,10 @@ Answers to common questions from STEP beginners and implementers, covering **30+
 1. [Basic Concepts](#basic-concepts)
 2. [File Operations](#file-operations)
 3. [AP Selection](#ap-selection)
-4. [Implementation](#implementation)
-5. [Troubleshooting](#troubleshooting)
-6. [Tools and Resources](#tools-and-resources)
+4. [Persistence and Simulation (IDs/Names)](#persistence-and-simulation-idsnames)
+5. [Implementation](#implementation)
+6. [Troubleshooting](#troubleshooting)
+7. [Tools and Resources](#tools-and-resources)
 
 ---
 
@@ -211,6 +212,37 @@ Detail: [Which AP should I use?](../decision-guides/which-ap-should-i-use.md)
 **Compatibility**: High compatibility with ed2.
 
 **Adoption**: CAD support for ed3 is increasing, but Electrical and AM features are still being adopted.
+
+---
+
+## Persistence and Simulation (IDs/Names)
+
+### Q14: Can I assign persistent IDs or names to faces?
+
+**A: Yes**, but not using the `#123` instance IDs. You must use **`SHAPE_ASPECT`** (labels).
+- **AP242**: Full support for semantic face/edge naming.
+- **AP214**: Partial support (depends on CAD implementation).
+- **AP203**: Generally not supported for user-defined names.
+
+Detailed guide: [Persistent IDs and Face Naming](./persistent-ids.md)
+
+---
+
+### Q15: Does Ansys Workbench read face names?
+
+**A: Yes**, it can import them as **Named Selections**.
+- Ensure the STEP file is exported as **AP242**.
+- In Ansys Geometry import settings, set "Named Selections" to `On`.
+- Use a consistent naming convention in CAD to help Ansys filter the selections.
+
+---
+
+### Q16: Why do my face names disappear in simulation?
+
+**A:** Common reasons:
+1. **Topology Change**: If you modify the geometry significantly, the CAD system might "lose" the link between the name and the new face.
+2. **AP Version**: Exporting as AP203 will strip all name labels.
+3. **Export Settings**: Many CAD tools have "Export names" disabled by default.
 
 ---
 
