@@ -1,15 +1,15 @@
-# STEPファイル完全解説 (Complete STEP File Walkthrough)
+# Complete STEP File Walkthrough
 
-**所要時間**: 30-45分
+**Estimated Time**: 30-45 minutes
 
-このガイドでは、実際のSTEPファイル（シンプルな立方体）を**1行ずつ完全に解説**します。STEPファイルの構造を実例を通じて理解できます。
+In this guide, we will provide a **complete, line-by-line explanation** of an actual STEP file (a simple cube). Through this example, you can gain a concrete understanding of a STEP file's structure.
 
 ---
 
-## 📦 サンプルファイル: Simple Cube (立方体)
+## 📦 Sample File: Simple Cube
 
-以下は、一辺10mmの立方体を表現する完全なSTEPファイルです。
-実際のファイルはこちらからダウンロードできます: **[cube.step](./cube.step)**
+Below is the complete STEP file for a cube with 10mm sides.
+You can download the actual file here: **[cube.step](./cube.step)**
 
 ```step
 ISO-10303-21;
@@ -208,120 +208,120 @@ END-ISO-10303-21;
 
 ---
 
-## 📖 セクション別解説
+## 📖 Section-by-Section Explanation
 
-### 1. ファイルヘッダー
+### 1. File Header
 
 ```step
 ISO-10303-21;
 ```
-**意味**: このファイルがISO 10303-21 (Part 21) 形式であることを宣言。
+**Meaning**: Declares that this file is in the ISO 10303-21 (Part 21) format.
 
 ---
 
 ```step
 HEADER;
 ```
-**意味**: HEADERセクションの開始。ファイルのメタデータを格納。
+**Meaning**: Start of the `HEADER` section, which stores file metadata.
 
 ---
 
 ```step
 FILE_DESCRIPTION(('Simple Cube Example'),'2;1');
 ```
-**意味**: ファイルの説明。
-- 第1引数: 説明文のリスト
-- 第2引数: 実装レベル（`'2;1'`はPart 21の標準）
+**Meaning**: Describes the file.
+- Argument 1: A list of descriptive strings.
+- Argument 2: The implementation level (`'2;1'` is the standard for Part 21).
 
 ---
 
 ```step
 FILE_NAME('cube.step','2025-12-19T09:00:00',('Author'),('Organization'),'Antigravity Tutorial','Antigravity STEP Writer','Unknown');
 ```
-**意味**: ファイル情報。
-- ファイル名: `cube.step`
-- 作成日時: `2025-12-19T09:00:00` (ISO 8601形式)
-- 作成者: `Author`
-- 組織: `Organization`
-- プリプロセッサ: `Antigravity Tutorial`
-- システム: `Antigravity STEP Writer`
-- 認証: `Unknown`
+**Meaning**: Information about the file itself.
+- Filename: `cube.step`
+- Creation Timestamp: `2025-12-19T09:00:00` (ISO 8601 format)
+- Author: `Author`
+- Organization: `Organization`
+- Preprocessor: `Antigravity Tutorial`
+- System: `Antigravity STEP Writer`
+- Authorization: `Unknown`
 
 ---
 
 ```step
 FILE_SCHEMA(('AP214_AUTOMOTIVE_DESIGN { 1 0 10303 214 3 1 1 }'));
 ```
-**意味**: 使用するスキーマ（AP）の宣言。
-- `AP214_AUTOMOTIVE_DESIGN`: AP214を使用
-- `{ 1 0 10303 214 3 1 1 }`: バージョン情報
+**Meaning**: Declaration of the schema (AP) being used.
+- `AP214_AUTOMOTIVE_DESIGN`: Uses Application Protocol 214.
+- `{ 1 0 10303 214 3 1 1 }`: Version information.
 
-**実装者注**: この値を見てどのAPか判定する（パーサーの最初のステップ）
+**Implementer's Note**: This value is checked to determine which AP the parser should use (the first step of parsing).
 
 ---
 
 ```step
 ENDSEC;
 ```
-**意味**: HEADERセクションの終了。
+**Meaning**: End of the `HEADER` section.
 
 ---
 
-### 2. データセクション: 管理情報
+### 2. Data Section: Management Information
 
 ```step
 DATA;
 ```
-**意味**: DATAセクションの開始。実際のデータ（エンティティのインスタンス）を格納。
+**Meaning**: Start of the `DATA` section, which contains the actual data (instances of entities).
 
 ---
 
-#### Product構造
+#### Product Structure
 
 ```step
 #10=PRODUCT('Cube','Cube','A simple 10mm cube',(#20));
 ```
-**エンティティ**: `PRODUCT`  
-**意味**: 製品そのものを定義。
+**Entity**: `PRODUCT`  
+**Meaning**: Defines the product itself.
 
-**属性**:
-- `id`: `'Cube'` (製品ID)
-- `name`: `'Cube'` (製品名)
-- `description`: `'A simple 10mm cube'` (説明)
-- `frame_of_reference`: `(#20)` (コンテキストのリスト)
+**Attributes**:
+- `id`: `'Cube'` (Part number/ID)
+- `name`: `'Cube'` (Part name)
+- `description`: `'A simple 10mm cube'` (Description)
+- `frame_of_reference`: `(#20)` (List of contexts)
 
-**参照**: `#20` (PRODUCT_CONTEXT)
+**Reference**: `#20` (PRODUCT_CONTEXT)
 
 ---
 
 ```step
 #20=PRODUCT_CONTEXT('',#30,'mechanical');
 ```
-**エンティティ**: `PRODUCT_CONTEXT`  
-**意味**: 製品のコンテキスト（機械的、電気的等）。
+**Entity**: `PRODUCT_CONTEXT`  
+**Meaning**: Context of the product (mechanical, electrical, etc.).
 
-**属性**:
-- `name`: `''` (空)
+**Attributes**:
+- `name`: `''` (Empty)
 - `frame_of_reference`: `#30` (APPLICATION_CONTEXT)
-- `discipline_type`: `'mechanical'` (機械分野)
+- `discipline_type`: `'mechanical'`
 
 ---
 
 ```step
 #30=APPLICATION_CONTEXT('automotive design');
 ```
-**エンティティ**: `APPLICATION_CONTEXT`  
-**意味**: アプリケーション分野（自動車設計）。
+**Entity**: `APPLICATION_CONTEXT`  
+**Meaning**: The application domain (e.g., automotive design).
 
 ---
 
 ```step
 #40=PRODUCT_DEFINITION_FORMATION('1','First version',#10);
 ```
-**エンティティ**: `PRODUCT_DEFINITION_FORMATION`  
-**意味**: 製品のバージョン管理。
+**Entity**: `PRODUCT_DEFINITION_FORMATION`  
+**Meaning**: Version management for the product.
 
-**属性**:
+**Attributes**:
 - `id`: `'1'`
 - `description`: `'First version'`
 - `of_product`: `#10` (PRODUCT)
@@ -331,10 +331,10 @@ DATA;
 ```step
 #50=PRODUCT_DEFINITION('design','',#40,#60);
 ```
-**エンティティ**: `PRODUCT_DEFINITION`  
-**意味**: 設計コンテキストでの製品定義。
+**Entity**: `PRODUCT_DEFINITION`  
+**Meaning**: Product definition within a design context.
 
-**属性**:
+**Attributes**:
 - `id`: `'design'`
 - `description`: `''`
 - `formation`: `#40` (PRODUCT_DEFINITION_FORMATION)
@@ -345,25 +345,25 @@ DATA;
 ```step
 #60=PRODUCT_DEFINITION_CONTEXT('part definition',#30,'design');
 ```
-**エンティティ**: `PRODUCT_DEFINITION_CONTEXT`  
-**意味**: 部品定義のコンテキスト。
+**Entity**: `PRODUCT_DEFINITION_CONTEXT`  
+**Meaning**: Context for part definition.
 
 ---
 
 ```step
 #70=PRODUCT_DEFINITION_SHAPE('','',#50);
 ```
-**エンティティ**: `PRODUCT_DEFINITION_SHAPE`  
-**意味**: 管理データと形状データの「橋渡し」。
+**Entity**: `PRODUCT_DEFINITION_SHAPE`  
+**Meaning**: The "bridge" between management data and shape data.
 
-**属性**:
+**Attributes**:
 - `definition`: `#50` (PRODUCT_DEFINITION)
 
-**重要**: ここが管理データから形状データへの接続点！
+**Crucial**: This is the connection point between management and geometry!
 
 ---
 
-### 3. データセクション: 単位とコンテキスト
+### 3. Data Section: Units and Context
 
 ```step
 #100=( GEOMETRIC_REPRESENTATION_CONTEXT(3) 
@@ -371,74 +371,74 @@ DATA;
   GLOBAL_UNIT_ASSIGNED_CONTEXT((#120,#130,#140)) 
   REPRESENTATION_CONTEXT('ID1','3D') );
 ```
-**エンティティ**: 複合型（4つのエンティティを同時に定義）  
-**意味**: 幾何表現のコンテキスト。
+**Entity**: Complex type (defines 4 entities simultaneously)  
+**Meaning**: Context for geometric representation.
 
-**内訳**:
-- `GEOMETRIC_REPRESENTATION_CONTEXT(3)`: 3次元
-- `GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#110))`: 精度設定
-- `GLOBAL_UNIT_ASSIGNED_CONTEXT((#120,#130,#140))`: 単位設定
-- `REPRESENTATION_CONTEXT('ID1','3D')`: 識別子
+**Breakdown**:
+- `GEOMETRIC_REPRESENTATION_CONTEXT(3)`: Three-dimensional.
+- `GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#110))`: Precision settings.
+- `GLOBAL_UNIT_ASSIGNED_CONTEXT((#120,#130,#140))`: Unit settings.
+- `REPRESENTATION_CONTEXT('ID1','3D')`: Identifier.
 
 ---
 
 ```step
 #110=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.0E-06),#120,'DISTANCE_ACCURACY_VALUE','...');
 ```
-**エンティティ**: `UNCERTAINTY_MEASURE_WITH_UNIT`  
-**意味**: 幾何精度の定義。
+**Entity**: `UNCERTAINTY_MEASURE_WITH_UNIT`  
+**Meaning**: Definition of geometric precision.
 
-**値**: `1.0E-06` mm (0.001 μm) = 1 nm（非常に高精度）
+**Value**: `1.0E-06` mm (0.001 μm) = 1 nm (very high precision).
 
 ---
 
 ```step
 #120=( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) );
 ```
-**エンティティ**: 複合型  
-**意味**: 長さの単位。
+**Entity**: Complex type  
+**Meaning**: Unit of length.
 
-**解釈**: `.MILLI.,.METRE.` = **mm (ミリメートル)**
+**Interpretation**: `.MILLI.,.METRE.` = **mm (millimeters)**.
 
-**実装者注**: この値を必ず確認して単位変換係数を計算！
+**Implementer's Note**: Always check this value to calculate your unit conversion factors!
 
 ---
 
 ```step
 #130=( NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.) );
 ```
-**エンティティ**: 平面角の単位。  
-**値**: **ラジアン**
+**Entity**: Plane angle unit.  
+**Value**: **Radians**.
 
 ---
 
 ```step
 #140=( NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT() );
 ```
-**エンティティ**: 立体角の単位。  
-**値**: **ステラジアン**
+**Entity**: Solid angle unit.  
+**Value**: **Steradians**.
 
 ---
 
-### 4. データセクション: 形状表現
+### 4. Data Section: Shape Representation
 
 ```step
 #200=SHAPE_DEFINITION_REPRESENTATION(#70,#210);
 ```
-**エンティティ**: `SHAPE_DEFINITION_REPRESENTATION`  
-**意味**: PRODUCT_DEFINITION_SHAPE (#70) と SHAPE_REPRESENTATION (#210) を紐付け。
+**Entity**: `SHAPE_DEFINITION_REPRESENTATION`  
+**Meaning**: Links `PRODUCT_DEFINITION_SHAPE` (#70) to `SHAPE_REPRESENTATION` (#210).
 
 ---
 
 ```step
 #210=SHAPE_REPRESENTATION('',(#220),#100);
 ```
-**エンティティ**: `SHAPE_REPRESENTATION`  
-**意味**: 形状のトップレベルコンテナ。
+**Entity**: `SHAPE_REPRESENTATION`  
+**Meaning**: Top-level container for geometry.
 
-**属性**:
+**Attributes**:
 - `name`: `''`
-- `items`: `(#220)` (形状要素のリスト)
+- `items`: `(#220)` (List of geometry elements)
 - `context_of_items`: `#100` (GEOMETRIC_REPRESENTATION_CONTEXT)
 
 ---
@@ -446,10 +446,10 @@ DATA;
 ```step
 #220=MANIFOLD_SOLID_BREP('Cube',#230);
 ```
-**エンティティ**: `MANIFOLD_SOLID_BREP`  
-**意味**: 閉じた3Dソリッド。
+**Entity**: `MANIFOLD_SOLID_BREP`  
+**Meaning**: A closed 3D solid.
 
-**属性**:
+**Attributes**:
 - `name`: `'Cube'`
 - `outer`: `#230` (CLOSED_SHELL)
 
@@ -458,171 +458,171 @@ DATA;
 ```step
 #230=CLOSED_SHELL('',(#240,#250,#260,#270,#280,#290));
 ```
-**エンティティ**: `CLOSED_SHELL`  
-**意味**: 閉じた面の集合（立方体の6面）。
+**Entity**: `CLOSED_SHELL`  
+**Meaning**: A collection of closed faces (the 6 faces of the cube).
 
-**属性**:
-- `cfs_faces`: 6つの面のリスト
+**Attributes**:
+- `cfs_faces`: List of 6 faces.
 
 ---
 
-### 5. データセクション: 面（Faces）
+### 5. Data Section: Faces
 
-各面は同じ構造なので、1つ（底面）を詳しく解説します。
+Since all faces have the same structure, we'll explain one (the bottom face) in detail.
 
 ```step
 #240=ADVANCED_FACE('',(#241),#242,.T.);
 ```
-**エンティティ**: `ADVANCED_FACE`  
-**意味**: 面を定義。
+**Entity**: `ADVANCED_FACE`  
+**Meaning**: Defines a face.
 
-**属性**:
+**Attributes**:
 - `name`: `''`
-- `bounds`: `(#241)` (面の境界)
-- `face_geometry`: `#242` (面の形状: PLANE)
-- `same_sense`: `.T.` (法線方向が面の形状と同じ)
+- `bounds`: `(#241)` (Face boundaries)
+- `face_geometry`: `#242` (Geometry of the face: PLANE)
+- `same_sense`: `.T.` (Normal direction matches the face geometry)
 
 ---
 
 ```step
 #241=FACE_OUTER_BOUND('',#243,.T.);
 ```
-**エンティティ**: `FACE_OUTER_BOUND`  
-**意味**: 面の外側の境界（穴がある場合は内側の境界もある）。
+**Entity**: `FACE_OUTER_BOUND`  
+**Meaning**: Outer boundary of the face (inner boundaries exist if there are holes).
 
-**属性**:
+**Attributes**:
 - `bound`: `#243` (EDGE_LOOP)
-- `orientation`: `.T.` (向きは正)
+- `orientation`: `.T.` (Positive orientation)
 
 ---
 
 ```step
 #243=EDGE_LOOP('',(#244,#245,#246,#247));
 ```
-**エンティティ**: `EDGE_LOOP`  
-**意味**: エッジのループ（4本のエッジで四角形を形成）。
+**Entity**: `EDGE_LOOP`  
+**Meaning**: A loop of edges (forming a rectangle with 4 edges).
 
-**属性**:
-- `edge_list`: 4つのORIENTED_EDGEのリスト
+**Attributes**:
+- `edge_list`: List of 4 `ORIENTED_EDGE` instances.
 
 ---
 
 ```step
 #244=ORIENTED_EDGE('',*,*,#300,.T.);
 ```
-**エンティティ**: `ORIENTED_EDGE`  
-**意味**: 方向付きエッジ。
+**Entity**: `ORIENTED_EDGE`  
+**Meaning**: A directional edge.
 
-**属性**:
+**Attributes**:
 - `edge_element`: `#300` (EDGE_CURVE)
-- `orientation`: `.T.` (エッジの向きをそのまま使用)
+- `orientation`: `.T.` (Use the edge direction as-is)
 
-**注**: `.F.`の場合はエッジを逆向きに使用
+**Note**: If `.F.`, use the edge in reverse.
 
 ---
 
 ```step
 #242=PLANE('',#400);
 ```
-**エンティティ**: `PLANE`  
-**意味**: 平面。
+**Entity**: `PLANE`  
+**Meaning**: A plane surface.
 
-**属性**:
-- `position`: `#400` (AXIS2_PLACEMENT_3D: 平面の位置と向き)
+**Attributes**:
+- `position`: `#400` (AXIS2_PLACEMENT_3D: Plane location and orientation)
 
 ---
 
-### 6. データセクション: エッジ（Edges）
+### 6. Data Section: Edges
 
 ```step
 #300=EDGE_CURVE('',#500,#501,#600,.T.);
 ```
-**エンティティ**: `EDGE_CURVE`  
-**意味**: 曲線エッジ（この場合は直線）。
+**Entity**: `EDGE_CURVE`  
+**Meaning**: A curved edge (a straight line in this case).
 
-**属性**:
-- `edge_start`: `#500` (VERTEX_POINT: 開始頂点)
-- `edge_end`: `#501` (VERTEX_POINT: 終了頂点)
-- `edge_geometry`: `#600` (LINE: エッジの形状)
-- `same_sense`: `.T.` (エッジの向きが幾何の向きと同じ)
+**Attributes**:
+- `edge_start`: `#500` (VERTEX_POINT: Start vertex)
+- `edge_end`: `#501` (VERTEX_POINT: End vertex)
+- `edge_geometry`: `#600` (LINE: The geometry of the edge)
+- `same_sense`: `.T.` (Edge direction matches geometry direction)
 
 ---
 
-### 7. データセクション: 頂点（Vertices）
+### 7. Data Section: Vertices
 
 ```step
 #500=VERTEX_POINT('',#700);
 ```
-**エンティティ**: `VERTEX_POINT`  
-**意味**: 頂点。
+**Entity**: `VERTEX_POINT`  
+**Meaning**: A vertex (a point in topology).
 
-**属性**:
+**Attributes**:
 - `vertex_geometry`: `#700` (CARTESIAN_POINT)
 
 ---
 
-### 8. データセクション: 幾何（Lines & Points）
+### 8. Data Section: Geometry (Lines & Points)
 
 ```step
 #600=LINE('',#700,#800);
 ```
-**エンティティ**: `LINE`  
-**意味**: 無限直線（エッジの幾何形状）。
+**Entity**: `LINE`  
+**Meaning**: An infinite straight line (geometry for an edge).
 
-**属性**:
-- `pnt`: `#700` (CARTESIAN_POINT: 直線上の点)
-- `dir`: `#800` (VECTOR: 方向ベクトル)
+**Attributes**:
+- `pnt`: `#700` (CARTESIAN_POINT: A point on the line)
+- `dir`: `#800` (VECTOR: Direction vector)
 
 ---
 
 ```step
 #700=CARTESIAN_POINT('',(0.0,0.0,0.0));
 ```
-**エンティティ**: `CARTESIAN_POINT`  
-**意味**: 3D空間の点。
+**Entity**: `CARTESIAN_POINT`  
+**Meaning**: A point in 3D Cartesian space.
 
-**属性**:
-- `coordinates`: `(0.0, 0.0, 0.0)` (原点)
+**Attributes**:
+- `coordinates`: `(0.0, 0.0, 0.0)` (The origin)
 
-**単位**: mm（#120で定義）
+**Unit**: mm (defined in #120).
 
 ---
 
 ```step
 #800=VECTOR('',#900,10.0);
 ```
-**エンティティ**: `VECTOR`  
-**意味**: ベクトル。
+**Entity**: `VECTOR`  
+**Meaning**: A vector.
 
-**属性**:
-- `orientation`: `#900` (DIRECTION: 単位方向ベクトル)
-- `magnitude`: `10.0` (長さ)
+**Attributes**:
+- `orientation`: `#900` (DIRECTION: Unit direction vector)
+- `magnitude`: `10.0` (Length)
 
 ---
 
 ```step
 #900=DIRECTION('',(1.0,0.0,0.0));
 ```
-**エンティティ**: `DIRECTION`  
-**意味**: 方向（単位ベクトル）。
+**Entity**: `DIRECTION`  
+**Meaning**: A direction (unit vector).
 
-**属性**:
-- `direction_ratios`: `(1.0, 0.0, 0.0)` (X軸方向)
+**Attributes**:
+- `direction_ratios`: `(1.0, 0.0, 0.0)` (X-axis direction)
 
 ---
 
-### 9. データセクション: 平面配置
+### 9. Data Section: Plane Placement
 
 ```step
 #400=AXIS2_PLACEMENT_3D('',#700,#1000,#1001);
 ```
-**エンティティ**: `AXIS2_PLACEMENT_3D`  
-**意味**: 3D空間での位置と向き（座標系）。
+**Entity**: `AXIS2_PLACEMENT_3D`  
+**Meaning**: Position and orientation in 3D space (coordinate system).
 
-**属性**:
-- `location`: `#700` (CARTESIAN_POINT: 原点)
-- `axis`: `#1000` (DIRECTION: Z軸方向 = 平面の法線)
-- `ref_direction`: `#1001` (DIRECTION: X軸方向)
+**Attributes**:
+- `location`: `#700` (CARTESIAN_POINT: Origin)
+- `axis`: `#1000` (DIRECTION: Z-axis direction = Plane normal)
+- `ref_direction`: `#1001` (DIRECTION: X-axis direction)
 
 ---
 
@@ -630,13 +630,13 @@ DATA;
 ENDSEC;
 END-ISO-10303-21;
 ```
-**意味**: DATAセクションの終了とファイルの終了。
+**Meaning**: End of the `DATA` section and the end of the file.
 
 ---
 
-## 🔍 データフロー図
+## 🔍 Data Flow Diagram
 
-立方体のデータがどのように構成されているかを可視化:
+Visualizing how the cube data is structured:
 
 ```mermaid
 graph TD
@@ -660,51 +660,51 @@ graph TD
 
 ---
 
-## 💡 実装者向けヒント
+## 💡 Tips for Implementers
 
-### パース時の注意点
+### Parsing Considerations
 
-1. **2パス処理が必須**: 前方参照あり（#10がより後の#20を参照）
-2. **単位の確認**: #120で定義された単位（mm）をすべての座標に適用
-3. **参照解決**: `#番号`をハッシュマップで管理
+1. **Two-Pass Processing is Mandatory**: Forward references exist (e.g., #10 referencing a later #20).
+2. **Confirm Units**: Apply the unit defined in #120 (mm) to all coordinates.
+3. **Reference Resolution**: Manage `#numbers` using a hash map.
 
-### よくある検証項目
+### Common Validation Checks
 
 ```python
-# 立方体の頂点数チェック
+# Check vertex count for a cube
 vertices = find_all_by_type(step_file, 'VERTEX_POINT')
 assert len(vertices) == 8, f"Expected 8 vertices, found {len(vertices)}"
 
-# 辺数チェック
+# Check edge count
 edges = find_all_by_type(step_file, 'EDGE_CURVE')
 assert len(edges) == 12, f"Expected 12 edges, found {len(edges)}"
 
-# 面数チェック
+# Check face count
 faces = find_all_by_type(step_file, 'ADVANCED_FACE')
 assert len(faces) == 6, f"Expected 6 faces, found {len(faces)}"
 
-# Eulerの多面体定理: V - E + F = 2
+# Euler's Polyhedral Formula: V - E + F = 2
 V, E, F = len(vertices), len(edges), len(faces)
 assert V - E + F == 2, f"Euler check failed: {V} - {E} + {F} != 2"
 ```
 
 ---
 
-## 🎯 実験: このファイルを改変してみよう
+## 🎯 Experiment: Try Modifying This File
 
-### 実験1: サイズを変更
+### Experiment 1: Change the Size
 
-すべての座標を2倍に:
+Double all coordinates:
 ```step
-#700=CARTESIAN_POINT('',(0.0,0.0,0.0));  → 変更なし
+#700=CARTESIAN_POINT('',(0.0,0.0,0.0));  → No change
 #701=CARTESIAN_POINT('',(10.0,0.0,0.0)); → (20.0,0.0,0.0)
 #702=CARTESIAN_POINT('',(10.0,10.0,0.0)); → (20.0,20.0,0.0)
 ...
 ```
 
-### 実験2: 単位を変更
+### Experiment 2: Change the Units
 
-mmからmに変更:
+Change from mm to meters:
 ```step  
 #120=( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) );
 ```
@@ -712,12 +712,11 @@ mmからmに変更:
 ```step
 #120=( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT($,.METRE.) );
 ```
+Result: 10mm cube → 10m cube (1000x larger).
 
-結果: 10mm立方体 → 10m立方体（1000倍巨大）
+### Experiment 3: Add Color
 
-### 実験3: 色を追加
-
-底面(#240)に赤色を追加:
+Add red color to the bottom face (#240):
 ```step
 #2000=STYLED_ITEM('',(#2010),#240);
 #2010=PRESENTATION_STYLE_ASSIGNMENT((#2020));
@@ -729,16 +728,16 @@ mmからmに変更:
 
 ---
 
-## 📚 次のステップ
+## 📚 Next Steps
 
-このファイルを理解したら:
+Once you understand this file:
 
-1. **[データモデル・マップ](../format/data-model-map.md)** - より複雑な階層を理解
-2. **[よくある落とし穴](../implementation/common-pitfalls.md)** - 実装の注意点
-3. **実際のパーサー実装**: Pythonでこのファイルをパースしてみる
+1. **[Data Model Map](../format/data-model-map.md)** - Understand more complex hierarchies.
+2. **[Common Pitfalls](../implementation/common-pitfalls.md)** - Implementation warnings.
+3. **Actual Parser Implementation**: Try parsing this file using Python.
 
 ---
-## 📚 次のステップ
-- **[データモデル・マップ](../format/data-model-map.md)** - エンティティの階層構造を把握する
+## 📚 Next Steps
+- **[Data Model Map](../format/data-model-map.md)** - Understand the entity hierarchy.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

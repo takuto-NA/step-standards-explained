@@ -1,21 +1,22 @@
-# 最小限のエクスポート (Minimal Export)
+# Minimal Export
 
-STEPファイルを自作（実装）する場合、最初から全てのエンティティを揃える必要はありません。
+When creating (implementing) a STEP file from scratch, you don't need to include every possible entity from the start.
 
-## 1. 成功への最短ルート
-1. **HEADERセクションの整備**: 正しいAP名を指定する。
-2. **PRODUCT関係の最小構成**:
+## 1. Shortest Path to Success
+
+1. **Prepare the HEADER Section**: Specify the correct AP name.
+2. **Minimal PRODUCT Configuration**:
    - `PRODUCT`
    - `PRODUCT_DEFINITION`
    - `PRODUCT_DEFINITION_SHAPE`
-3. **Geometryの基本**:
+3. **Geometry Basics**:
    - `CARTESIAN_POINT`
    - `DIRECTION`
    - `AXIS2_PLACEMENT_3D`
 
-## 2. 最小構成テンプレート (AP242)
-これをベースに、必要に応じて幾何要素を追加してください。
-[実ファイル (minimal_part.step)](../examples/minimal_part.step) も参考にしてください。
+## 2. Minimal Template (AP242)
+
+Use this as a base and add geometric elements as needed. See the [sample file (minimal_part.step)](../examples/minimal_part.step) for reference.
 
 ```step
 ISO-10303-21;
@@ -50,22 +51,22 @@ ENDSEC;
 END-ISO-10303-21;
 ```
 
-## 3. 実装チェックリスト
-- [ ] **インスタンスIDの一貫性**: `#番号`が重複していないか。
-- [ ] **HEADERのAP名**: `FILE_SCHEMA` の記述が正しいか（AP214とAP242を間違えていないか）。
-- [ ] **単位系 (SI_UNIT)**: `.MILLI.,.METRE.` (mm) か `.METRE.` (m) かを明示しているか。
-- [ ] **閉じているか**: `ENDSEC;` や `END-ISO-10303-21;` が抜けていないか。
+## 3. Implementation Checklist
+- [ ] **Instance ID Consistency**: Ensure `#numbers` are unique within the file.
+- [ ] **HEADER AP Name**: Is the `FILE_SCHEMA` correct? (Did you mix up AP214 and AP242?)
+- [ ] **Unit System (SI_UNIT)**: Explicitly state whether you are using `.MILLI.,.METRE.` (mm) or `.METRE.` (m).
+- [ ] **Structure Integrity**: Are `ENDSEC;` and `END-ISO-10303-21;` present?
 
-## 4. 形状確認のコツ
-* `ADVANCED_BREP_SHAPE_REPRESENTATION` を使用するのが最も確実です。
-* 最初は1つの `CLOSED_SHELL` から始める。
+## 4. Geometry Verification Tips
+* Using `ADVANCED_BREP_SHAPE_REPRESENTATION` is the most reliable method.
+* Start with a single `CLOSED_SHELL`.
 
-## 5. 検証ツール
-* **NIST STEP File Analyzer**: 生成したファイルが規格に準拠しているか強力にチェックできます。
-* **CAx-IF Checkers**: 相互運用性の観点からチェック。
+## 5. Validation Tools
+* **NIST STEP File Analyzer**: A powerful tool to check if generated files comply with the standard.
+* **CAx-IF Checkers**: Validate files from an interoperability perspective.
 
 ---
-## 📚 次のステップ
-- **[よくある落とし穴](./common-pitfalls.md)** - 実装時にハマりやすいポイント
+## 📚 Next Steps
+- **[Common Pitfalls](./common-pitfalls.md)** - Points where implementations often fail.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

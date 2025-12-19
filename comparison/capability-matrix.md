@@ -1,8 +1,8 @@
-# 機能マトリックス (Capability Matrix)
+# Capability Matrix
 
-どのAPがどの機能をサポートしているかの詳細な比較です。
+A detailed comparison of which functions are supported by which AP.
 
-| 機能カテゴリ | 詳細機能 | AP203 | AP214 | AP242 |
+| Feature Category | Detailed Feature | AP203 | AP214 | AP242 |
 | :--- | :--- | :---: | :---: | :---: |
 | **Geometry** | B-rep | ✅ | ✅ | ✅ |
 | | Surface / Wireframe | ✅ | ✅ | ✅ |
@@ -16,8 +16,10 @@
 | **Admin** | Material Properties | ⚠ | ✅ | ✅ |
 | | User Defined Props | ⚠ | ✅ | ✅ |
 
----
-## 📚 次のステップ
-- **[STEPファイル完全解説](../examples/step-file-walkthrough.md)** - 実ファイルを1行ずつ理解する
+**Legend**: ✅ Fully Supported | ⚠ Partially Supported | ❌ Not Supported
 
-[READMEに戻る](../README.md)
+---
+## 📚 Next Steps
+- **[STEP File Walkthrough](../examples/step-file-walkthrough.md)** - Understand real files line by line.
+
+[Back to README](../README.md)

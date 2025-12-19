@@ -1,20 +1,20 @@
-# STEPファイルの基本構造 (STEP File Basics)
+# STEP File Basics
 
-STEPファイル（*.stp, *.step）は、ISO 10303-21 で規定されたプレーンテキスト形式です。
+STEP files (`*.stp`, `*.step`) are plain text files specified by ISO 10303-21.
 
-## 1. ファイル構成
-ファイルは大きく3つのセクションに分かれます。
+## 1. File Structure
+The file is broadly divided into three sections.
 
 ```text
 ISO-10303-21;
 HEADER;
-  /* ファイル名、作成者、APの定義など */
+  /* Metadata: Filename, author, AP definition, etc. */
   FILE_NAME(...);
   FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF'));
 ENDSEC;
 
 DATA;
-  /* 実データの実体（エンティティ） */
+  /* Actual data entities */
   #10=PRODUCT('Part1','Part1','',(#20));
   #20=PRODUCT_CONTEXT('',#30,'');
   ...
@@ -23,13 +23,13 @@ ENDSEC;
 END-ISO-10303-21;
 ```
 
-## 2. なぜ行番号 (#10, #20...) が重要か
-* STEPは**ポインタ（参照）型**の構造をしています。
-* あるエンティティが別のエンティティを引用する際、この番号を使用します。
-* 注意: この番号はファイル内で一意であればよく、意味（ID）は持ちません。ファイルを保存し直すと番号が変わるのが普通です。
+## 2. Why Instance IDs (#10, #20...) Matter
+- STEP uses a **pointer (reference)** based structure.
+- When one entity references another, it uses these numbers.
+- **Note**: These numbers only need to be unique within the file and have no inherent meaning (IDs). It is normal for these numbers to change when a file is re-saved.
 
 ---
-## 📚 次のステップ
-- **[データモデル・マップ](./data-model-map.md)** - エンティティの階層構造を把握する
+## 📚 Next Steps
+- **[Data Model Map](./data-model-map.md)** - Understand the entity hierarchy.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

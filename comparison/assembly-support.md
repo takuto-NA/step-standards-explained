@@ -1,50 +1,50 @@
-# アセンブリ構造 (Assembly Support)
+# Assembly Support
 
-STEPファイルにおけるアセンブリ（階層構造）の表現方法についての解説です。
+This document explains how assemblies (hierarchical structures) are represented in STEP files.
 
-## 1. 階層の仕組み
+## 1. Hierarchy Mechanism
 
-STEPでは、親子関係(Relationship)と、それに付随する配置情報(Transformation)を分離して記述します。
+In STEP, parent-child relationships and their associated transformation (placement) information are described separately.
 
 ```mermaid
 graph TD
-    ParentPD[Parent PRODUCT_DEFINITION] --> NAUO[NEXT_ASSEMBLY_USAGE_OCCURRENCE]
-    NAUO --> ChildPD[Child PRODUCT_DEFINITION]
+    ParentPD["Parent PRODUCT_DEFINITION"] --> NAUO[NEXT_ASSEMBLY_USAGE_OCCURRENCE]
+    NAUO --> ChildPD["Child PRODUCT_DEFINITION"]
     CDSR[CONTEXT_DEPENDENT_SHAPE_REPRESENTATION] -- "Contains matrix" --> IDT[ITEM_DEFINED_TRANSFORMATION]
     CDSR -- "Attached to" --> NAUO
 ```
 
-- **NEXT_ASSEMBLY_USAGE_OCCURRENCE (NAUO)**: 親部品と子部品を論理的につなぐ中心エンティティ。
-- **ITEM_DEFINED_TRANSFORMATION**: 座標変換行列（回転・平行移動）。
+- **NEXT_ASSEMBLY_USAGE_OCCURRENCE (NAUO)**: The central entity that logically connects a parent part to a child part.
+- **ITEM_DEFINED_TRANSFORMATION**: The coordinate transformation matrix (rotation and translation).
 
-## 2. 外部参照 (External References)
+## 2. External References
 
-大規模なアセンブリを扱う際、以下の2通りの管理方法があります。
+When dealing with large assemblies, there are two common management methods:
 
-| 方式 | 特徴 | 互換性リスク |
+| Method | Characteristics | Compatibility Risks |
 | :--- | :--- | :--- |
-| **Monolithic** | 1ファイルに全データを詰め込む | ファイルサイズが巨大化し、読み込みに失敗することがある |
-| **External Reference** | 形状データを別ファイルにし、パスで参照する | 相対パスが壊れたり、受信側が参照解決をサポートしていないことがある |
+| **Monolithic** | All data is packed into a single file. | File size can become massive, sometimes leading to loading failures. |
+| **External Reference** | Geometry data is stored in separate files and referenced via paths. | Relative paths may break, or the receiver may not support reference resolution. |
 
-## 3. 座標変換の数学的詳細 (Transformation Math)
+## 3. Mathematical Details of Transformation
 
-アセンブリの配置情報は、以下の2つのケースで記述されます。
+Assembly placement information is typically described in one of two ways:
 
-### A. 配置行列 (`ITEM_DEFINED_TRANSFORMATION`)
-親の座標系から子の座標系への変換を、直接的な行列（または 3x3 行列と平行移動ベクトル）として記述します。
-- **適用順序**: 子部品のローカル座標を $P_{child}$、変換行列を $M$ とすると、親座標系での位置 $P_{parent}$ は通常 $P_{parent} = M \times P_{child}$ となります。
-- **注意**: STEP規格上は定式化されていますが、一部のCADカーネルでは行列の転置が必要な場合があります。
+### A. Transformation Matrix (`ITEM_DEFINED_TRANSFORMATION`)
+Describes the transformation from the parent coordinate system to the child coordinate system as a direct matrix (or a 3x3 matrix and a translation vector).
+- **Application Order**: If $P_{child}$ is the local coordinate of the child part and $M$ is the transformation matrix, the position in the parent coordinate system $P_{parent}$ is usually $P_{parent} = M \times P_{child}$.
+- **Note**: While formulated in the STEP standard, some CAD kernels may require the matrix to be transposed.
 
-### B. 軸配置による定義 (`AXIS2_PLACEMENT_3D`)
-`REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION` を使用し、親の基準位置（From）と子の配置位置（To）を `AXIS2_PLACEMENT_3D` で指定します。
-- **メリット**: 数値的な行列よりも直感的で、CAD間の互換性が高い傾向にあります。
+### B. Definition via Axis Placement (`AXIS2_PLACEMENT_3D`)
+Uses `REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION` to specify the origin in the parent (From) and the target placement for the child (To) using `AXIS2_PLACEMENT_3D`.
+- **Pros**: More intuitive than numerical matrices and tends to have higher interoperability between CAD systems.
 
-## 4. 実装の注意点
-* **Transformationの逆転**: 行列の適用順序（Parent to Child か Child to Parent か）は規格で定義されていますが、一部の実装で逆転して読み込まれることがあります。
-* **単位の伝搬**: 親アセンブリが mm、子部品が inch の場合、変換行列を適用する前に単位変換を行う必要があります。
+## 4. Implementation Notes
+* **Transformation Reversal**: The order of matrix application (Parent to Child vs. Child to Parent) is defined in the standard, but some implementations may read them in reverse.
+* **Unit Propagation**: If a parent assembly is in mm and a child part is in inches, units must be converted before applying the transformation matrix.
 
 ---
-## 📚 次のステップ
-- **[PMIサポート状況](./pmi-support.md)** - 寸法公差情報の定義
+## 📚 Next Steps
+- **[PMI Support](./pmi-support.md)** - Definition of dimensions and tolerances.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

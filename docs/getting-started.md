@@ -1,193 +1,192 @@
-# STEP実装者向けスタートガイド (Getting Started)
+# Getting Started for STEP Implementers
 
-**所要時間**: 10分
+**Estimated Time**: 10 minutes
 
-このガイドは、CAD経験はあるがSTEP規格に初めて触れる実装者向けに、STEPの基礎を素早く理解するための超入門です。
-
----
-
-## 🎯 この10分で理解すること
-
-1. STEPとは何か（実装者視点）
-2. 最初の一歩: STEPファイルを読む
-3. 推奨ツールとリソース
-4. 次に読むべきドキュメント
+This guide is a super-intro for implementers who have CAD experience but are new to the STEP standard. It aims to help you grasp the basics of STEP quickly.
 
 ---
 
-## 1. STEPとは（実装者視点）
+## 🎯 What You'll Learn in 10 Minutes
 
-### 基本的な性質
-
-**STEP** (Standard for the Exchange of Product model data, ISO 10303) は:
-- **テキストベース**のCADデータ交換フォーマット
-- **B-rep**（境界表現）で3D形状を表現
-- 形状だけでなく**管理情報**（Product、Assembly）や**PMI**（寸法公差）も格納可能
+1. What STEP is (from an implementer's perspective)
+2. First step: Reading a STEP file
+3. Recommended tools and resources
+4. What to read next
 
 ---
 
-## Part 21形式とは？
+## 1. What is STEP? (Implementer's Perspective)
 
-**Part 21** は、STEPデータをテキストファイルとして保存するための規格です。
+### Core Properties
 
-### 正式名称と由来
+**STEP** (Standard for the Exchange of Product model data, ISO 10303) is:
+- A **text-based** CAD data exchange format.
+- A way to represent 3D geometry using **B-rep** (Boundary Representation).
+- Capable of storing not just geometry, but also **management information** (Products, Assemblies) and **PMI** (Product and Manufacturing Information/Tolerances).
 
-- **正式名称**: ISO 10303-21 "Clear text encoding of the exchange structure"
-- **策定**: ISO（国際標準化機構）
-- **初版発行**: 1994年
-- **最新版**: ISO 10303-21:2016
+---
 
-### なぜ「Part 21」？
+## What is the Part 21 Format?
 
-STEP規格（ISO 10303）は、数百のパートに分かれた巨大な規格群です:
+**Part 21** is the standard for saving STEP data as a text file.
 
-#### 主要なパート一覧
+### Official Name and Origins
 
-**Part 1-20番台: 基礎・共通仕様**
-- Part 11: EXPRESS言語（データモデル定義言語）
-- Part 21: **テキストファイル形式（ASCII/Clear text）** ← **最重要！**
-- Part 28: XML形式
+- **Official Name**: ISO 10303-21 "Clear text encoding of the exchange structure"
+- **Established by**: ISO (International Organization for Standardization)
+- **First Published**: 1994
+- **Latest Version**: ISO 10303-21:2016
 
-**Part 40-50番台: 統合リソース**
-- Part 41: 製品記述とサポートの基礎
-- Part 42: 幾何・位相表現
-- Part 43: 表現構造
-- Part 44: 製品構造設定
-- Part 45: 材料・その他
+### Why "Part 21"?
 
-**Part 100番台: 統合アプリケーションリソース**
-- Part 101: 図面
-- Part 104: 有限要素解析
-- Part 105: 運動学
+The STEP standard (ISO 10303) is a massive collection of hundreds of "parts":
 
-**Part 200番台: Application Protocols (AP) - 実装者が最も使う**
-- Part 203: **AP203** - 形状管理3D設計
-- Part 214: **AP214** - 自動車設計
-- Part 238: AP238 - CNC加工
-- Part 242: **AP242** - モデルベース3Dエンジニアリング（最新・最重要）
+#### List of Major Parts
 
-**Part 500番台以降: 抽象テストスイート等**
+**Parts 1-20s: Fundamentals & Shared Specifications**
+- Part 11: EXPRESS Language (Data modeling language)
+- Part 21: **Clear text encoding (ASCII/Clear text)** ← **Most Important!**
+- Part 28: XML representation
 
-#### 実装者が知るべきパート
+**Parts 40-50s: Integrated Resources**
+- Part 41: Fundamentals of product description and support
+- Part 42: Geometric and topological representation
+- Part 43: Representation structures
+- Part 44: Product structure configuration
+- Part 45: Materials and others
 
-実際の実装で重要なのは以下の5つだけ:
+**Parts 100s: Integrated Application Resources**
+- Part 101: Draughting
+- Part 104: Finite element analysis
+- Part 105: Kinematics
 
-1. **Part 21** (テキストファイル形式) ← ファイルの読み書き
-2. **Part 11** (EXPRESS) ← スキーマの理解
-3. **Part 203, 214, 242** (AP) ← どのAPを使うか
+**Parts 200s: Application Protocols (AP) - Most used by implementers**
+- Part 203: **AP203** - Configuration controlled 3D design
+- Part 214: **AP214** - Core data for automotive design
+- Part 238: AP238 - Application protocol for computer controlled controllers
+- Part 242: **AP242** - Managed model-based 3D engineering (Latest & Most Important)
 
-**Part 21** は「第21番目のパート」という意味で、STEPデータの**エンコーディング方式**（ファイルへの保存方法）を定義しています。
+**Parts 500s+: Abstract Test Suites, etc.**
 
-### 他の形式との関係
+#### Essential Parts for Implementers
 
-| 規格 | ファイル形式 | 特徴 | CADサポート |
+In practice, only these five are essential:
+
+1. **Part 21** (Text format) ← Reading and writing files
+2. **Part 11** (EXPRESS) ← Understanding the schema
+3. **Part 203, 214, 242** (APs) ← Deciding which standard to use
+
+**Part 21** simply means the "21st part" of the standard, defining the **encoding method** (how data is saved to a file).
+
+### Relationship with Other Formats
+
+| Standard | File Format | Characteristics | CAD Support |
 |------|------------|------|------------|
-| **Part 21** | `.stp`, `.step` (ASCII) | 人間が読める、最も普及 | ✅ ほぼ全てのCAD |
-| Part 28 | `.stpx`, `.stpZ` (XML) | XML技術との親和性、冗長 | ❌ ほとんど非対応 |
-| - | (バイナリ形式) | 公式にはなし | - |
+| **Part 21** | `.stp`, `.step` (ASCII) | Human-readable, most common | ✅ Almost all CAD |
+| Part 28 | `.stpx`, `.stpZ` (XML) | XML-friendly, redundant | ❌ Very limited |
+| - | (Binary Format) | No official binary format | - |
 
 > [!IMPORTANT]
-> **CADソフトの対応状況**
+> **CAD Support Status**
 > 
-> - **Part 21**: SolidWorks, CATIA, NX, Creo, Inventor, Fusion360等、**ほぼ全てのCADが対応**
-> - **Part 28**: 一部の専用ツールのみ対応。**主要CADは非対応または限定的**
->   - ✅ 対応: Siemens NX, Kubotek Kosmos, STEP Tools
->   - ❌ 非対応: SolidWorks, Creo, Inventor, Fusion360, FreeCAD
-> - 実務では **Part 21 (`.step`) を使うのが標準**
+> - **Part 21**: Supported by **almost all CAD software** including SolidWorks, CATIA, NX, Creo, Inventor, and Fusion360.
+> - **Part 28**: Only supported by specific tools. **Major CAD software often does not support it.**
+>   - ✅ Supported: Siemens NX, Kubotek Kosmos, STEP Tools
+>   - ❌ Not Supported: SolidWorks, Creo, Inventor, Fusion360, FreeCAD
+> - In professional practice, **Part 21 (`.step`) is the standard.**
 > 
-> **詳細**: [Part 21 vs Part 28 完全比較](../comparison/part21-vs-part28.md)
+> **Detail**: [Part 21 vs Part 28 Comparison](../comparison/part21-vs-part28.md)
 
-**実務**: 99%以上のSTEPファイルがPart 21形式です。Part 28は学術・研究用途が中心で、実際のCADデータ交換では使われません。
+**Note**: Over 99% of STEP files are in Part 21 format. Part 28 is mainly for academic or research purposes and is rarely used in actual CAD data exchange.
 
 ---
 
-## Part 21形式の基本構造
+## Basic Structure of Part 21 Format
 
-最も一般的なSTEPファイル（`.stp` / `.step`）は **Part 21** 形式で、以下の構造を持ちます:
+The most common STEP files (`.stp` / `.step`) use the **Part 21** format and have the following structure:
 
 ```step
-ISO-10303-21;                  ← Part 21形式の宣言
-HEADER;                         ← ファイルのメタデータ
+ISO-10303-21;                  ← Part 21 format declaration
+HEADER;                         ← File metadata
   FILE_DESCRIPTION(...);
   FILE_NAME(...);
-  FILE_SCHEMA(...);            ← 使用するAP（重要！）
+  FILE_SCHEMA(...);            ← AP version (Crucial!)
 ENDSEC;
-DATA;                           ← 実データ
-  #10 = PRODUCT(...);          ← エンティティのインスタンス
+DATA;                           ← Actual data
+  #10 = PRODUCT(...);          ← Entity instances
   #20 = PRODUCT_DEFINITION_FORMATION(...);
   ...
 ENDSEC;
 END-ISO-10303-21;
 ```
 
-### 3つの重要概念
+### Three Key Concepts
 
-#### ① Entity (エンティティ)
-データの「型」。オブジェクト指向の「クラス」に相当。
-- 例: `PRODUCT`, `SHAPE_REPRESENTATION`, `ADVANCED_FACE`
-- すべて大文字で表記
+#### ① Entity
+The "type" of data. Equivalent to a "class" in object-oriented programming.
+- Examples: `PRODUCT`, `SHAPE_REPRESENTATION`, `ADVANCED_FACE`
+- Always written in uppercase.
 
-#### ② Instance (インスタンス)
-エンティティの具体的なデータ。`#番号`で識別。
+#### ② Instance
+Concrete data for an entity. Identified by `#number`.
 ```step
 #10 = PRODUCT('Part_A', 'Part_A', 'Description', (#20));
 ```
-- `#10` = インスタンスID
-- `PRODUCT` = エンティティ型
-- `'Part_A', ...` = 属性値
+- `#10` = Instance ID
+- `PRODUCT` = Entity type
+- `'Part_A', ...` = Attribute values
 
-#### ③ Reference (参照)
-`#番号`で他のインスタンスを参照。
+#### ③ Reference
+Referencing other instances using their `#number`.
 ```step
-#10 = PRODUCT(..., (#20));  ← #20を参照
+#10 = PRODUCT(..., (#20));  ← References #20
 #20 = PRODUCT_CONTEXT(...);
 ```
 
-**パーサー実装のポイント**:
-- インスタンスIDは1から始まり、ファイル内でユニーク
-- **前方参照**が可能（後で定義されるインスタンスを先に参照できる）
-- 参照の解決にはハッシュマップ（辞書）が効率的
+**Parsing Tips**:
+- Instance IDs start from 1 and are unique within the file.
+- **Forward references** are allowed (an ID can be referenced before it is defined).
+- Using a hash map (dictionary) is efficient for resolving references.
 
 ---
 
-## 2. 最初の一歩: STEPファイルを読む
+## 2. First Step: Reading a STEP file
 
-### ステップ1: テキストエディタで開く
+### Step 1: Open with a Text Editor
 
-STEPファイルはプレーンテキストなので、**メモ帳**や**VS Code**でそのまま開けます。
+Since STEP files are plain text, you can open them with **Notepad** or **VS Code**.
 
-1. 任意の`.step`ファイルを用意
-2. テキストエディタで開く
-3. HEADERセクションを確認
+1. Prepare any `.step` file.
+2. Open it in your text editor.
+3. Inspect the `HEADER` section.
 
-### ステップ2: APバージョンを確認
+### Step 2: Identify the AP Version
 
-HEADERセクションの`FILE_SCHEMA`を見て、どのAPか確認:
+Check the `FILE_SCHEMA` in the `HEADER` section:
 
 ```step
 FILE_SCHEMA(('AP214_AUTOMOTIVE_DESIGN { ... }'));
 ```
-→ このファイルはAP214
+→ This is an AP214 file.
 
 ```step
 FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF { ... }'));
 ```
-→ このファイルはAP242
+→ This is an AP242 file.
 
-**なぜ重要？**
-- APが違うと使えるエンティティが異なる
-- パーサーはAPに応じたスキーマを読み込む必要がある
+**Why is this important?**
+- Different APs use different entities.
+- Parsers need to load the schema corresponding to the AP.
 
-### ステップ3: PRODUCTエンティティを探す
+### Step 3: Find the PRODUCT Entity
 
-DATAセクションで`PRODUCT(`を検索:
+Search for `PRODUCT(` in the `DATA` section:
 ```step
 #10 = PRODUCT('Part_A','Part_A','Simple part',(#20));
 ```
+This is the top-level information for the part.
 
-これが部品のトップレベル情報です。
-
-**関連エンティティを辿る**:
+**Following the Related Entities**:
 ```
 PRODUCT (#10)
   ↓ (via PRODUCT_DEFINITION_FORMATION)
@@ -195,124 +194,124 @@ PRODUCT_DEFINITION (#50)
   ↓ (via PRODUCT_DEFINITION_SHAPE)
 SHAPE_REPRESENTATION (#90)
   ↓
-REPRESENTATION_ITEM (#100-#500)  ← ここに形状データ
+REPRESENTATION_ITEM (#100-#500)  ← Geometry data is here
 ```
 
-詳細は [データモデル・マップ](../format/data-model-map.md) 参照。
+See the [Data Model Map](../format/data-model-map.md) for details.
 
-### ステップ4: 形状データへの辿り方（概要）
+### Step 4: How to Reach Geometry Data (Overview)
 
-実際の実装では:
+In an actual implementation:
 
-**擬似コード（Python風）**:
+**Pseudocode (Python-style)**:
 ```python
-# 1. PRODUCTインスタンスを取得
+# 1. Get the PRODUCT instance
 product = find_entity(step_file, 'PRODUCT')
 
-#選択 PRODUCT_DEFINITIONを辿る
+# 2. Follow to PRODUCT_DEFINITION
 product_def = traverse(product, 'PRODUCT_DEFINITION')
 
-# 3. SHAPE_REPRESENTATIONを取得
+# 3. Get the SHAPE_REPRESENTATION
 shape_rep = traverse(product_def, 'SHAPE_REPRESENTATION')
 
-# 4. 形状要素（FACE等）を取得
+# 4. Get geometry elements (like FACES)
 faces = filter_items(shape_rep.items, 'ADVANCED_FACE')
 ```
 
-詳細な実装例は [データモデル・マップ](../format/data-model-map.md) に記載。
+See [Data Model Map](../format/data-model-map.md) for detailed implementation examples.
 
 ---
 
-## 3. 推奨ツール
+## 3. Recommended Tools
 
-### STEPビューワー（無料）
+### STEP Viewers (Free)
 
-| ツール | 特徴 | URL |
+| Tool | Features | URL |
 |--------|------|-----|
-| **FreeCAD** | オープンソースCAD。STEP読み込み・編集可能 | https://www.freecad.org/ |
-| **OpenCascade** | CADライブラリ。C++/Python | https://www.opencascade.com/ |
-| **3D-Tool Free Viewer** | Windows用軽量ビューワー | https://www.3d-tool.com/ |
+| **FreeCAD** | Open-source CAD. Can read and edit STEP. | https://www.freecad.org/ |
+| **OpenCascade** | CAD library. C++/Python. | https://www.opencascade.com/ |
+| **3D-Tool Free Viewer** | Lightweight viewer for Windows. | https://www.3d-tool.com/ |
 
-### バリデーター
+### Validators
 
-- **STEP Tools** (有料): 商用の高機能バリデーター
-- **CAx-IF推奨テストケース**: https://www.cax-if.org/
+- **STEP Tools** (Paid): High-performance commercial validator.
+- **CAx-IF Recommended Test Cases**: https://www.cax-if.org/
 
-### パーサーライブラリ
+### Parser Libraries
 
-| 言語 | ライブラリ/ツール |
+| Language | Libraries / Tools |
 |------|------------------|
-| **Python** | `ifcopenshell` (IFC向けだが参考になる), `pythonOCC` (OpenCascade wrapper) |
+| **Python** | `ifcopenshell` (for IFC but useful reference), `pythonOCC` (OpenCascade wrapper) |
 | **C++** | OpenCascade, STEP Tools SDK |
-| **JavaScript/TypeScript** | 自前実装が多い（Part 21パーサーは比較的シンプル） |
+| **JavaScript/TypeScript** | Mostly custom implementations (Part 21 parsers are relatively simple). |
 
 ---
 
-## 4. 次に読むべきドキュメント
+## 4. What to Read Next
 
-STEPの基礎を理解したら、以下の順で学習を進めてください:
+After understanding the basics, proceed in this order:
 
-### ① まず理解を深める
+### ① Deepen Your Understanding
 
-1. **[用語集](./glossary.md)** - 重要用語トップ5を覚える
-2. **[FAQ](./faq.md)** - よくある疑問を解消
+1. **[Glossary](./glossary.md)** - Memorize the Top 5 important terms.
+2. **[FAQ](./faq.md)** - Resolve common questions.
 
-### ② APを選択する
+### ② Select an AP
 
-3. **[どのAPを使うべきか？](../decision-guides/which-ap-should-i-use.md)**
-4. **[機能比較マトリックス](../comparison/capability-matrix.md)**
+3. **[Which AP should I use?](../decision-guides/which-ap-should-i-use.md)**
+4. **[Capability Matrix](../comparison/capability-matrix.md)**
 
-### ③ 実装に入る
+### ③ Start Implementation
 
-5. **[STEPファイル完全解説](../examples/step-file-walkthrough.md)** - 実ファイルを1行ずつ理解
-6. **[データモデル・マップ](../format/data-model-map.md)** - エンティティの階層構造
-7. **[よくある落とし穴](../implementation/common-pitfalls.md)** - 実装時の注意点
-
----
-
-## 💡 実装を始める前のチェックリスト
-
-実装に着手する前に、以下を確認してください:
-
-- [ ] STEPの基本構造（HEADER + DATA）を理解した
-- [ ] エンティティ・インスタンス・参照の概念がわかった
-- [ ] 自分のプロジェクトに適したAPを選択した
-- [ ] Part 21形式の文法（基本的なパース方法）を理解した
-- [ ] テストに使うサンプルSTEPファイルを入手した
-- [ ] STEPビューワーで実際のファイルを開ける環境を用意した
+5. **[STEP File Walkthrough](../examples/step-file-walkthrough.md)** - Understand real files line-by-line.
+6. **[Data Model Map](../format/data-model-map.md)** - Entity hierarchy.
+7. **[Common Pitfalls](../implementation/common-pitfalls.md)** - Implementation warnings.
 
 ---
 
-## 📚 さらに学ぶために
+## 💡 Pre-Implementation Checklist
 
-### 公式リソース
+Before you start coding, ensure you:
 
-- **ISO 10303規格書**: 正式な仕様（有料）
-- **CAx-IF推奨プラクティス**: 実装ガイドライン（無料）
+- [ ] Understand the basic structure (HEADER + DATA) of a STEP file.
+- [ ] Grasp the concepts of Entity, Instance, and Reference.
+- [ ] Chose the appropriate AP for your project.
+- [ ] Understand the syntax of Part 21 (basic parsing methods).
+- [ ] Obtained sample STEP files for testing.
+- [ ] Set up a STEP viewer to open actual files.
 
-### コミュニティ
+---
+
+## 📚 Further Learning
+
+### Official Resources
+
+- **ISO 10303 Standards**: Official specifications (Paid).
+- **CAx-IF Recommended Practices**: Implementation guidelines (Free).
+
+### Communities
 
 - **CAx-IF**: https://www.cax-if.org/
 - **STEP modularization**: https://www.stepmod.org/
 
-### おすすめの学習順序
+### Recommended Learning Path
 
 ```mermaid
 graph LR
-    A[Getting Started<br/>このページ] --> B[用語集]
+    A["Getting Started<br/>(This Page)"] --> B[Glossary]
     B --> C[FAQ]
-    C --> D{何を実装?}
-    D -->|パーサー| E[Data Model Map]
-    D -->|エクスポーター| F[AP選択ガイド]
+    C --> D{What to Implement?}
+    D -->|Parser| E[Data Model Map]
+    D -->|Exporter| F[AP Selection Guide]
     E --> G[Walkthrough]
     F --> H[Common Pitfalls]
-    G --> I[実装開始]
+    G --> I[Start Implementation]
     H --> I
 ```
 
 ---
-## 📚 次のステップ
-- **[FAQ](./faq.md)** - よくある疑問を解消
-- **[どのAPを使うべきか？](../decision-guides/which-ap-should-i-use.md)** - 実際に使用するAPを選択
+## 📚 Next Steps
+- **[FAQ](./faq.md)** - Resolve common questions.
+- **[Which AP should I use?](../decision-guides/which-ap-should-i-use.md)** - Select the AP for your use case.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

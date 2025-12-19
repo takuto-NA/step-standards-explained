@@ -1,37 +1,37 @@
-# PMI サポート状況 (PMI Support)
+# PMI Support
 
-PMI (Product Manufacturing Information) のSTEPにおける扱いは、実装上の最も大きな課題の一つです。
+Handling Product and Manufacturing Information (PMI) in STEP is one of the most significant implementation challenges.
 
-## 1. PMIの種類
+## 1. Types of PMI
 
 ### Graphical PMI (Representation)
-* 「人間が見るための線と文字」
-* CAD上で見た目は正しいが、データとして「公差値」などは持っていない（単なる `POLYLINE` の集合）。
+* "Visual lines and characters for human consumption."
+* It looks correct in CAD, but it does not contain "tolerance values" as data (it's simply a collection of `POLYLINE`s).
 
 ### Semantic PMI (Data)
-* 「コンピュータが理解できる属性データ」
-* 下流のCAMや計測ソフトが、公差タイプや数値を直接読み取れる。AP242の核心部分。
+* "Attribute data that a computer can understand."
+* Downstream software (CAM, inspection, etc.) can directly read the tolerance types and values. This is the core of AP242.
 
-## 2. APごとのPMIサポート
+## 2. PMI Support by AP
 
-| AP | Graphical | Semantic | 主要エンティティ |
+| AP | Graphical | Semantic | Primary Entities |
 | :--- | :---: | :---: | :--- |
 | **AP203** | ❌ | ❌ | - |
 | **AP214** | ✅ | ❌ | `DRAUGHTING_CALLOUT` |
 | **AP242** | ✅ | ✅ | `GEOMETRIC_TOLERANCE`, `SHAPE_ASPECT` |
 
-## 3. 実装の構造 (PMI Linkage)
+## 3. Implementation Structure (PMI Linkage)
 
-PMIが「どこにあるか（プレゼンテーション）」と「何を表すか（セマンティック）」がどのように紐付くかの全体図です。
+This diagram shows how PMI "Location/Appearance (Presentation)" and "Meaning (Semantic)" are linked together.
 
 ```mermaid
 graph TD
-    subgraph Presentation ["プレゼンテーション (表示)"]
+    subgraph Presentation ["Presentation (Visual)"]
         DC[DRAUGHTING_CALLOUT] --> ANN_REP[ANNOTATION_OCCURRENCE]
         ANN_REP --> GRAPH_ITEM[GRAPHICAL_REPRESENTATION_ITEM]
     end
 
-    subgraph Semantic ["セマンティック (データ)"]
+    subgraph Semantic ["Semantic (Data)"]
         GT[GEOMETRIC_TOLERANCE] --> SA[SHAPE_ASPECT]
         SA --> AF[ADVANCED_FACE]
     end
@@ -39,16 +39,18 @@ graph TD
     DC -- "Links to" --> GT
 ```
 
-### 重要なリンク
-- **SHAPE_ASPECT_RELATIONSHIP**: 2つの面（データムAとデータムB）の間の公差（直角度など）を定義する際に使用。
-- **REPRESENTATION_ITEM**: ここに実際の文字データ（Text）やポリラインが格納されます。
+### Important Links
+- **SHAPE_ASPECT_RELATIONSHIP**: Used when defining a tolerance between two faces (e.g., perpendicularity between Datum A and Datum B).
+- **REPRESENTATION_ITEM**: Stores the actual text data or polylines.
 
-## 4. 実装の壁
-「AP242で出したのにPMIが消えた」原因のほとんどは、受信側CADの実装不足、または送信側が「グラフィカル」のみで出力していることにあります。
-- **CAx-IF推奨**: セマンティック情報をやり取りするには、CAx-IFの `Recommended Practices for PMI` に厳密に従い、`SHAPE_ASPECT` を正しく構成する必要があります。
+## 4. Implementation Hurdles
+
+The most common reason why "PMI disappeared even though I used AP242" is either insufficient implementation on the receiving CAD side or the sender only outputting "Graphical" PMI.
+
+- **CAx-IF Recommendation**: To exchange semantic information, you must strictly follow the CAx-IF `Recommended Practices for PMI` and correctly configure the `SHAPE_ASPECT` structure.
 
 ---
-## 📚 次のステップ
-- **[CADサポートマトリックス](./cad-support-matrix.md)** - 各CADでのPMI対応状況を確認
+## 📚 Next Steps
+- **[CAD Support Matrix](./cad-support-matrix.md)** - Check PMI support status across different CAD systems.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

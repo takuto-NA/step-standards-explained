@@ -1,62 +1,63 @@
-# CAD ソフトウェア STEP 対応状況マトリックス
+# CAD Software STEP Support Matrix
 
-主要な CAD ソフトウェアにおける STEP 規格のサポート状況を、「エクスポート（出力）」と「インポート（入力）」に分けてまとめています。
+This matrix summarizes the support status of the STEP standard in major CAD software, categorized into "Export" and "Import."
 
-## 1. 総合サポートマトリックス (入出力別)
+## 1. General Support Matrix (by I/O)
 
-下表では、ジオメトリ (G) と PMI (P) それぞれの対応状況を示します。（2025年12月時点）
+The table below shows the support status for Geometry (G) and PMI (P) as of December 2025.
 
-| ソフトウェア | エクスポート (出) | インポート (入) | 備考 |
+| Software | Export (Out) | Import (In) | Remarks |
 | :--- | :---: | :---: | :--- |
-| **Siemens NX** | G:✅ / P:✅ | G:✅ / P:✅ | 業界最高水準の双方向互換性。ed3対応済み。 |
-| **CATIA V5-6** | G:✅ / P:✅ | G:✅ / P:✅ | 出力には FTA + ST1 ライセンスが必要。ed2対応安定。 |
-| **SolidWorks** | G:✅ / P:✅ | G:✅ / P:✅ | 2024以降、MBD標準機能でのPMI入出力が大幅に強化。 |
-| **PTC Creo** | G:✅ / P:✅ | G:✅ / P:✅ | AP242 ed3への対応が最も早い。 |
-| **Autodesk Inventor** | G:✅ / P:✅ | G:✅ / P:✅ | 2024以降、セマンティックPMIのサポート範囲が拡大。 |
-| **Onshape** | G:✅ / P:✅ | G:✅ / P:✅ | クラウドネイティブな実装により、PMIサポートが急速に進展。 |
-| **Rhino 8** | G:✅ / P:⚠ | G:✅ / P:⚠ | Rhino 8でPMI（アノテーション）のサポートが改善されたが、一部制限あり。 |
-| **FreeCAD** | G:⚠ / P:❌ | G:⚠ / P:❌ | 基本形状のみ。AP242 PMIはプラグイン等で限定的対応。 |
+| **Siemens NX** | G:✅ / P:✅ | G:✅ / P:✅ | Industry-leading bidirectional compatibility. ed3 supported. |
+| **CATIA V5-6** | G:✅ / P:✅ | G:✅ / P:✅ | Export requires FTA + ST1 licenses. ed2 support is stable. |
+| **SolidWorks** | G:✅ / P:✅ | G:✅ / P:✅ | Since 2024, PMI I/O in MBD standard features has been significantly enhanced. |
+| **PTC Creo** | G:✅ / P:✅ | G:✅ / P:✅ | Among the fastest to adopt AP242 ed3. |
+| **Autodesk Inventor** | G:✅ / P:✅ | G:✅ / P:✅ | Since 2024, the scope of Semantic PMI support has expanded. |
+| **Onshape** | G:✅ / P:✅ | G:✅ / P:✅ | PMI support is progressing rapidly due to its cloud-native implementation. |
+| **Rhino 8** | G:✅ / P:⚠ | G:✅ / P:⚠ | Improved support for PMI (annotations) in Rhino 8, with some limitations. |
+| **FreeCAD** | G:⚠ / P:❌ | G:⚠ / P:❌ | Basic geometry only. AP242 PMI support is limited via plugins. |
 
 ---
-## 📚 次のステップ
-- **[PMIサポート状況](./pmi-support.md)** - 寸法公差情報の定義について詳細を確認
+## 📚 Next Steps
+- **[PMI Support](./pmi-support.md)** - Detailed information on dimension and tolerance definitions.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)
 
-## 2. PMI サポートの詳細
+## 2. PMI Support Details
 
-PMI の入出力において、特に注意が必要な「Semantic（意味型）」と「Graphical（表示型）」の対応レベルです。
+Support levels for "Semantic" and "Graphical" PMI, where caution is particularly required.
 
-| ソフトウェア | 出力 (Semantic) | 入力 (Semantic) | 挙動の特徴 |
+| Software | Export (Semantic) | Import (Semantic) | Behavioral Characteristics |
 | :--- | :---: | :---: | :--- |
-| **NX / CATIA** | ✅ | ✅ | セマンティック情報を保持したままの受け渡しが可能。 |
-| **SolidWorks** | ⚠ (MBD) | ⚠ (2023+) | 2023以前はインポート時に表示のみになる場合が多い。 |
-| **Inventor** | ✅ | ⚠ | インポートした PMI は「3D注記」として表示されるが制限あり。 |
-| **Creo** | ✅ | ✅ | アノテーションとジオメトリのリンクを良好に保持。 |
+| **NX / CATIA** | ✅ | ✅ | Capable of exchanging semantic information while preserving it. |
+| **SolidWorks** | ⚠ (MBD) | ⚠ (2023+) | Prior to 2023, often became display-only upon import. |
+| **Inventor** | ✅ | ⚠ | Imported PMI appears as "3D Annotations" but with limitations. |
+| **Creo** | ✅ | ✅ | Maintains links between annotations and geometry well. |
 
 ---
 
-## 3. ソフトウェア別の主要マイルストーン
+## 3. Major Milestones by Software
 
-入出力能力が大きく変化した主要なマイルストーンです。
+Key milestones that significantly changed I/O capabilities.
 
-| ソフトウェア | バージョン | 内容 |
+| Software | Version | Content |
 | :--- | :---: | :--- |
-| **SolidWorks** | 2017 | AP242 **エクスポート** (PMI含む) 開始。 |
-| | 2023 | 他社製 STEP からの **名目的 (Semantic) インポート** を強化。 |
-| **NX** | NX 11 | AP242 双方向フルサポートの基礎を確立。 |
-| **CATIA V5** | V5-6R2018 | **グラフィカル PMI** の品質向上と AP242 ed2 対応。 |
-| **Inventor** | 2019.1 | STEP AP242 からの **PMI インポート** に初対応。 |
-| | 2022.4 | アセンブリの **AP242 エクスポート** 不具合を解消。 |
-| **Creo** | Creo 11 | AP242 **Edition 3 エクスポート** への最新対応。 |
+| **SolidWorks** | 2017 | Started AP242 **Export** (including PMI). |
+| | 2023 | Enhanced **Semantic Import** from third-party STEP files. |
+| **NX** | NX 11 | Established the foundation for full bidirectional AP242 support. |
+| **CATIA V5** | V5-6R2018 | Quality improvements for **Graphical PMI** and AP242 ed2 support. |
+| **Inventor** | 2019.1 | First support for **PMI Import** from STEP AP242. |
+| | 2022.4 | Resolved **AP242 Export** issues for assemblies. |
+| **Creo** | Creo 11 | Latest support for AP242 **Edition 3 Export**. |
 
 ---
 
-## 4. 実装上の注意点
+## 4. Implementation Notes
 
-- **ライセンス**: 多くのミッドレンジ〜ハイエンド CAD で AP242/PMI 機能を有効にするには、専用のパッケージ（MBD, FTA, Extended STEP IF等）が必要です。
-- **設定**: インポート時に「PMIを読み込む」オプションがデフォルトでオフになっているシステムも多いため、確認が必要です。
-- **CAx-IF**: 相互運用性の最新情報は [CAx-IF (CAx Interoperability Forum)](https://www.cax-if.org/) のテスト結果を参照することを推奨します。
+- **Licensing**: In many mid-range to high-end CAD systems, enabling AP242/PMI features requires dedicated packages (MBD, FTA, Extended STEP IF, etc.).
+- **Settings**: Many systems have the "Import PMI" option turned off by default, so verification is necessary.
+- **CAx-IF**: For the latest interoperability information, it is recommended to refer to test results from the [CAx-IF (CAx Interoperability Forum)](https://www.cax-if.org/).
 
 ---
-[READMEに戻る](../README.md) | [PMI サポート詳細](pmi-support.md)
+
+[Back to README](../README.md) | [PMI Support Details](pmi-support.md)

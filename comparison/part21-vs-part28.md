@@ -1,136 +1,136 @@
-# STEPファイル形式対応マトリックス (Part 21 vs Part 28)
+# STEP File Format Support Matrix (Part 21 vs Part 28)
 
-このドキュメントでは、主要CADソフトウェアのSTEP Part 21（ASCII）とPart 28（XML）の対応状況を整理します。
+This document outlines the support status for STEP Part 21 (ASCII) and Part 28 (XML) across major CAD software.
 
 ---
 
-## 📊 CADソフトウェア対応状況
+## 📊 CAD Software Support Status
 
-### メジャーCADソフトウェア
+### Major CAD Software
 
-| CADソフトウェア | Part 21<br/>(.stp, .step) | Part 28<br/>(.stpx, .stpZ) | 備考 |
+| CAD Software | Part 21<br/>(.stp, .step) | Part 28<br/>(.stpx, .stpZ) | Remarks |
 |----------------|---------------------------|---------------------------|------|
-| **SolidWorks** | ✅ 完全対応 | ❌ 非対応 | Part 21のみ。AP203/214/242対応 |
-| **CATIA V5/V6** | ✅ 完全対応 | ⚠️ 限定的 | Part 21が主。AP214/242対応。Part 28は明示的サポートなし |
-| **Siemens NX** | ✅ 完全対応 | ✅ 対応 | .stpx, .stpZ(圧縮版)の読み書き対応 |
-| **PTC Creo** | ✅ 完全対応 | ❌ 非対応 | Part 21のみ。AP203/214/242対応 |
-| **Autodesk Inventor** | ✅ 完全対応 | ❌ 非対応 | Part 21のみ |
-| **Fusion 360** | ✅ 完全対応 | ❌ 非対応 | Part 21のみ |
-| **FreeCAD** | ✅ 完全対応 | ❌ 非対応 | OpenCascadeベース、Part 21のみ |
-| **Rhino** | ✅ 完全対応 | ❌ 非対応 | Part 21のみ |
+| **SolidWorks** | ✅ Full Support | ❌ Not Supported | Part 21 only. AP203/214/242 support. |
+| **CATIA V5/V6** | ✅ Full Support | ⚠️ Limited | Part 21 is primary. AP214/242 support. No explicit Part 28 support. |
+| **Siemens NX** | ✅ Full Support | ✅ Supported | Supports reading/writing .stpx and .stpZ (compressed). |
+| **PTC Creo** | ✅ Full Support | ❌ Not Supported | Part 21 only. AP203/214/242 support. |
+| **Autodesk Inventor** | ✅ Full Support | ❌ Not Supported | Part 21 only. |
+| **Fusion 360** | ✅ Full Support | ❌ Not Supported | Part 21 only. |
+| **FreeCAD** | ✅ Full Support | ❌ Not Supported | Based on OpenCascade; Part 21 only. |
+| **Rhino** | ✅ Full Support | ❌ Not Supported | Part 21 only. |
 
-### 専用ツール・コンバーター
+### Specialized Tools & Converters
 
-| ツール | Part 21 | Part 28 | 備考 |
+| Tool | Part 21 | Part 28 | Remarks |
 |--------|---------|---------|------|
-| **Kubotek Kosmos** | ✅ 対応 | ✅ 対応 | 2025年8月v7.1からPart 28対応開始 |
-| **CAD Exchanger** | ✅ 対応 | ⚠️ 限定的 | Part 21が主 |
-| **STEP Tools** | ✅ 対応 | ✅ 対応 | 商用ツール、両形式フルサポート |
-| **OpenCascade** | ✅ 対応 | ❌ 非対応 | Part 21のみ（オープンソース） |
+| **Kubotek Kosmos** | ✅ Supported | ✅ Supported | Part 28 support started in Aug 2025 (v7.1). |
+| **CAD Exchanger** | ✅ Supported | ⚠️ Limited | Part 21 is primary. |
+| **STEP Tools** | ✅ Supported | ✅ Supported | Commercial tool; full support for both formats. |
+| **OpenCascade** | ✅ Supported | ❌ Not Supported | Part 21 only (Open Source). |
 
 ---
 
-## 📈 Part 28 (STEP-XML) の現状
+## 📈 Current Status of Part 28 (STEP-XML)
 
-### 策定と歴史
+### Standards & History
 
-- **初版発行**: 2007年（ISO 10303-28:2007）
-- **最新版**: ISO 10303-28:2016
-- **正式名称**: "ISO 10303-28: Industrial automation systems and integration — Product data representation and exchange — Part 28: Implementation methods: XML representations of EXPRESS schemas and data, using XML schemas"
+- **First Published**: 2007 (ISO 10303-28:2007)
+- **Latest Version**: ISO 10303-28:2016
+- **Official Name**: "ISO 10303-28: Industrial automation systems and integration — Product data representation and exchange — Part 28: Implementation methods: XML representations of EXPRESS schemas and data, using XML schemas"
 
-### 特徴
+### Characteristics
 
-**メリット**:
-- XML技術との親和性（XSLT変換、XPath検索等）
-- アセンブリレベルPMI対応
-- UUID（Unique Universal ID）サポート
-- Model-Based Enterprise (MBE) プロセスとの統合
+**Pros**:
+- Compatibility with XML technologies (XSLT transformation, XPath search, etc.).
+- Support for assembly-level PMI.
+- Support for UUID (Unique Universal ID).
+- Integration with Model-Based Enterprise (MBE) processes.
 
-**デメリット**:
-- ファイルサイズが大きい（Part 21の2-3倍以上）
-- CADソフトウェアの対応が遅れている
-- Part 21に比べて普及していない
+**Cons**:
+- Large file sizes (2-3 times larger than Part 21).
+- Slow adoption by CAD software vendors.
+- Less prevalent compared to Part 21.
 
-### 普及状況（2025年時点）
+### Prevalence (as of 2025)
 
 ```
 Part 21 (ASCII):  ████████████████████ 99%+
-Part 28 (XML):    ██                    5%未満
+Part 28 (XML):    ██                    Less than 5%
 ```
 
-**実務での使用例**:
-- 🟢 **Part 21**: CAD間のデータ交換（最も一般的）
+**Common Use Cases**:
+- 🟢 **Part 21**: CAD data exchange (most common).
 - 🟡 **Part 28**: 
-  - 長期アーカイブ（LOTAR）
-  - MBEプロセス統合
-  - AI/LLMアプリケーション（新興）
-  - 研究・学術用途
+  - Long-Term Archiving (LOTAR)
+  - MBE process integration
+  - Emerging AI/LLM applications
+  - Academic and research purposes
 
 ---
 
-## 🎯 実装者への推奨
+## 🎯 Recommendations for Implementers
 
-### ファイル形式の選択
+### Choosing a File Format
 
-**Part 21 (`.step`) を使うべき場合**:
-- ✅ 一般的なCAD間データ交換
-- ✅ 最大限の互換性が必要
-- ✅ ファイルサイズを抑えたい
-- ✅ 人間がテキストエディタで読みたい
+**When to use Part 21 (`.step`)**:
+- ✅ For general CAD-to-CAD data exchange.
+- ✅ When maximum compatibility is required.
+- ✅ To keep file sizes manageable.
+- ✅ When human-readability in a text editor is desired.
 
-**Part 28 (`.stpx`) を検討する場合**:
-- ⚠️ XML処理ツールを活用したい
-- ⚠️ 長期アーカイブが目的（LOTAR準拠）
-- ⚠️ MBEプロセスとの統合
-- ⚠️ 受信側がPart 28対応を明示している
+**When to consider Part 28 (`.stpx`)**:
+- ⚠️ When you want to leverage XML processing tools.
+- ⚠️ For long-term archiving purposes (LOTAR compliance).
+- ⚠️ For integration with MBE processes.
+- ⚠️ When the receiver explicitly specifies Part 28 support.
 
 > [!WARNING]
-> **互換性の注意**
+> **Compatibility Warning**
 > 
-> Part 28ファイルを送る前に、**必ず受信側のCADソフトが対応しているか確認**してください。非対応の場合、ファイルが開けない可能性があります。
+> Before sending a Part 28 file, **always confirm that the receiver's CAD software supports it.** If not, the file may fail to open.
 
-### パーサー実装の優先順位
+### Parser Implementation Priority
 
-実装者がSTEPパーサーを自作する場合:
+If you are building a custom STEP parser:
 
-1. **Phase 1**: Part 21対応（必須）
-   - 99%のファイルをカバー
-   - 比較的シンプル
+1. **Phase 1**: Support Part 21 (Mandatory)
+   - Covers 99% of files.
+   - Relatively simple to implement.
 
-2. **Phase 2**: Part 28対応（オプショナル）
-   - XML解析ライブラリを活用
-   - 需要は限定的
+2. **Phase 2**: Support Part 28 (Optional)
+   - Leverage existing XML parsing libraries.
+   - Demand is currently limited.
 
 ---
 
-## 🔍 Part 28 対応の確認方法
+## 🔍 How to Check Part 28 Support
 
-### CADソフトで確認
+### In CAD Software
 
+Check if `.stpx` appears in the file selection dialog:
 ```
 File → Import → STEP
 ```
-で、ファイル形式選択ダイアログに `.stpx` が表示されるか確認。
 
-### コマンドラインで確認
+### Via Command Line
 
 **NX (Siemens)**:
 ```bash
-# NXはPart 28対応
+# NX supports Part 28
 ugopen -import file.stpx
 ```
 
 **SolidWorks**:
 ```
-# Part 28非対応のため、.stpxは開けない
-# Part 21形式(.step)に変換が必要
+# SolidWorks does not support Part 28; .stpx files will not open.
+# Conversion to Part 21 (.step) is required.
 ```
 
 ---
 
-## 📚 技術背景: Part 21 vs Part 28
+## 📚 Technical Background: Part 21 vs Part 28
 
-### ファイル構造の違い
+### Differences in File Structure
 
 **Part 21 (ASCII)**:
 ```step
@@ -160,92 +160,86 @@ END-ISO-10303-21;
 </iso_10303_28>
 ```
 
-### ファイルサイズ比較（実例）
+### File Size Comparison (Examples)
 
-| ファイル | Part 21 | Part 28 | 比率 |
+| File | Part 21 | Part 28 | Ratio |
 |---------|---------|---------|------|
-| シンプルな立方体 | 5 KB | 15 KB | 3倍 |
-| 中規模アセンブリ | 2 MB | 6 MB | 3倍 |
-| 大規模製品 | 50 MB | 150 MB | 3倍 |
+| Simple Cube | 5 KB | 15 KB | ~3x |
+| Mid-size Assembly | 2 MB | 6 MB | ~3x |
+| Large Product | 50 MB | 150 MB | ~3x |
 
 ---
 
-## 🌐 関連リソース
+## 🌐 Related Resources
 
-### 公式規格書
+### Official Standards
 
-- **ISO 10303-21**: Clear text encoding（Part 21）
-- **ISO 10303-28**: XML representations（Part 28）
-- 購入先: ISO公式サイト、各国標準化機関
+- **ISO 10303-21**: Clear text encoding (Part 21)
+- **ISO 10303-28**: XML representations (Part 28)
+- Available for purchase from ISO or national standards bodies.
 
-### 実装ガイド
+### Implementation Guides
 
 - **CAx-IF**: https://www.cax-if.org/
 - **PDES Inc.**: https://www.pdesinc.org/
-- **Kubotek Kosmos STEP-XML解説**: https://kubotekkosmos.com/
-
-### 対応ツール
-
-- **Siemens NX**: 公式にPart 28サポート
-- **Kubotek Kosmos**: 専用コンバーター（Part 28対応）
-- **STEP Tools**: 商用ツール（両形式対応）
+- **Kubotek Kosmos STEP-XML Guide**: https://kubotekkosmos.com/
 
 ---
 
 ## ❓ FAQ
 
-### Q: Part 28の方が新しいのに、なぜ普及していないのですか？
+### Q: Why isn't Part 28 more common given it's newer?
 
-**A:** 主な理由:
+**A:** Main reasons include:
 
-1. **Part 21で十分**: ほとんどのCADデータ交換はPart 21で問題なくできる
-2. **ファイルサイズ**: XMLは冗長でファイルが大きい
-3. **CAD対応の遅れ**: メジャーCADがPart 28サポートを優先していない
-4. **後方互換性**: Part 21の方が古いシステムとの互換性が高い
+1. **Part 21 is Sufficient**: Most CAD exchange needs are met perfectly well by Part 21.
+2. **File Size**: XML is redundant, leading to much larger files.
+3. **Slow CAD Adoption**: Major CAD vendors haven't prioritized Part 28 support.
+4. **Backward Compatibility**: Part 21 has better compatibility with older systems.
 
-### Q: 将来的にPart 28が主流になりますか？
+### Q: Will Part 28 become the mainstream in the future?
 
-**A:** 短期的（5年程度）には**Part 21が主流のまま**と予想されます。
+**A:** In the short term (next ~5 years), **Part 21 will remain the dominant format.**
 
-**長期的には**: MBE/AI活用の普及次第で、Part 28の利用が増える可能性はありますが、Part 21が完全に置き換わることはないでしょう。
+**In the long term**: Adoption of Part 28 may increase as MBE and AI applications grow, but it is unlikely to completely replace Part 21.
 
-### Q: Part 21とPart 28は相互変換できますか？
+### Q: Can I convert between Part 21 and Part 28?
 
-**A:** はい、可能です。
+**A:** Yes, it is possible.
 
-- **Part 21 → Part 28**: 比較的容易（データ構造は同じ）
-- **Part 28 → Part 21**: 可能（XML→ASCII変換）
+- **Part 21 → Part 28**: Relatively easy since the underlying data structure is the same.
+- **Part 28 → Part 21**: Possible (XML to ASCII conversion).
 
-**変換ツール**:
-- STEP Tools (商用)
-- Kubotek Kosmos (商用)
-- カスタムスクリプト（EXPRESS schemaベース）
-
----
-
-## 📝 まとめ
-
-**実装者へのアドバイス**:
-
-1. **まずPart 21対応を優先**
-   - 99%のユースケースをカバー
-   - 全てのメジャーCADが対応
-
-2. **Part 28は特定用途のみ**
-   - 長期アーカイブ
-   - MBE統合
-   - 受信側が明示的に対応している場合のみ
-
-3. **迷ったらPart 21**
-   - 互換性・ファイルサイズ・対応ツールの豊富さで優位
+**Conversion Tools**:
+- STEP Tools (Commercial)
+- Kubotek Kosmos (Commercial)
+- Custom scripts (based on EXPRESS schemas)
 
 ---
 
-**最終更新**: 2025-12-19  
-**情報源**: CADベンダー公式ドキュメント、CAx-IF、ウェブ調査
+## 📝 Summary
+
+**Advice for Implementers**:
+
+1. **Prioritize Part 21 Support First**
+   - Covers 99% of use cases.
+   - Supported by all major CAD systems.
+
+2. **Use Part 28 for Specific Needs Only**
+   - Long-term archiving.
+   - MBE integration.
+   - Only when the receiver explicitly supports it.
+
+3. **When in Doubt, Use Part 21**
+   - Superior in terms of compatibility, file size, and available tooling.
 
 ---
-## 📚 次のステップ
-- **[アセンブリ構造の解説](./assembly-support.md)** - 複数の部品からなる構造の定義
 
-[READMEに戻る](../README.md)
+**Last Updated**: 2025-12-19  
+**Sources**: Official CAD vendor documentation, CAx-IF, Web research.
+
+---
+## 📚 Next Steps
+- **[Assembly Support](./assembly-support.md)** - Definition of structures composed of multiple parts.
+
+[Back to README](../README.md)

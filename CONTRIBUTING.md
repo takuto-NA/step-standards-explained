@@ -1,27 +1,26 @@
-# Contributing (Japanese)
+# Contributing
 
-このリポジトリは、STEP規格（ISO 10303）をより理解しやすくすることを目的とした有志によるプロジェクトです。
-改善の提案や新しい情報、修正は大歓迎です。
+This repository is a community-driven project aimed at making the STEP standard (ISO 10303) easier to understand. Contributions in the form of suggestions, new information, or fixes are highly welcome.
 
-## 貢献の方法
+## How to Contribute
 
-### 1. Issueを作成する
-- 内容の誤りを見つけた場合
-- 説明が不足している箇所の指摘
-- 追加してほしい機能やAPの要望
+### 1. Create an Issue
+- If you find errors in the content.
+- If you notice areas that lack sufficient explanation.
+- To request additional features or explanations for specific APs.
 
-### 2. Pull Requestを送る
-- 誤字脱字の修正
-- 図解（Mermaid）の改善
-- 新しい解説記事の追加
-  - `versions/` 配下のAP別解説
-  - `comparison/` 配下の機能比較
-  - `implementation/` 配下の実装テクニック
+### 2. Send a Pull Request
+- Fixing typos.
+- Improving diagrams (Mermaid.js).
+- Adding new explanatory articles:
+  - AP-specific explanations under `versions/`.
+  - Functional comparisons under `comparison/`.
+  - Implementation techniques under `implementation/`.
 
-## 執筆ガイドライン
-- **シンプルに**: 規格書の文章をそのまま引用するのではなく、実装者が「結局どうすればいいか」がわかるように要約してください。
-- **図解を活用**: 複雑なエンティティ構造は Mermaid.js を使って図示することを推奨します。
-- **リンク**: 関連するファイルや公式ドキュメントへのリンクを適切に配置してください。
+## Writing Guidelines
+- **Keep it Simple**: Instead of quoting the standard document verbatim, summarize it so implementers can understand "what they actually need to do."
+- **Use Diagrams**: We recommend using Mermaid.js to illustrate complex entity structures.
+- **Internal Links**: Ensure appropriate links to related files and official documents are provided.
 
 ---
 

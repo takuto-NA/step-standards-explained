@@ -1,21 +1,21 @@
-# バリデーションとCAx-IF (Validation and CAx-IF)
+# Validation and CAx-IF
 
-STEPデータの品質を担保するための仕組みと、コミュニティによる活動についての解説です。
+This document explains the mechanisms for ensuring the quality of STEP data and the activities of the community.
 
-## 1. CAx-IF (Implementor Forum) とは
-* 主要なCADベンダー（Autodesk, Dassault, Siemens, PTCなど）が参加し、STEPの実装バイブルである「推奨プラクティス（Recommended Practices）」を策定している国際グループです。
-* **規格そのものよりも、この「推奨プラクティス」に従うことが、実務的な実装の成功には不可欠です。**
+## 1. What is CAx-IF (Implementor Forum)?
+* An international group consisting of major CAD vendors (Autodesk, Dassault, Siemens, PTC, etc.) that develops the "Recommended Practices," which serve as the implementation bible for STEP.
+* **Following these "Recommended Practices" is more critical for successful practical implementation than following the official standard alone.**
 
-## 2. 幾何検証プロパティ (GVP: Geometric Validation Properties)
-* 形状データが正しく伝達されたかを検証するための仕組みです。
-* 体積、表面積、重心位置などの幾何情報をSTEPデータ内に埋め込み、受信側で再計算した値と比較することで、変換エラーを検出します。
+## 2. Geometric Validation Properties (GVP)
+* A mechanism to verify that geometric data has been transmitted correctly.
+* Geometric information such as volume, surface area, and center of mass is embedded within the STEP data. The receiver can then recalculate these values and compare them to detect conversion errors.
 
-## 3. 推奨リソース
-* [CAx-IF Recommended Practices](https://www.cax-if.org/joint_testing_info.html) - 実装のガイドライン
-* [MBx Interoperability Forum](https://www.mbx-if.org/) - 最新の相互運用性情報
+## 3. Recommended Resources
+* [CAx-IF Recommended Practices](https://www.cax-if.org/joint_testing_info.html) - Guidelines for implementation.
+* [MBx Interoperability Forum](https://www.mbx-if.org/) - Latest interoperability information.
 
 ---
-## 📚 次のステップ
-- **[最小限のエクスポート](./minimal-export.md)** - 実際にSTEPファイルを出力してみる
+## 📚 Next Steps
+- **[Minimal Export](./minimal-export.md)** - Try exporting your own STEP file.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

@@ -1,38 +1,38 @@
-# どのAPを使うべきか？ (Which AP should I use?)
+# Which AP should I use?
 
-STEPには多くのAP（Application Protocol）が存在しますが、現代の製造・設計環境で主に使われるのは以下の3つです。
+While many Application Protocols (APs) exist in STEP, three are primarily used in modern manufacturing and design environments.
 
-## 1. クイック診断フロー
+## 1. Quick Diagnosis Flow
 
-1. **PMI（寸法・幾何公差）をデータに含める必要がありますか？**
-   - **Yes** → **AP242** 一択です。
-   - **No** → 次へ
+1. **Do you need to include PMI (dimensions and geometric tolerances) in the data?**
+   - **Yes** → **AP242** is your only choice.
+   - **No** → Next
 
-2. **航空宇宙、防衛、または最新のMBD（Model Based Definition）プロセスですか？**
-   - **Yes** → **AP242** を推奨します。
-   - **No** → 次へ
+2. **Is this for Aerospace, Defense, or modern MBD (Model Based Definition) processes?**
+   - **Yes** → **AP242** is recommended.
+   - **No** → Next
 
-3. **自動車業界、または「色・レイヤ」の保持が重要ですか？**
-   - **Yes** → **AP214** がデファクトスタンダードです。
-   - **No**（単純な形状のみ） → **AP203** (e1/e2) でも十分ですが、現在は **AP214** 以降が一般的です。
+3. **Is this for the automotive industry, or is preserving "Colors and Layers" important?**
+   - **Yes** → **AP214** is the de-facto standard.
+   - **No** (simple geometry only) → **AP203** (e1/e2) might suffice, but **AP214** or later is now more common.
 
-## 2. APごとの特徴まとめ
+## 2. AP Characteristics Summary
 
-| AP | 通称 | 特徴 | 形状以外の主な保持データ |
+| AP | Common Name | Characteristics | Key Data Preserved (beyond geometry) |
 | :--- | :--- | :--- | :--- |
-| **AP203** | Configuration Controlled Design | 古い標準。安定しているが機能が限定的。 | 基本形状、管理情報 |
-| **AP214** | Core Data for Automotive Design | 自動車業界発。色、レイヤ、アセンブリ等のサポートが強力。 | 色、レイヤ、意匠 |
-| **AP242** | Managed Model-based 3D Engineering | 最新標準。AP203とAP214を統合・進化させたもの。 | PMI、テセレーション形状、LOTAR等 |
+| **AP203** | Configuration Controlled Design | Legacy standard. Stable but limited in features. | Basic geometry, Management data |
+| **AP214** | Core Data for Automotive Design | Originating from the automotive industry. Strong support for colors, layers, and assemblies. | Colors, Layers, Styling |
+| **AP242** | Managed Model-based 3D Engineering | Latest standard. Integrates and evolves AP203 and AP214. | PMI, Tessellated geometry, LOTAR, etc. |
 
-## 3. 業界・用途別の推奨
+## 3. Recommendations by Industry/Use Case
 
-* **汎用的なデータ交換**: AP214 (または AP242)
-* **最新のCAD間連携・MBD**: AP242
-* **レガシーシステムとの互換性**: AP203
-* **長期保存 (Archiving)**: AP242 + LOTAR
+* **General Data Exchange**: AP214 (or AP242)
+* **Modern CAD Interoperability / MBD**: AP242
+* **Legacy System Compatibility**: AP203
+* **Long-Term Archiving (LOTAR)**: AP242 + LOTAR
 
 ---
-## 📚 次のステップ
-- **[機能マトリックス](../comparison/capability-matrix.md)** - 各APの機能差を詳細に比較
+## 📚 Next Steps
+- **[Capability Matrix](../comparison/capability-matrix.md)** - Detailed functional comparison between APs.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

@@ -1,11 +1,11 @@
-# 免責事項 (Disclaimer)
+# Disclaimer
 
-1. **非公式資料**: 本リポジトリの内容は、ISO 10303 (STEP) 規格に関する非公式な解説およびガイドです。
-2. **個人の理解**: 記載内容は作成者の経験と理解に基づいています。実装や判断の参考として提供するものであり、内容の正確性、完全性、最新性を保証するものではありません。
-3. **公式規格の優先**: 矛盾がある場合、常に公式のISO規格書（または各プロジェクトの公式実装ガイドライン）が優先されます。
-4. **利用責任**: 本リポジトリの情報を用いて発生したいかなる不利益や損害についても、作成者は責任を負いません。
-5. **法的な位置づけ**: 本リポジトリはISOの公式解釈を代表するものではありません。
-6. **引用について**: EXPRESSモデル等の引用は、理解を助けるための最小限にとどめています。
+1. **Unofficial Material**: The content of this repository consists of unofficial explanations and guides regarding the ISO 10303 (STEP) standard.
+2. **Personal Understanding**: The information provided is based on the authors' experience and understanding. It is provided as a reference for implementation and decision-making, but its accuracy, completeness, or timeliness is not guaranteed.
+3. **Official Standards Precedence**: In case of any contradiction, the official ISO standards (or official implementation guidelines for specific projects) always take precedence.
+4. **User Responsibility**: The authors assume no responsibility for any disadvantages or damages resulting from the use of information in this repository.
+5. **Legal Standing**: This repository does not represent an official interpretation by ISO.
+6. **Citations**: Citations of EXPRESS models and other materials are kept to the minimum necessary to aid understanding.
 
 ---
-最終更新: 2025-12-19
+Last Updated: 2025-12-19

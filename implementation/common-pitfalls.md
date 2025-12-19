@@ -1,41 +1,41 @@
-# よくある落とし穴 (Common Pitfalls)
+# Common Pitfalls
 
-STEPの実装や変換でよく遭遇する問題と、その**対策・検出方法・実装例**を解説します。
-
----
-
-## 📋 目次
-
-1. [単位 (Units) の不一致](#1-単位-units-の不一致)
-2. [精度 (Tolerance) の問題](#2-精度-tolerance-の問題)
-3. [面の向きと整合性](#3-面の向きと整合性)
-4. [アセンブリ構造の消失](#4-アセンブリ構造の消失)
-5. [PMIの「浮き（Dangling）」](#5-pmiの浮きdangling)
-6. [色やレイヤが消える](#6-色やレイヤが消える)
-7. [エンコーディング問題](#7-エンコーディング問題)
-8. [前方参照の処理ミス](#8-前方参照の処理ミス)
+This document explains problems frequently encountered during STEP implementation and conversion, along with **countermeasures, detection methods, and implementation examples**.
 
 ---
 
-## 1. 単位 (Units) の不一致
+## 📋 Table of Contents
 
-**難易度**: ★★☆（中級）  
-**頻度**: ★★★（非常によくある）  
-**影響度**: 🔴 高（形状サイズが大きく変わる）
+1. [Unit Mismatches](#1-unit-mismatches)
+2. [Precision (Tolerance) Issues](#2-precision-tolerance-issues)
+3. [Face Orientation and Consistency](#3-face-orientation-and-consistency)
+4. [Loss of Assembly Structure](#4-loss-of-assembly-structure)
+5. [Dangling PMI](#5-dangling-pmi)
+6. [Missing Colors and Layers](#6-missing-colors-and-layers)
+7. [Encoding Issues](#7-encoding-issues)
+8. [Improper Forward Reference Handling](#8-improper-forward-reference-handling)
 
-### ❌ 問題
+---
 
-- `SI_UNIT` と `CONVERSION_BASED_UNIT` (Inchなど) の変換ミス
-- ファイル内に「長さはmm、角はRadian」といった定義が正しく書かれていない
-- **実装者の盲点**: プレフィックス（kilo, milli）の解釈漏れ
+## 1. Unit Mismatches
 
-**具体例**:
-- mmのつもりがmで解釈→1000倍の巨大な形状
-- Inchで作成したファイルをmmと誤認→40倍程度の誤差
+**Difficulty**: ★★☆ (Intermediate)  
+**Frequency**: ★★★ (Very Common)  
+**Impact**: 🔴 High (Drastic changes in geometry size)
 
-### ✅ 対策
+### ❌ The Problem
 
-#### 1. 必ずUNIT_CONTEXTを確認
+- Conversion errors between `SI_UNIT` and `CONVERSION_BASED_UNIT` (e.g., Inches).
+- Definitions like "length in mm, angles in Radians" are not correctly specified in the file.
+- **Implementer's Blind Spot**: Missing the interpretation of SI prefixes (kilo, milli).
+
+**Examples**:
+- Interpreting mm as meters → Geometry becomes 1000x larger.
+- Misidentifying an Inch file as mm → ~4% error (or 25.4x depending on the direction).
+
+### ✅ Solutions
+
+#### 1. Always Verify UNIT_CONTEXT
 
 ```step
 #500 = ( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) );
@@ -44,30 +44,30 @@ STEPの実装や変換でよく遭遇する問題と、その**対策・検出�
 
 - `.MILLI.,.METRE.` = mm
 - `.CENTI.,.METRE.` = cm
-- なし（`$`）または`.METRE.` = m
+- None (`$`) or `.METRE.` = m
 
-#### 2. プレフィックスの変換表を実装
+#### 2. Implement an SI Prefix Conversion Table
 
-| PREFIX | 係数 | 例 |
+| PREFIX | Factor | Example |
 |--------|------|---|
 | `.PICO.` | 10^-12 | |
 | `.NANO.` | 10^-9 | |
 | `.MICRO.` | 10^-6 | μm |
 | `.MILLI.` | 10^-3 | mm |
 | `.CENTI.` | 10^-2 | cm |
-| なし or `$` | 1 | m |
+| None or `$` | 1 | m |
 | `.KILO.` | 10^3 | km |
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
-**バリデーションコード（Python）**:
+**Validation Code (Python)**:
 
 ```python
 def validate_and_get_unit_scale(step_file):
     """
-    単位を取得し、mmへの変換係数を返す
+    Retrieve units and return the conversion scale to mm.
     """
-    # GEOMETRIC_REPRESENTATION_CONTEXTを探す
+    # Search for GEOMETRIC_REPRESENTATION_CONTEXT
     contexts = find_all_by_type(step_file, 'GEOMETRIC_REPRESENTATION_CONTEXT')
     
     for ctx in contexts:
@@ -75,20 +75,20 @@ def validate_and_get_unit_scale(step_file):
         
         for unit in units:
             if 'LENGTH_UNIT' in str(unit.entity_types):
-                # SI_UNITからプレフィックスを取得
+                # Retrieve prefix from SI_UNIT
                 prefix = unit.prefix if hasattr(unit, 'prefix') else None
                 
-                # プレフィックスから係数を計算
+                # Calculate scale from prefix
                 scale = get_si_prefix_scale(prefix)  # .MILLI. → 0.001
                 
-                return scale  # mへの係数（mmなら0.001）
+                return scale  # Factor to meters (0.001 if mm)
     
-    # デフォルト：mと仮定
+    # Default: assume meters
     logger.warning("LENGTH_UNIT not found, assuming meters")
     return 1.0
 
 def get_si_prefix_scale(prefix):
-    """SI接頭辞から係数を取得"""
+    """Get factor from SI prefix"""
     prefix_map = {
         'PICO': 1e-12, 'NANO': 1e-9, 'MICRO': 1e-6,
         'MILLI': 1e-3, 'CENTI': 1e-2,
@@ -100,45 +100,45 @@ def get_si_prefix_scale(prefix):
     return prefix_map.get(prefix.upper().strip('.'), 1.0)
 ```
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- **単位変換係数を事前に計算してキャッシュ**
-- すべての座標取得時に自動変換（内部はmmに統一など）
-- 出力時は明示的に単位を指定（`SI_UNIT(.MILLI.,.METRE.)`）
+- **Pre-calculate and cache unit conversion factors.**
+- Automatically convert all coordinates upon retrieval (e.g., unifying internal data to mm).
+- Explicitly specify units during export (e.g., `SI_UNIT(.MILLI.,.METRE.)`).
 
 ---
 
-## 2. 精度 (Tolerance) の問題
+## 2. Precision (Tolerance) Issues
 
-**難易度**: ★★☆（中級）  
-**頻度**: ★★☆（よくある）  
-**影響度**: 🟡 中（幾何演算で隙間が発生）
+**Difficulty**: ★★☆ (Intermediate)  
+**Frequency**: ★★☆ (Common)  
+**Impact**: 🟡 Medium (Gaps appearing during geometric operations)
 
-### ❌ 問題
+### ❌ The Problem
 
-`UNCERTAINTY_MEASURE_WITH_UNIT` の値が送信側と受信側で異なり、幾何演算の許容誤差が合わない。
+The `UNCERTAINTY_MEASURE_WITH_UNIT` value differs between sender and receiver, causing mismatches in geometric operation tolerances.
 
-**具体例**:
-- 送信側: 精度 10^-6 mm
-- 受信側: 精度 10^-2 mm で判定
-- 結果: 「Faceに隙間がある」と誤って判定
+**Example**:
+- Sender: Precision 10^-6 mm
+- Receiver: Evaluates with 10^-2 mm precision
+- Result: Incorrectly determines that "there is a gap between faces."
 
-### ✅ 対策
+### ✅ Solutions
 
 ```step
 #600 = UNCERTAINTY_MEASURE_WITH_UNIT(1.0E-6,(#500),'distance_accuracy_value','');
 ```
-→ 精度は 10^-6 (mの単位系なら、mの10^-6 = 1 μm)
+→ Precision is 10^-6 (If the unit system is meters, 10^-6 m = 1 μm).
 
-**推奨値**:
-- mmベース: `1.0E-3` (0.001 mm = 1 μm)
-- mベース: `1.0E-6` (1 μm)
+**Recommended Values**:
+- mm-based: `1.0E-3` (0.001 mm = 1 μm)
+- m-based: `1.0E-6` (1 μm)
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
 ```python
 def get_geometric_tolerance(step_file):
-    """幾何精度を取得"""
+    """Retrieve geometric precision"""
     uncertainties = find_all_by_type(step_file, 'UNCERTAINTY_MEASURE_WITH_UNIT')
     
     for unc in uncertainties:
@@ -146,49 +146,49 @@ def get_geometric_tolerance(step_file):
             value = unc.value_component
             unit = unc.unit_component
             
-            # 単位変換を考慮
+            # Account for unit conversion
             scale = get_unit_scale(unit)
-            tolerance_in_mm = value * scale * 1000  # mmに変換
+            tolerance_in_mm = value * scale * 1000  # Convert to mm
             
             return tolerance_in_mm
     
-    # デフォルト
+    # Default
     return 0.001  # 1 μm
 ```
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- 幾何演算ライブラリ（OpenCascade等）の許容誤差設定に使用
-- エクスポート時は適切な精度値を必ず設定
-- 精度が極端に大きい（1mm以上）場合は警告
+- Use this value to set tolerances in geometric libraries (like OpenCascade).
+- Always set an appropriate precision value during export.
+- Warn if the precision is excessively large (e.g., > 1mm).
 
 ---
 
-## 3. 面の向きと整合性
+## 3. Face Orientation and Consistency
 
-**難易度**: ★★★（上級）  
-**頻度**: ★★☆（よくある）  
-**影響度**: 🔴 高（ソリッドが壊れる）
+**Difficulty**: ★★★ (Advanced)  
+**Frequency**: ★★☆ (Common)  
+**Impact**: 🔴 High (Broken solids)
 
-### ❌ 問題
+### ❌ The Problem
 
-`FACE_BOUND` と `ORIENTED_EDGE` の向き（方向フラグ `.T.` / `.F.`）が反転し、ソリッドが閉じていないと判定される。
+Orientation flags (`.T.` / `.F.`) for `FACE_BOUND` and `ORIENTED_EDGE` are inverted, leading to the conclusion that a solid is not "closed."
 
-**STEPでの面の定義**:
+**Face Definition in STEP**:
 ```step
-#100 = ADVANCED_FACE('',(#110),#120,.T.);  ← .T. = 面の法線方向
+#100 = ADVANCED_FACE('',(#110),#120,.T.);  ← .T. = Face normal direction
 #110 = FACE_OUTER_BOUND('',(#111,#112,#113,#114),.T.);
-#111 = ORIENTED_EDGE('',*,*,#115,.F.);  ← .F. = エッジを逆向きに使用
+#111 = ORIENTED_EDGE('',*,*,#115,.F.);  ← .F. = Edge used in reverse direction
 ```
 
-### ✅ 対策
+### ✅ Solutions
 
-#### 1. 面の向き一貫性をチェック
+#### 1. Check Face Orientation Consistency
 
 ```python
 def validate_face_orientation(face):
     """
-    ADVANCED_FACEの向き整合性を検証
+    Verify orientation consistency of an ADVANCED_FACE.
     """
     face_orientation = face.same_sense  # .T. or .F.
     face_surface = face.face_geometry
@@ -199,56 +199,56 @@ def validate_face_orientation(face):
         for oriented_edge in bound.bound:
             edge_sense = oriented_edge.orientation
             
-            # 向きの組み合わせが妥当かチェック
-            # （詳細な幾何検証はOpenCascadeなどに委ねる）
+            # Check if the combination of orientations is valid
+            # (Detailed geometric validation is usually deferred to libraries like OpenCascade)
             
     return True
 ```
 
-#### 2. 法線ベクトルの確認
+#### 2. Verify Normal Vectors
 
-エッジループを辿って面積ベクトルを計算し、面の法線方向と一致するか確認。
+Traverse the edge loops to calculate the area vector and verify it matches the face normal.
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
-- **CADで開いてエラーが出ないか確認**
-- OpenCascadeの`BRepCheck_Analyzer`を使用
-- 自前実装する場合は Euler の多面体定理（V - E + F = 2）を確認
+- **Verify by opening in CAD.**
+- Use `BRepCheck_Analyzer` in OpenCascade.
+- If implementing manually, verify Euler's polyhedral formula (V - E + F = 2).
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- 面の向きは変更せず、CADからのエクスポート結果をそのまま使用
-- エクスポート時にCADの「修復」機能を使用
-- 受信側では向きを自動修正する機能を実装（OpenCascadeの`ShapeFix`など）
+- Do not change face orientations; use the export result from CAD as-is.
+- Use CAD "repair" functions during export.
+- Implement automatic orientation correction on the receiving side (e.g., OpenCascade's `ShapeFix`).
 
 ---
 
-## 4. アセンブリ構造の消失
+## 4. Loss of Assembly Structure
 
-**難易度**: ★★★（上級）  
-**頻度**: ★★☆（よくある）  
-**影響度**: 🟡 中（構造が失われる）
+**Difficulty**: ★★★ (Advanced)  
+**Frequency**: ★★☆ (Common)  
+**Impact**: 🟡 Medium (Loss of structure)
 
-### ❌ 問題
+### ❌ The Problem
 
-- `NEXT_ASSEMBLY_USAGE_OCCURRENCE` (NAUO) と配置行列の紐付けミス
-- 親部品と子部品の `PRODUCT_DEFINITION` 間のリンクが途切れている
-- 配置行列（`ITEM_DEFINED_TRANSFORMATION`）が単位行列になっている
+- Mismatches in linking `NEXT_ASSEMBLY_USAGE_OCCURRENCE` (NAUO) with transformation matrices.
+- Broken links between `PRODUCT_DEFINITION`s of parent and child parts.
+- The transformation matrix (`ITEM_DEFINED_TRANSFORMATION`) is incorrectly set to identity.
 
-### ✅ 対策
+### ✅ Solutions
 
-#### 1. NAUOの検証
+#### 1. Validate NAUO
 
 ```python
 def validate_assembly_structure(step_file):
     """
-    アセンブリ構造を検証
+    Validate assembly structure.
     """
     nauos = find_all_by_type(step_file, 'NEXT_ASSEMBLY_USAGE_OCCURRENCE')
     
     issues = []
     for nauo in nauos:
-        # 親・子のPRODUCT_DEFINITIONが存在するか
+        # Check for existence of parent/child PRODUCT_DEFINITIONs
         parent_pd = nauo.relating_product_definition
         child_pd = nauo.related_product_definition
         
@@ -256,12 +256,12 @@ def validate_assembly_structure(step_file):
             issues.append(f"NAUO {nauo.id}: Broken PD reference")
             continue
         
-        # 配置行列の存在確認
+        # Verify existence of placement transformation
         cdsrs = find_referencing(nauo, 'CONTEXT_DEPENDENT_SHAPE_REPRESENTATION')
         if not cdsrs:
             issues.append(f"NAUO {nauo.id}: No placement transform")
         
-        # 配置行列が単位行列でないか確認
+        # Check if transformation is identity
         for cdsr in cdsrs:
             transform = extract_transform_matrix(cdsr)
             if is_identity_matrix(transform):
@@ -270,119 +270,118 @@ def validate_assembly_structure(step_file):
     return issues
 ```
 
-#### 2. 配置行列の抽出
+#### 2. Extract Transformation Matrix
 
 ```python
 def extract_transform_matrix(cdsr):
     """
-    CONTEXT_DEPENDENT_SHAPE_REPRESENTATIONから4x4行列を抽出
+    Extract 4x4 matrix from CONTEXT_DEPENDENT_SHAPE_REPRESENTATION.
     """
     rep_rel = cdsr.representation_relation
     
     if hasattr(rep_rel, 'transformation_operator'):
         item_transform = rep_rel.transformation_operator
         
-        # AXIS2_PLACEMENT_3D から行列を構築
+        # Build matrix from AXIS2_PLACEMENT_3D
         origin = item_transform.location.coordinates  # (x, y, z)
         axis = item_transform.axis.direction_ratios if hasattr(item_transform, 'axis') else (0, 0, 1)
         ref_direction = item_transform.ref_direction.direction_ratios if hasattr(item_transform, 'ref_direction') else (1, 0, 0)
         
-        # 4x4変換行列を構築（詳細は線形代数の知識が必要）
+        # Build 4x4 matrix (requires linear algebra knowledge)
         matrix = build_transformation_matrix(origin, axis, ref_direction)
         return matrix
     
     return identity_matrix_4x4()
 ```
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
-- **ツリー表示**: PRODUCTエンティティをツリー表示し、親子関係を可視化
-- **孤立検出**: NAUOで参照されていないPRODUCT_DEFINITIONを検出
-- **配置確認**: すべての配置行列が単位行列でないか確認
+- **Tree View**: List `PRODUCT` entities in a tree to visualize parent-child relations.
+- **Isolation Detection**: Detect `PRODUCT_DEFINITION`s not referenced by any NAUO.
+- **Placement Verification**: Check if all matrices are identity by mistake.
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- **デフォルト値を設定**: 配置行列が見つからない場合は単位行列を使用
--  **循環参照チェック**: 親が子を参照し、子が親を参照する循環を検出
-- **多重インスタンス対応**: 同じ子部品が複数回使用される場合に対応
+- **Set default values**: Use an identity matrix if no transformation is found.
+- **Check for cyclic references**: Detect instances where a parent references a child that eventually references the parent.
+- **Support multiple instances**: Correctness when the same child part is used multiple times.
 
 ---
 
-## 5. PMIの「浮き（Dangling）」
+## 5. Dangling PMI
 
-**難易度**: ★★★（上級）  
-**頻度**: ★☆☆（AP242のみ）  
-**影響度**: 🟡 中（PMIが失われる）
+**Difficulty**: ★★★ (Advanced)  
+**Frequency**: ★☆☆ (AP242 only)  
+**Impact**: 🟡 Medium (Loss of PMI)
 
-### ❌ 問題
+### ❌ The Problem
 
-公差（`GEOMETRIC_TOLERANCE`）はあるが、対象の面（`SHAPE_ASPECT`）への参照が壊れている。
+The tolerance (`GEOMETRIC_TOLERANCE`) exists, but the reference to the target face (`SHAPE_ASPECT`) is broken.
 
-**原因**:
-- AP242のPMIリンクは複雑で多重化
-- CAD間での解釈の違い
-- エクスポート時の不完全な実装
+**Causes**:
+- Complexity and redundancy of PMI links in AP242.
+- Differences in interpretation between CAD systems.
+- Incomplete export implementations.
 
-### ✅ 対策
+### ✅ Solutions
 
 ```python
 def validate_pmi_linkage(step_file):
     """
-    PMIのリンク整合性を検証
+    Validate PMI linkage consistency.
     """
     tolerances = find_all_by_type(step_file, 'GEOMETRIC_TOLERANCE')
     
     for tol in tolerances:
-        # 1. Shape Aspectへのリンクを確認
+        # 1. Check link to Shape Aspect
         shape_aspects = find_all_referencing(tol, 'SHAPE_ASPECT')
         
         if not shape_aspects:
             logger.warning(f"Tolerance {tol.id}: No SHAPE_ASPECT reference (dangling PMI)")
             continue
         
-        # 2. Shape Aspectから幾何要素へのリンクを確認
+        # 2. Check link from Shape Aspect to geometric elements
         for sa in shape_aspects:
             if not hasattr(sa, 'of_shape') or sa.of_shape is None:
                 logger.warning(f"SHAPE_ASPECT {sa.id}: No geometry reference")
 ```
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
-- すべての`GEOMETRIC_TOLERANCE`から`SHAPE_ASPECT`への参照をチェック
-- `SHAPE_ASPECT`から実際の形状要素（FACE等）への参照をチェック
+- Check references from every `GEOMETRIC_TOLERANCE` to `SHAPE_ASPECT`.
+- Check references from `SHAPE_ASPECT` to actual geometry (like `ADVANCED_FACE`).
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- PMIの読み込みはオプション機能として実装（失敗しても形状は読める）
-- CAx-IF推奨プラクティスに従う
-- PMIが不完全な場合は警告を出して継続
+- Implement PMI loading as an optional feature (so geometry still loads if PMI fails).
+- Follow CAx-IF Recommended Practices.
+- Continue with a warning if PMI is incomplete.
 
 ---
 
-## 6. 色やレイヤが消える
+## 6. Missing Colors and Layers
 
-**難易度**: ★★☆（中級）  
-**頻度**: ★★★（非常によくある）  
-**影響度**: 🟢 低（見た目のみ）
+**Difficulty**: ★★☆ (Intermediate)  
+**Frequency**: ★★★ (Very Common)  
+**Impact**: 🟢 Low (Visual only)
 
-### ❌ 問題
+### ❌ The Problem
 
-- 色情報の定義層が不適切（Shellに付いているか、Faceに付いているか）
-- `PRESENTATION_STYLE_ASSIGNMENT` がジオメトリに直接紐付いていない
-- APの制限（AP203には色情報なし）
+- Color information defined on an inappropriate layer (e.g., Shell vs. Face).
+- `PRESENTATION_STYLE_ASSIGNMENT` is not directly linked to geometry.
+- AP limitations (AP203 does not support colors).
 
-### ✅ 対策
+### ✅ Solutions
 
-#### 1. APの確認
+#### 1. Verify AP
+AP203 does not support colors/layers → **Use AP214 or later.**
 
-AP203では色・レイヤ非対応 → **AP214以降を使用**
-
-#### 2. STYLED_ITEMの正しい作成
+#### 2. Correct STYLED_ITEM Creation
 
 ```step
-# 正しい例: FACEに直接STYLED_ITEMを紐付け
+# Correct Example: Link STYLED_ITEM directly to a FACE
 #100 = ADVANCED_FACE(...);
-#200 = STYLED_ITEM('',(#210),#100);  # itemがFACE
+#200 = STYLED_ITEM('',(#210),#100);  # Item is a FACE
 #210 = PRESENTATION_STYLE_ASSIGNMENT((#220));
 #220 = SURFACE_STYLE_USAGE(.BOTH.,#230);
 #230 = SURFACE_SIDE_STYLE('',(#240));
@@ -390,184 +389,171 @@ AP203では色・レイヤ非対応 → **AP214以降を使用**
 #250 = COLOUR_RGB('Red',1.0,0.0,0.0);
 ```
 
-**間違った例**:
+**Incorrect Example**:
 ```step
-# STYLED_ITEMがShellを参照（CADによっては無視される）
+# STYLED_ITEM references a Shell (ignored by some CAD)
 #100 = CLOSED_SHELL(...);
-#200 = STYLED_ITEM('',(#210),#100);  # ← CADによっては認識しない
+#200 = STYLED_ITEM('',(#210),#100);  # Some CAD will not recognize this
 ```
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
 ```python
 def validate_color_assignment(step_file):
     """
-    色定義の妥当性を検証
+    Validate color assignment correctness.
     """
     styled_items = find_all_by_type(step_file, 'STYLED_ITEM')
     
     for si in styled_items:
         item = si.item
         
-        # 色が付けられている対象をチェック
+        # Check what the color is attached to
         if item.entity_type not in ['ADVANCED_FACE', 'MANIFOLD_SOLID_BREP', 'SHELL_BASED_SURFACE_MODEL']:
             logger.warning(f"STYLED_ITEM {si.id}: Attached to {item.entity_type} (may not be supported)")
         
-        # COLOUR_RGBまで辿れるかチェック
-        色 = extract_color_from_styled_item(si)
-        if 色 is None:
+        # Check if it reaches COLOUR_RGB
+        color = extract_color_from_styled_item(si)
+        if color is None:
             logger.warning(f"STYLED_ITEM {si.id}: No COLOUR_RGB found")
 ```
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- **FACEレベルに色を付ける**（最も互換性が高い）
-- 色値は0.0〜1.0の範囲（0-255に変換: `int(value * 255)`）
-- デフォルト色を設定（色がない場合はグレーなど）
+- **Attach colors at the FACE level** (highest compatibility).
+- Color values are 0.0 to 1.0 (convert to 0-255: `int(value * 255)`).
+- Set default colors (e.g., gray if no color is defined).
 
 ---
 
-## 7. エンコーディング問題
+## 7. Encoding Issues
 
-**難易度**: ★☆☆（初級）  
-**頻度**: ★☆☆（たまにある）  
-**影響度**: 🟡 中（文字化け）
+**Difficulty**: ★☆☆ (Beginner)  
+**Frequency**: ★☆☆ (Occasional)  
+**Impact**: 🟡 Medium (Mangled characters)
 
-### ❌ 問題
+### ❌ The Problem
+Improper handling of non-ASCII characters (Japanese, Chinese, etc.).
 
-非ASCII文字（日本語、中国語など）の扱いが不適切。
+**Specification**: STEP Part 21 is fundamentally ISO 8859-1 (Latin-1); non-ASCII characters must be escaped using `\X2\...\X0\`.
 
-**仕様**: STEP Part 21は基本的にISO 8859-1（Latin-1）、非ASCII文字は`\X2\...\X0\`エスケープ
-
-### ✅ 対策
+### ✅ Solutions
 
 ```step
-# 正しい例: Unicodeエスケープ
+# Correct Example: Unicode Escape
 #10 = PRODUCT('\X2\30D130FC30C8\X0\','Part A',...);
               ↑ Unicode hex (UTF-16BE)
-# \X2\30D130FC30C8\X0\ = 「パート」（カタカナ）
+# \X2\30D130FC30C8\X0\ = 「パート」 (Part in Katakana)
 ```
 
-**パーサー実装**:
+**Parser Implementation**:
 ```python
 def decode_step_string(s):
     """
-    STEPの文字列をデコード（\X2\...\X0\エスケープ処理）
+    Decode STEP strings (Handle \X2\...\X0\ escapes).
     """
     import re
     
     def replace_unicode_escape(match):
         hex_str = match.group(1)
-        # UTF-16BEとして解釈
+        # Interpret as UTF-16BE
         bytes_data = bytes.fromhex(hex_str)
         return bytes_data.decode('utf-16-be')
     
-    # \X2\...\X0\ パターンを置換
+    # Replace \X2\...\X0\ patterns
     result = re.sub(r'\\X2\\([0-9A-F]+)\\X0\\', replace_unicode_escape, s)
     return result
 ```
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
-- ファイルに`\X2\`が含まれているか確認
-- ASCII範囲外の文字（0x80以上）が直接含まれている場合は警告
+- Check if the file contains `\X2\`.
+- Warn if non-ASCII characters (0x80 or higher) are included directly.
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- 入力時: エスケープシーケンスを正しくデコード
-- 出力時: 非ASCII文字は必ずエスケープ
-- ファイル全体はASCIIとして読み込む（UTF-8ではない）
+- Input: Correctly decode escape sequences.
+- Output: Always escape non-ASCII characters.
+- Read the file as ASCII, not UTF-8.
 
 ---
 
-## 8. 前方参照の処理ミス
+## 8. Improper Forward Reference Handling
 
-**難易度**: ★★☆（中級）  
-**頻度**: ★★☆（よくある）  
-**影響度**: 🔴 高（パースエラー）
+**Difficulty**: ★★☆ (Intermediate)  
+**Frequency**: ★★☆ (Common)  
+**Impact**: 🔴 High (Parsing error)
 
-### ❌ 問題
+### ❌ The Problem
 
-参照先（`#番号`）が、参照元より後に定義されている場合の処理ミス。
+Handling cases where the reference target (`#number`) is defined *after* the reference source.
 
 ```step
-#10 = PRODUCT(..., (#20, #30), ...);  ← #20, #30を参照
-#20 = PRODUCT_CONTEXT(...);  ← #10より後に定義
+#10 = PRODUCT(..., (#20, #30), ...);  ← References #20, #30
+#20 = PRODUCT_CONTEXT(...);  ← Defined after #10
 #30 = APPLICATION_CONTEXT(...);
 ```
 
-**パーサーの誤った実装**:
+**Incorrect Implementation**:
 ```python
-# ❌ 間違い: 逐次処理
+# ❌ Error: Sequential processing
 for line in step_file:
     inst = parse_instance(line)
     instance_map[inst.id] = inst
-    # この時点で参照を解決 → #20がまだ存在しない！
-    resolve_references(inst)  # エラー！
+    # Trying to resolve reference here → #20 doesn't exist yet!
+    resolve_references(inst)  # ERROR!
 ```
 
-### ✅ 対策
+### ✅ Solutions
 
-**2パスパーサー**:
+**Two-Pass Parser**:
 ```python
-# ✅ 正しい: 2パス処理
-# Pass 1: すべてのインスタンスを読み込み
+# ✅ Correct: Two-pass processing
+# Pass 1: Load all instances
 instance_map = {}
 for line in step_file:
     inst = parse_instance(line)
-    instance_map[inst.id] = inst  # 参照は未解決のまま
+    instance_map[inst.id] = inst  # References remain unresolved
 
-# Pass 2: すべての参照を解決
+# Pass 2: Resolve all references
 for inst in instance_map.values():
     resolve_references(inst, instance_map)
 ```
 
-### 🔍 検出方法
+### 🔍 Detection Methods
 
-- パース後に未解決参照がないか確認
-- 存在しない`#番号`への参照を検出
+- Verify no unresolved references remain after parsing.
+- Detect references to non-existent `#numbers`.
 
 ```python
 def validate_all_references(instance_map):
-    """すべての参照が解決されているか確認"""
+    """Confirm all references are resolved"""
     for inst in instance_map.values():
         for ref in inst.get_all_references():
             if ref.target_id not in instance_map:
                 logger.error(f"Instance {inst.id}: Reference to non-existent #{ref.target_id}")
 ```
 
-### 💡 実装時のベストプラクティス
+### 💡 Implementation Best Practices
 
-- **必ず2パス処理を実装**
-- インスタンスIDの重複チェック
-- 循環参照の検出（稀だが発生しうる）
-
----
-
-## まとめ
-
-「STEPは壊れやすい」のではなく、**「規格の厳密さに対して、CADベンダーの実装がルーズな部分で齟齬が起きている」**のが実態です。
-
-**実装者へのアドバイス**:
-1. **バリデーションを徹底**: 単位・精度・参照整合性を必ずチェック
-2. **エラーハンドリング**: 不完全なデータでも可能な限り読み込む
-3. **CAx-IF推奨プラクティスに従う**: 互換性が大幅に向上
-4. **テストケースを活用**: CAx-IFのベンチマークファイルで検証
+- **Always implement two-pass processing.**
+- Check for duplicate instance IDs.
+- Detect cyclic references (rare but possible).
 
 ---
 
-## まとめ
+## Summary
 
-「STEPは壊れやすい」のではなく、**「規格の厳密さに対して、一部のCADベンダーの実装が不完全なために齟齬が起きている」**のが実態です。
+The reality is not that "STEP is fragile," but rather that **"CAD vendor implementations can be loose relative to the strictness of the standard, leading to discrepancies."**
 
-**実装者へのアドバイス**:
-1. **バリデーションを徹底**: 単位・精度・参照整合性を必ずチェックしてください。
-2. **エラーハンドリング**: 不完全なデータでも、可能な限り読み込めるように設計しましょう。
-3. **CAx-IF推奨プラクティスに従う**: これにより、互換性が大幅に向上します。
-4. **テストケースを活用**: CAx-IFのベンチマークファイルでの検証を推奨します。
+**Advice for Implementers**:
+1. **Be thorough with validation**: Always check units, precision, and reference integrity.
+2. **Robust error handling**: Load as much data as possible, even if it's incomplete.
+3. **Follow CAx-IF Recommended Practices**: This will significantly improve interoperability.
+4. **Leverage test cases**: Validate your implementation using CAx-IF benchmark files.
 
 ---
-## 📚 次のステップ
-- **[バリデーションとCAx-IF](./validation-and-caxif.md)** - 品質確保と相互運用性の向上
+## 📚 Next Steps
+- **[Validation and CAx-IF](./validation-and-caxif.md)** - Ensuring quality and improving interoperability.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

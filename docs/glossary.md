@@ -1,121 +1,121 @@
-# 用語集 (Glossary)
+# Glossary
 
 > [!IMPORTANT]
-> **このページを最初に読むことを強く推奨します**
+> **We strongly recommend reading this page first.**
 > 
-> STEP規格の理解は専門用語の理解から始まります。以下の「最重要用語トップ5」を押さえることで、他のドキュメントの理解が格段に容易になります。
+> Understanding the STEP standard begins with its terminology. By grasping these "Top 5 Most Important Terms," understanding other documents will become significantly easier.
 
 ---
 
-## ⭐ 最重要用語トップ5（まずはこれだけ覚える）
+## ⭐ Top 5 Most Important Terms (Start Here)
 
-実装者が最初に理解すべき5つの核心概念です。
+The five core concepts that every implementer should understand first.
 
 ### 1. AP (Application Protocol) ★★★
 
-特定の業界や用途向けに定義された規格のサブセット。
+A subset of the standard defined for a specific industry or application.
 
-**実装者が知るべきこと**:
-- AP203, AP214, AP242がメジャーバージョン
-- APが違うと使えるエンティティ（データ構造）が異なる
-- ファイルのHEADERセクションの`FILE_SCHEMA`で確認可能
+**What Implementers Need to Know**:
+- AP203, AP214, and AP242 are the major versions.
+- Different APs support different entities (data structures).
+- You can identify the AP in the `FILE_SCHEMA` of the STEP file's HEADER section.
 
-**STEPファイル内での例**:
+**Example within a STEP file**:
 ```step
 FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF { 1 0 10303 442 1 1 4 }'));
 ```
-→ このファイルはAP242を使用
+→ This file uses AP242.
 
-**関連用語**: [MIM](#mim-mapped-interpreted-model), [AIM](#aim-application-interpreted-model)
+**Related Terms**: [MIM](#mim-mapped-interpreted-model), [AIM](#aim-application-interpreted-model)
 
 ---
 
-### 2. Entity (エンティティ) ★★★
+### 2. Entity ★★★
 
-STEPデータの構成要素。オブジェクト指向プログラミングの「クラス」に相当。
+The building blocks of STEP data. Equivalent to a "Class" in Object-Oriented Programming.
 
-**実装者が知るべきこと**:
-- すべて**大文字**で表記（例: `PRODUCT`, `SHAPE_REPRESENTATION`）
-- 属性（Attribute）を持つ
-- 継承関係がある（SUPERTYPE/SUBTYPE）
+**What Implementers Need to Know**:
+- Written in all **UPPERCASE** (e.g., `PRODUCT`, `SHAPE_REPRESENTATION`).
+- Has attributes.
+- Supports inheritance (SUPERTYPE/SUBTYPE).
 
-**STEPファイル内での例**:
+**Example within a STEP file**:
 ```step
 #10 = PRODUCT('Part_A','Part_A','description',(#20));
 ```
-- `PRODUCT` がエンティティ名
-- `#10` がインスタンスID（このファイル内でのユニークな識別子）
-- 括弧内が属性値
+- `PRODUCT` is the entity name.
+- `#10` is the Instance ID (a unique identifier within this file).
+- The values inside parentheses are the attribute values.
 
-**パーサー実装時の注意**:
-- エンティティ名は大文字小文字を区別しない（仕様上）が、通常は大文字で統一
-- `#番号`での参照を正しく解決する必要がある
+**Implementation Note**:
+- Entity names are technically case-insensitive per the specification, but they are typically written in uppercase.
+- Parsers must correctly resolve references using the `#number` format.
 
-**関連用語**: [EXPRESS](#express), [Instance](#instance-インスタンス)
+**Related Terms**: [EXPRESS](#express), [Instance](#instance)
 
 ---
 
 ### 3. B-rep (Boundary Representation) ★★★
 
-**境界表現**。面・稜線・頂点によって形状を定義する方式。
+A method of defining shapes by their boundaries: faces, edges, and vertices.
 
-**STLとの違い**:
+**Difference from STL**:
 | | B-rep (STEP) | STL |
 |---|---|---|
-| 表現方法 | 数学的に正確な面（NURBS等） | 三角形メッシュ（近似） |
-| 精度 | 理論上無限精度 | 近似精度（三角形サイズ依存） |
-| ファイルサイズ | 中〜大 | 小〜中 |
-| 編集可能性 | パラメトリック編集可能 | 困難 |
+| Representation | Mathematically precise surfaces (NURBS, etc.) | Triangular mesh (approximate) |
+| Precision | Theoretically infinite | Dependent on mesh size |
+| File Size | Medium to Large | Small to Medium |
+| Editability | Parametrically editable | Difficult |
 
-**STEPでのB-rep階層**:
+**B-rep Hierarchy in STEP**:
 ```
 MANIFOLD_SOLID_BREP
   └─ CLOSED_SHELL
-      └─ ADVANCED_FACE (面)
-          └─ EDGE_LOOP (稜線ループ)
-              └─ ORIENTED_EDGE (方向付き稜線)
-                  └─ VERTEX_POINT (頂点)
+      └─ ADVANCED_FACE (Face)
+          └─ EDGE_LOOP (Edge Loop)
+              └─ ORIENTED_EDGE (Directional Edge)
+                  └─ VERTEX_POINT (Vertex)
 ```
 
-**関連用語**: [NURBS](#nurbs), [Tessellation](#tessellation-テセレーション)
+**Related Terms**: [NURBS](#nurbs), [Tessellation](#tessellation)
 
 ---
 
 ### 4. PMI (Product and Manufacturing Information) ★★
 
-製品製造情報。寸法、公差、表面粗さなどの「形状以外の設計意図」。
+Non-geometric design intent, such as dimensions, tolerances, and surface finish.
 
-**2種類のPMI**:
+**Two Types of PMI**:
 
-**Graphical PMI（表示型）**:
-- 人間が読むための注記（見た目の線や文字）
-- 3Dビューワーで表示可能
-- コンピュータが意味を解釈できない
+**Graphical PMI (Display type)**:
+- Annotations for humans (visual lines and text).
+- Can be displayed in 3D viewers.
+- Cannot be semantically interpreted by computers.
 
-**Semantic PMI（意味型）**:
-- コンピュータが処理可能な意味情報
-- `GEOMETRIC_TOLERANCE`等のエンティティで表現
-- AP242でフルサポート
+**Semantic PMI (Representation type)**:
+- Computer-processable information.
+- Represented by entities like `GEOMETRIC_TOLERANCE`.
+- Fully supported in AP242.
 
-**実装者にとっての重要性**:
-- PMIの有無でAPの選択が変わる（PMI必要 → AP242必須）
-- Semantic PMIの解析には幾何公差の知識が必要
-- CAD間でのPMI互換性は完全ではない（CAx-IFガイドライン参照）
+**Importance for Implementers**:
+- The need for PMI dictates the AP choice (PMI required → AP242 mandatory).
+- Parsing Semantic PMI requires knowledge of Geometric Dimensioning and Tolerancing (GD&T).
+- PMI compatibility between CAD systems is not always perfect (refer to CAx-IF guidelines).
 
-**関連用語**: [GD&T](#gdt-geometric-dimensioning-and-tolerancing), [MBD](#mbd-model-based-definition)
+**Related Terms**: [GD&T](#gdt-geometric-dimensioning-and-tolerancing), [MBD](#mbd-model-based-definition)
 
 ---
 
 ### 5. EXPRESS ★★
 
-STEPのデータモデルを定義する言語（ISO 10303-11）。
+The data modeling language used to define STEP (ISO 10303-11).
 
-**実装者が知るべきこと**:
-- 各APの「スキーマ」はEXPRESSで記述されている
-- ENTITYの定義、属性の型、制約などを確認できる
-- 実装時は規格書のEXPRESSスキーマを参照
+**What Implementers Need to Know**:
+- The "Schema" for each AP is written in EXPRESS.
+- It defines entities, attribute types, and constraints.
+- Refer to the EXPRESS schema in the standard documents during implementation.
 
-**EXPRESSの例**:
+**EXPRESS Example**:
 ```express
 ENTITY product;
   id : identifier;
@@ -124,30 +124,30 @@ ENTITY product;
   frame_of_reference : SET [1:?] OF product_context;
 END_ENTITY;
 ```
-- `OPTIONAL`: この属性は省略可能
-- `SET [1:?]`: 1個以上の重複なし集合
+- `OPTIONAL`: This attribute can be omitted.
+- `SET [1:?]`: A set of one or more unique items.
 
-**プログラミング言語との対応**:
-| EXPRESS | Java/C++ | Python | 意味 |
-|---------|----------|--------|------|
-| `ENTITY` | `class` | `class` | クラス定義 |
-| `TYPE` | `typedef` | `NewType` | 型エイリアス |
-| `OPTIONAL` | `Optional<T>` | `Optional[T]` | null許容 |
-| `SET [1:?]` | `Set<T>` | `set` | 重複なし集合 |
-| `LIST [0:?]` | `List<T>` | `list` | 順序付きリスト |
+**Mapping to Programming Languages**:
+| EXPRESS | Java/C++ | Python | Meaning |
+|---------|----------|--------|---------|
+| `ENTITY` | `class` | `class` | Class Definition |
+| `TYPE` | `typedef` | `NewType` | Type Alias |
+| `OPTIONAL` | `Optional<T>` | `Optional[T]` | Nullable |
+| `SET [1:?]` | `Set<T>` | `set` | Unique Set |
+| `LIST [0:?]` | `List<T>` | `list` | Ordered List |
 
-**関連用語**: [Entity](#2-entity-エンティティ-), [Schema](#schema-スキーマ)
+**Related Terms**: [Entity](#2-entity), [Schema](#schema)
 
 ---
 
-## 📂 カテゴリ別用語集
+## 📂 Glossary by Category
 
-### ファイル構造関連
+### File Structure
 
 #### Part 21 (ASCII / Clear Text)
-拡張子 `.stp` や `.step` で知られる、最も一般的なテキスト形式のファイルフォーマット（ISO 10303-21）。
+The most common text-based file format for STEP, known by extensions `.stp` or `.step` (ISO 10303-21).
 
-**構造**:
+**Structure**:
 ```step
 ISO-10303-21;
 HEADER;
@@ -163,120 +163,120 @@ END-ISO-10303-21;
 ```
 
 #### Part 28 (XML)
-STEPデータをXML形式で表現したもの。Part 21より冗長だが、XML技術との親和性が高い。
+An XML representation of STEP data. More redundant than Part 21 but compatible with XML technologies.
 
-#### Instance (インスタンス)
-エンティティの具体的な値を持つデータ。`#10 = PRODUCT(...)`の`#10`がインスタンス識別子。
+#### Instance
+Concrete data with specific values for an entity. In `#10 = PRODUCT(...)`, `#10` is the instance identifier.
 
-**実装上の注意**:
-- インスタンスIDは1から始まり、ファイル内でユニーク
-- 前方参照（後で定義されるインスタンスへの参照）が可能
+**Implementation Note**:
+- Instance IDs start at 1 and are unique within the file.
+- Forward references (referring to an ID defined later in the file) are permitted.
 
 ---
 
-### 形状・幾何関連
+### Geometry & Topology
 
 #### NURBS (Non-Uniform Rational B-Spline)
-非一様有理Bスプライン。複雑な曲線・曲面を数学的に表現する方法。STEPのB-repで多用。
+A mathematical way to represent complex curves and surfaces. Extensively used in STEP B-rep.
 
-#### Tessellation (テセレーション)
-曲面を三角形や四角形のポリゴンで近似表現すること。AP242で標準化。
+#### Tessellation
+Approximating a surface with a mesh of triangles or polygons. Standardized in AP242.
 
-**用途**:
-- 高速な表示（ポリゴンは描画が軽い）
-- ファイルサイズ削減（B-repとテセレーションを併用）
+**Uses**:
+- Fast visualization (polygons are lighter to render).
+- File size reduction (using tessellation alongside or instead of B-rep).
 
 #### ADVANCED_FACE
-STEPで面を表現する最も一般的なエンティティ。面の境界（EDGEのループ）と表面形状（SURFACE）を定義。
+The most common entity for representing faces in STEP. Defines the face boundary (edge loops) and its surface geometry.
 
 ---
 
-### 管理データ関連
+### Management Data
 
 #### PRODUCT
-部品そのものを表すトップレベルエンティティ。
+A top-level entity representing the part itself.
 
-**属性**:
-- `id`: 部品ID（文字列）
-- `name`: 部品名
-- `description`: 説明（オプション）
-- `frame_of_reference`: コンテキスト
+**Attributes**:
+- `id`: Part ID (string).
+- `name`: Part name.
+- `description`: Description (optional).
+- `frame_of_reference`: Context.
 
 #### PRODUCT_DEFINITION
-設計、解析、製造などのコンテキストにおける製品の定義。形状データはこのエンティティに紐付く。
+A definition of a product in a specific context (design, analysis, manufacturing). Geometry data is linked to this entity.
 
 #### PRODUCT_DEFINITION_SHAPE
-管理データと形状データの「橋渡し」役。`PRODUCT_DEFINITION`と`SHAPE_REPRESENTATION`を結びつける。
+The "bridge" between management data and geometry. Links `PRODUCT_DEFINITION` to a `SHAPE_REPRESENTATION`.
 
 ---
 
-### PMI・公差関連
+### PMI & Tolerancing
 
 #### GD&T (Geometric Dimensioning and Tolerancing)
-幾何寸法公差。部品の形状・位置・姿勢に関する許容範囲を定義する体系。
+A system for defining and communicating engineering tolerances.
 
-**主な公差タイプ**:
-- 平面度、真直度、真円度（形状公差）
-- 位置度、同軸度、対称度（位置公差）
-- 平行度、直角度、傾斜度（姿勢公差）
+**Major Tolerance Types**:
+- Flatness, Straightness, Circularity (Form)
+- Position, Coaxiality, Symmetry (Location)
+- Parallelism, Perpendicularity, Angularity (Orientation)
 
 #### GEOMETRIC_TOLERANCE
-STEPでGD&Tを表現するエンティティの基底型。`POSITION_TOLERANCE`、`FLATNESS_TOLERANCE`等のサブタイプがある。
+The base type for entities representing GD&T in STEP. Subtypes include `POSITION_TOLERANCE`, `FLATNESS_TOLERANCE`, etc.
 
-#### DATUM (データム)
-公差の基準となる理論的に正確な面・線・点。
+#### DATUM
+A theoretically exact point, axis, or plane derived from the true geometric counterpart of a specified datum feature. A basis for tolerances.
 
 ---
 
-### AP・スキーマ関連
+### AP & Schema
 
 #### MIM (Mapped Interpreted Model)
-実装者が実際に目にする、Express言語で記述されたデータモデル（STEPファイルの構成要素）。
+The data model implementers actually work with, written in EXPRESS (the components of a STEP file).
 
 #### AIM (Application Interpreted Model)
-AP間で共通化されたデータモデル。MIMの基盤となる。
+A shared data model across APs that serves as the foundation for the MIM.
 
 #### ARM (Application Reference Model)
-ユーザー視点での情報モデル。業務要件を定義するためのもの。MIMに変換（マッピング）される。
+A high-level information model from a user's perspective, used to define business requirements. It is mapped to the MIM.
 
-#### Schema (スキーマ)
-EXPRESSで記述されたデータモデルの定義全体。各APは独自のスキーマを持つ。
+#### Schema
+The entire data model definition written in EXPRESS. Each AP has its own unique schema.
 
 ---
 
-### MBD・デジタルスレッド関連
+### MBD & Digital Thread
 
 #### MBD (Model Based Definition)
-3Dモデルを唯一の正（Master）とし、そこにすべての設計・製造情報を集約する手法。
+A practice of using 3D models (the "Master") to contain all design and manufacturing information.
 
-**従来との違い**:
-- 従来: 2D図面がマスター、3Dは参考
-- MBD: 3Dモデルがマスター、2D図面は不要または従属
+**Difference from Traditional Methods**:
+- Traditional: 2D drawings are the master; 3D is a reference.
+- MBD: 3D model is the master; 2D drawings are unnecessary or subordinate.
 
 #### LOTAR (Long Term Archiving and Retrieval)
-STEPデータの長期保存・検索のための標準。AP242で対応。
+A standard for the long-term preservation and retrieval of digital data. Supported in AP242.
 
-**目的**:
-- 数十年後もデータを読めるようにする
-- 航空宇宙・防衛産業で重要
+**Purpose**:
+- Ensure data remains readable decades later.
+- Crucial in aerospace and defense industries.
 
 #### CAx-IF (CAD-CAx Implementor Forum)
-CADベンダー間でのSTEP実装ガイドラインを策定する団体。
+A group that establishes STEP implementation guidelines among CAD vendors.
 
-**実装者にとっての重要性**:
-- CAx-IFの推奨プラクティスに従うことで相互運用性向上
-- テストケースとベンチマークファイルを提供
-
----
-
-## 🔗 関連リソース
-
-- **公式規格書**: ISO 10303シリーズ（有料）
-- **CAx-IF推奨プラクティス**: https://www.cax-if.org/
-- **EXPRESSスキーマ**: 各AP規格書の付録に記載
+**Importance for Implementers**:
+- Following CAx-IF recommended practices improves interoperability.
+- Provides test cases and benchmark files.
 
 ---
-## 📚 次のステップ
-- **[スタートガイド](./getting-started.md)** - STEPの全体像を把握
 
-[READMEに戻る](../README.md)
+## 🔗 Related Resources
+
+- **Official Standards**: ISO 10303 series (Paid)
+- **CAx-IF Recommended Practices**: https://www.cax-if.org/
+- **EXPRESS Schemas**: Found in the annexes of each AP standard document.
+
+---
+## 📚 Next Steps
+- **[Getting Started Guide](./getting-started.md)** - Grasp the overall picture of STEP.
+
+[Back to README](../README.md)

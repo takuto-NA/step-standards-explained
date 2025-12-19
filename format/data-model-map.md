@@ -1,61 +1,57 @@
-# データモデル・マップ (Data Model Map)
+# Data Model Map
 
 > [!NOTE]
-> **対象読者**: 中級者向け  
-> **前提知識**: [用語集](../docs/glossary.md)、[Getting Started](../docs/getting-started.md) を先に読んでください
+> **Target Audience**: Intermediate users  
+> **Prerequisites**: Please read the **[Glossary](../docs/glossary.md)** and **[Getting Started](../docs/getting-started.md)** first.
 
-STEPのエンティティは非常に深く、複雑にネストしています。ここでは実装者が迷わないよう、主要な階層とナビゲーションパスを**図示**し、**実装例**を示します。
-
----
-
-## 🗺️ 全体マップ
-
-STEPファイルの主要な4つの階層:
-
-1. **[コア階層](#1-コア階層-プロダクトから形状まで)**: Product → Shape
-2. **[アセンブリ構造](#2-アセンブリ構造-assembly-structure)**: 親子関係
-3. **[PMI階層](#3-pmi製品製造情報の階層)**: 寸法公差
-4. **[プレゼンテーション](#4-プレゼンテーション色レイヤ)**: 色・レイヤ
+STEP entities are deeply and complexly nested. To prevent implementers from getting lost, this page **illustrates** the primary hierarchies and navigation paths, accompanied by **implementation examples**.
 
 ---
 
-## 1. コア階層: プロダクトから形状まで
+## 🗺️ Overall Map
 
-**難易度**: ★★☆（中級）  
-**重要度**: ★★★（必須）
+The four primary hierarchies in a STEP file:
 
-すべてのSTEPファイルの基盤となる「管理データ」から「形状」へのリンクです。
+1. **[Core Hierarchy](#1-core-hierarchy-from-product-to-geometry)**: From Product to Geometry.
+2. **[Assembly Structure](#2-assembly-structure)**: Parent-child relationships.
+3. **[PMI Hierarchy](#3-pmi-product-and-manufacturing-information-hierarchy)**: Dimensions and tolerances.
+4. **[Presentation](#4-presentation-colors-and-layers)**: Colors and layers.
 
-### エンティティ階層図
+---
+
+## 1. Core Hierarchy: From Product to Geometry
+
+**Difficulty**: ★★☆ (Intermediate)  
+**Importance**: ★★★ (Essential)
+
+The link from "Management Data" to "Geometry" that forms the foundation of every STEP file.
+
+### Entity Hierarchy Diagram
 
 ```mermaid
 graph TD
-    P["PRODUCT<br/>(部品情報)"] -->|"of_product"| PDF["PRODUCT_DEFINITION_FORMATION<br/>(バージョン管理)"]
-    PDF -->|"formation"| PD["PRODUCT_DEFINITION<br/>(設計コンテキスト)"]
-    PD -->|"definition"| PDS["PRODUCT_DEFINITION_SHAPE<br/>(橋渡し)"]
-    PDS -->|"shape_representation"| SR["SHAPE_REPRESENTATION<br/>(形状カタログ)"]
-    SR -->|"items"| RI["REPRESENTATION_ITEM<br/>(形状要素)"]
+    P["PRODUCT<br/>(Part Info)"] -->|"of_product"| PDF["PRODUCT_DEFINITION_FORMATION<br/>(Version Management)"]
+    PDF -->|"formation"| PD["PRODUCT_DEFINITION<br/>(Design Context)"]
+    PD -->|"definition"| PDS["PRODUCT_DEFINITION_SHAPE<br/>(Bridge)"]
+    PDS -->|"shape_representation"| SR["SHAPE_REPRESENTATION<br/>(Geometry Container)"]
+    SR -->|"items"| RI["REPRESENTATION_ITEM<br/>(Geometry Elements)"]
     RI --> AF["ADVANCED_FACE / EDGE / VERTEX"]
-    
-    style P fill:#e1f5ff
-    style PDS fill:#fff3cd
-    style SR fill:#d4edda
 ```
 
-### エンティティ詳細
+### Entity Details
 
-| エンティティ | 役割 | 必須/任意 | 出現頻度 |
+| Entity | Role | Required/Optional | Frequency |
 |------------|------|----------|--------|
-| **PRODUCT** | 部品そのもの | 必須 | 1個 |
-| **PRODUCT_DEFINITION_FORMATION** | バージョン管理 | 必須 | 1個 |
-| **PRODUCT_DEFINITION** | 設計コンテキスト | 必須 | 1個以上 |
-| **PRODUCT_DEFINITION_SHAPE** | 管理↔形状の橋渡し | 必須 | 1個 |
-| **SHAPE_REPRESENTATION** | 形状のコンテナ | 必須 | 1個以上 |
-| **REPRESENTATION_ITEM** | 実際の形状要素 | 必須 | 多数 |
+| **PRODUCT** | The part itself | Required | 1 |
+| **PRODUCT_DEFINITION_FORMATION** | Version management | Required | 1 |
+| **PRODUCT_DEFINITION** | Design context | Required | 1+ |
+| **PRODUCT_DEFINITION_SHAPE** | Bridge between Admin and Shape | Required | 1 |
+| **SHAPE_REPRESENTATION** | Geometry container | Required | 1+ |
+| **REPRESENTATION_ITEM** | Actual geometry elements | Required | Many |
 
-### 実ファイルでの例
+### Example in a Real File
 
-実際のSTEPファイル（[minimal-product.step.md](../examples/minimal-product.step.md) より抜粋）:
+Excerpt from [Minimal STEP Analysis](../examples/minimal-product.step.md):
 
 ```step
 #10 = PRODUCT('Part_A','Part_A','Part_A description',(#20));
@@ -67,17 +63,17 @@ graph TD
 #70 = PRODUCT_DEFINITION_SHAPE('','',#50);
 #80 = SHAPE_DEFINITION_REPRESENTATION(#70,#90);
 #90 = SHAPE_REPRESENTATION('',(#100,#110,#120),#130);
-#100 = ADVANCED_FACE(...);  ← 形状データ
+#100 = ADVANCED_FACE(...);  ← Geometry data starts here
 ```
 
-### パーサー実装のヒント
+### Tips for Parser Implementation
 
-**基本的なトラバーサルパターン（Python風擬似コード）**:
+**Basic Traversal Pattern (Python-style Pseudocode)**:
 
 ```python
 def get_all_faces_from_product(product_instance):
     """
-    PRODUCTインスタンスからすべてのADVANCED_FACEを取得
+    Retrieve all ADVANCED_FACE entities from a PRODUCT instance.
     """
     # 1. PRODUCT → PRODUCT_DEFINITION
     prod_def_formation = find_referencing(product_instance, 'PRODUCT_DEFINITION_FORMATION', 'of_product')
@@ -86,33 +82,33 @@ def get_all_faces_from_product(product_instance):
     # 2. PRODUCT_DEFINITION → SHAPE_REPRESENTATION
     prod_def_shape = find_referencing(prod_def, 'PRODUCT_DEFINITION_SHAPE', 'definition')
     shape_def_rep = find_referencing(prod_def_shape, 'SHAPE_DEFINITION_REPRESENTATION', 'definition')
-    shape_rep = shape_def_rep.used_representation  # 属性で直接参照
+    shape_rep = shape_def_rep.used_representation  # Direct attribute reference
     
     # 3. SHAPE_REPRESENTATION → ADVANCED_FACE
     faces = []
-    for item in shape_rep.items:  # リスト属性
+    for item in shape_rep.items:  # List attribute
         if item.entity_type == 'ADVANCED_FACE':
             faces.append(item)
         elif item.entity_type == 'MANIFOLD_SOLID_BREP':
-            # Solidの場合はさらに辿る
+            # For Solids, traverse deeper
             for face in item.outer.cfs_faces:
                 faces.append(face)
     
     return faces
 ```
 
-**実装上の注意点**:
-- `find_referencing()`: 他のインスタンスから参照されているものを逆引き検索
-- 前方参照に注意（参照先がまだパースされていない可能性）
-- キャッシュ（メモ化）で高速化
+**Implementation Considerations**:
+- `find_referencing()`: Reverse lookups for instances that reference the current one.
+- Beware of forward references (the target ID might not be parsed yet).
+- Speed up processing with caching (memoization).
 
-**効率的な実装**:
+**Efficient Implementation**:
 ```python
-# インスタンスIDから直接アクセスできるハッシュマップを構築
+# Build a hash map for direct access by instance ID
 instance_map = {}  # {id: instance}
 reference_map = {}  # {referenced_id: [referencing_instances]}
 
-# パース時に構築
+# Build during parsing
 for inst in instances:
     instance_map[inst.id] = inst
     for attr_value in inst.attributes:
@@ -120,85 +116,82 @@ for inst in instances:
             reference_map.setdefault(attr_value.id, []).append(inst)
 ```
 
-👉 詳細: [プロダクト・エンティティの解剖図](./anatomy-of-product.md)
+👉 Details: **[Anatomy of Product Entities](./anatomy-of-product.md)**
 
 ---
 
-## 2. アセンブリ構造 (Assembly Structure)
+## 2. Assembly Structure
 
-**難易度**: ★★★（上級）  
-**重要度**: ★★☆（頻出）
+**Difficulty**: ★★★ (Advanced)  
+**Importance**: ★★☆ (Frequent)
 
-アセンブリは、プロダクト定義間の「使用関係」として定義されます。
+Assemblies are defined as "usage relationships" between product definitions.
 
-### エンティティ階層図
+### Entity Hierarchy Diagram
 
 ```mermaid
 graph TD
-    ParentPD["親 PRODUCT_DEFINITION"] -->|"relating_product_definition"| NAUO["NEXT_ASSEMBLY_USAGE_OCCURRENCE<br/>(使用関係)"]
-    NAUO -->|"related_product_definition"| ChildPD["子 PRODUCT_DEFINITION"]
-    NAUO -->|"via RR"| CDSR["CONTEXT_DEPENDENT_SHAPE_REPRESENTATION<br/>(配置情報)"]
-    CDSR --> IT["ITEM_DEFINED_TRANSFORMATION<br/>(座標変換行列)"]
-    
-    style NAUO fill:#fff3cd
-    style CDSR fill:#f8d7da
+    ParentPD["Parent PRODUCT_DEFINITION"] -->|"relating_product_definition"| NAUO["NEXT_ASSEMBLY_USAGE_OCCURRENCE<br/>(Usage Relationship)"]
+    NAUO -->|"related_product_definition"| ChildPD["Child PRODUCT_DEFINITION"]
+    NAUO -->|"via RR"| CDSR["CONTEXT_DEPENDENT_SHAPE_REPRESENTATION<br/>(Placement Info)"]
+    CDSR --> IT["ITEM_DEFINED_TRANSFORMATION<br/>(Coordinate Matrix)"]
 ```
 
-### エンティティ詳細
+### Entity Details
 
-| エンティティ | 役割 | 属性 |
+| Entity | Role | Attributes |
 |------------|------|------|
-| **NEXT_ASSEMBLY_USAGE_OCCURRENCE** | 親子関係の定義 | `relating_PD`, `related_PD` |
-| **CONTEXT_DEPENDENT_SHAPE_REPRESENTATION** | 配置情報 | `representation_relation` |
-| **ITEM_DEFINED_TRANSFORMATION** | 座標変換行列 | `transform_item_1`, `transform_item_2` |
+| **NEXT_ASSEMBLY_USAGE_OCCURRENCE** | Defines parent-child relation | `relating_PD`, `related_PD` |
+| **CONTEXT_DEPENDENT_SHAPE_REPRESENTATION** | Placement information | `representation_relation` |
+| **ITEM_DEFINED_TRANSFORMATION** | Transformation matrix | `transform_item_1`, `transform_item_2` |
 
-### 実ファイルでの例
+### Example in a Real File
 
 ```step
-# 親アセンブリ
+# Parent Assembly
 #100 = PRODUCT('Assembly_A',...);
 #110 = PRODUCT_DEFINITION(..., #100, ...);
 
-# 子部品
+# Child Part
 #200 = PRODUCT('Part_B',...);
 #210 = PRODUCT_DEFINITION(..., #200, ...);
 
-# 使用関係（Assembly_A が Part_B を使用）
+# Usage Relationship (Assembly_A uses Part_B)
 #300 = NEXT_ASSEMBLY_USAGE_OCCURRENCE('1','Part B Instance','',#110,#210,$);
 
-# 配置情報（座標変換）
+# Placement Info (Transformation)
 #310 = CONTEXT_DEPENDENT_SHAPE_REPRESENTATION(#320,#330);
 #320 = ( REPRESENTATION_RELATIONSHIP('','',#340,#350) 
         REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION(#360) );
 #360 = ITEM_DEFINED_TRANSFORMATION('','',#370,#380);
-#370 = AXIS2_PLACEMENT_3D(...);  # 変換元
-#380 = AXIS2_PLACEMENT_3D(...);  # 変換先（配置位置）
+#370 = AXIS2_PLACEMENT_3D(...);  # Source
+#380 = AXIS2_PLACEMENT_3D(...);  # Target (Placement Location)
 ```
 
-### パーサー実装のヒント
+### Tips for Parser Implementation
 
-**アセンブリツリーの構築（Python風）**:
+**Building an Assembly Tree (Python-style)**:
 
 ```python
 def build_assembly_tree(root_product_def):
     """
-    PRODUCT_DEFINITIONを起点にアセンブリツリーを構築
+    Build an assembly tree starting from a PRODUCT_DEFINITION.
     """
     tree = {
         'product_def': root_product_def,
         'children': []
     }
     
-    # NAUOを検索（このPRODUCT_DEFINITIONを親とするもの）
+    # Search for NAUOs where this PRODUCT_DEFINITION is the parent
     nauos = find_all_by_type('NEXT_ASSEMBLY_USAGE_OCCURRENCE')
     for nauo in nauos:
         if nauo.relating_product_definition == root_product_def:
             child_pd = nauo.related_product_definition
             
-            # 配置行列を取得
+            # Retrieve the placement transformation
             transform = get_placement_transform(nauo)
             
-            # 再帰的に子のツリーを構築
+            # Recursively build the child tree
             child_tree = build_assembly_tree(child_pd)
             child_tree['transform'] = transform
             child_tree['nauo'] = nauo
@@ -209,77 +202,74 @@ def build_assembly_tree(root_product_def):
 
 def get_placement_transform(nauo):
     """
-    NAUOから配置変換行列を取得
+    Retrieve the transformation matrix from an NAUO.
     """
-    # CONTEXT_DEPENDENT_SHAPE_REPRESENTATIONを検索
+    # Search for CONTEXT_DEPENDENT_SHAPE_REPRESENTATION
     cdsrs = find_referencing(nauo, 'CONTEXT_DEPENDENT_SHAPE_REPRESENTATION')
     for cdsr in cdsrs:
         rep_rel = cdsr.representation_relation
         if hasattr(rep_rel, 'transformation_operator'):
             item_transform = rep_rel.transformation_operator
-            # AXIS2_PLACEMENT_3Dから4x4変換行列を構築
+            # Build a 4x4 matrix from AXIS2_PLACEMENT_3D
             return build_4x4_matrix(item_transform)
     
-    return identity_matrix()  # デフォルトは単位行列
+    return identity_matrix()  # Default to identity
 ```
 
-**実装上の注意点**:
-- **循環参照に注意**: 誤ったファイルで親が子を参照し、子が親を参照する循環が発生する場合あり
-- **多重インスタンス**: 同じ子部品が複数回使用される（NAUOが複数）
-- **配置行列の欠落**: CDSRが存在しない場合は単位行列を仮定
+**Implementation Considerations**:
+- **Cyclic References**: Watch for invalid files where a parent references a child and vice-versa.
+- **Multiple Instances**: The same child part can be used multiple times (multiple NAUOs).
+- **Missing Matrices**: Assume an identity matrix if CDSR is absent.
 
-👉 詳細: [アセンブリ構造の解説 (比較ページ)](../comparison/assembly-support.md)
+👉 Details: **[Assembly Support (Comparison Page)](../comparison/assembly-support.md)**
 
 ---
 
-## 3. PMI（製品製造情報）の階層
+## 3. PMI (Product and Manufacturing Information) Hierarchy
 
-**難易度**: ★★★（上級）  
-**重要度**: ★☆☆（AP242のみ）
+**Difficulty**: ★★★ (Advanced)  
+**Importance**: ★☆☆ (AP242 only)
 
-PMIは形状（FaceやEdge）に「技術的な意味（Shape Aspect）」を持たせ、そこに公差や注記をぶら下げます。
+PMI gives "Technical Meaning (Shape Aspect)" to geometry (Faces or Edges), linking them to tolerances and annotations.
 
-### エンティティ階層図
+### Entity Hierarchy Diagram
 
 ```mermaid
 graph TD
-    GEOM["GEOMETRIC_REPRESENTATION_ITEM<br/>(面・稜線)"] -->|"of_shape"| SA["SHAPE_ASPECT<br/>(意味付け)"]
+    GEOM["GEOMETRIC_REPRESENTATION_ITEM<br/>(Face/Edge)"] -->|"of_shape"| SA["SHAPE_ASPECT<br/>(Semantic Label)"]
     SA -->|"element"| DA["DATUM_FEATURE / DATUM"]
-    SA -->|"element"| GT["GEOMETRIC_TOLERANCE<br/>(公差)"]
-    GT --> PT["POSITION_TOLERANCE等<br/>(具体的公差型)"]
-    GT -->|"datum"| DR["DATUM_REFERENCE<br/>(データム参照)"]
-    
-    style SA fill:#d4edda
-    style GT fill:#f8d7da
+    SA -->|"element"| GT["GEOMETRIC_TOLERANCE<br/>(Tolerance)"]
+    GT --> PT["POSITION_TOLERANCE etc.<br/>(Specific Type)"]
+    GT -->|"datum"| DR["DATUM_REFERENCE<br/>(Datum Reference)"]
 ```
 
-### パーサー実装のヒント
+### Tips for Parser Implementation
 
-**PMIの抽出（Python風）**:
+**Extracting PMI (Python-style)**:
 
 ```python
 def extract_pmi_from_face(face_instance):
     """
-    ADVANCED_FACEからPMI情報を取得
+    Extract PMI information from an ADVANCED_FACE.
     """
     pmi_list = []
     
-    # 1. このfaceを参照するSHAPE_ASPECTを探す
+    # 1. Find the SHAPE_ASPECT referencing this face
     shape_aspects = find_all_referencing(face_instance, 'SHAPE_ASPECT', 'of_shape')
     
     for sa in shape_aspects:
-        # 2. このSHAPE_ASPECTに紐付くGEOMETRIC_TOLERANCEを探す
+        # 2. Find GEOMETRIC_TOLERANCE linked to this SHAPE_ASPECT
         tolerances = find_all_referencing(sa, 'GEOMETRIC_TOLERANCE')
         
         for tol in tolerances:
             pmi_info = {
-                'type': tol.entity_type,  # POSITION_TOLERANCE, FLATNESS_TOLERANCE等
+                'type': tol.entity_type,  # e.g., POSITION_TOLERANCE, FLATNESS_TOLERANCE
                 'value': tol.magnitude,
                 'shape_aspect': sa,
                 'datum_references': []
             }
             
-            # 3. データム参照を取得
+            # 3. Retrieve datum references
             if hasattr(tol, 'datum_system'):
                 for datum_ref in tol.datum_system:
                     pmi_info['datum_references'].append({
@@ -292,21 +282,21 @@ def extract_pmi_from_face(face_instance):
     return pmi_list
 ```
 
-**実装上の注意点**:
-- PMIはAP242専用（AP214には限定的にしかない）
-- `SHAPE_ASPECT`の扱いが複雑（複数の面をまとめて一つのデータムとすることもある）
-- CAD間での互換性が完全ではない
+**Implementation Considerations**:
+- PMI is exclusive to AP242 (limited support in AP214).
+- `SHAPE_ASPECT` handling can be complex (multiple faces might define a single datum).
+- Interoperability between CAD systems is not always perfect.
 
 ---
 
-## 4. プレゼンテーション（色・レイヤ）
+## 4. Presentation (Colors and Layers)
 
-**難易度**: ★★☆（中級）  
-**重要度**: ★★☆（AP214以降）
+**Difficulty**: ★★☆ (Intermediate)  
+**Importance**: ★★☆ (AP214 and later)
 
-形状要素に対して「スタイル」を割り当てることで表現します。
+Styles are assigned to geometry elements to represent colors and layers.
 
-### エンティティ階層図
+### Entity Hierarchy Diagram
 
 ```mermaid
 graph TD
@@ -317,47 +307,44 @@ graph TD
     SSS -->|"styles"| SSR["SURFACE_STYLE_RENDERING"]
     SSR -->|"surface_colour"| COLOUR["COLOUR_RGB<br/>(R,G,B: 0.0-1.0)"]
     
-    GEOM -.->|"assigned_items"| PLA["PRESENTATION_LAYER_ASSIGNMENT<br/>(レイヤ)"]
-    
-    style SI fill:#d4edda
-    style COLOUR fill:#fff3cd
+    GEOM -.->|"assigned_items"| PLA["PRESENTATION_LAYER_ASSIGNMENT<br/>(Layer)"]
 ```
 
-### 実ファイルでの例
+### Example in a Real File
 
 ```step
-# 面
+# Face
 #100 = ADVANCED_FACE(...);
 
-# 色の定義
-#200 = STYLED_ITEM('',(#210),#100);  # #100（面）にスタイル適用
+# Color Definition
+#200 = STYLED_ITEM('',(#210),#100);  # Apply style to #100 (Face)
 #210 = PRESENTATION_STYLE_ASSIGNMENT((#220));
 #220 = SURFACE_STYLE_USAGE(.BOTH.,#230);
 #230 = SURFACE_SIDE_STYLE('',(#240));
 #240 = SURFACE_STYLE_RENDERING(#250,.MATTE.);
-#250 = COLOUR_RGB('Red',1.0,0.0,0.0);  # RGB(1.0, 0.0, 0.0) = 赤
+#250 = COLOUR_RGB('Red',1.0,0.0,0.0);  # RGB(1.0, 0.0, 0.0) = Red
 
-# レイヤ
+# Layer
 #300 = PRESENTATION_LAYER_ASSIGNMENT('Layer_1','',(#100));
 ```
 
-### パーサー実装のヒント
+### Tips for Parser Implementation
 
-**色の抽出（Python風）**:
+**Extracting Colors (Python-style)**:
 
 ```python
 def get_face_color(face_instance):
     """
-    ADVANCED_FACEの色を取得
-    戻り値: (R, G, B) のタプル (0.0-1.0) or None
+    Retrieve the color of an ADVANCED_FACE.
+    Returns: (R, G, B) tuple (0.0-1.0) or None
     """
-    # STYLED_ITEMを探す（faceを参照しているもの）
+    # Find STYLED_ITEM referencing the face
     styled_items = find_all_by_attr('STYLED_ITEM', 'item', face_instance)
     
     for si in styled_items:
         for style in si.styles:
             if style.entity_type == 'PRESENTATION_STYLE_ASSIGNMENT':
-                # スタイルを辿る
+                # Traverse the style hierarchy
                 for psa_style in style.styles:
                     if psa_style.entity_type == 'SURFACE_STYLE_USAGE':
                         side_style = psa_style.style
@@ -367,42 +354,42 @@ def get_face_color(face_instance):
                                 if colour.entity_type == 'COLOUR_RGB':
                                     return (colour.red, colour.green, colour.blue)
     
-    return None  # 色が定義されていない
+    return None  # No color defined
 
 def get_face_layer(face_instance):
     """
-    ADVANCED_FACEのレイヤ名を取得
+    Retrieve the layer name for an ADVANCED_FACE.
     """
     layers = find_all_referencing(face_instance, 'PRESENTATION_LAYER_ASSIGNMENT', 'assigned_items')
     if layers:
-        return layers[0].name  # レイヤ名
+        return layers[0].name
     return None
 ```
 
-**実装上の注意点**:
-- 色は0.0〜1.0の範囲（0-255に変換する場合は`int(value * 255)`）
-- 複数のSTYLED_ITEMが同じ形状を参照する場合、優先順位に注意
-- レイヤは文字列なので、予約語（"HIDDEN"など）に注意
+**Implementation Considerations**:
+- Colors are in the range 0.0 to 1.0 (convert to 0-255 via `int(value * 255)`).
+- Handle priority if multiple `STYLED_ITEM`s reference the same geometry.
+- Layers are strings; beware of reserved words like "HIDDEN".
 
 ---
 
-## 💡 実装のベストプラクティス
+## 💡 Implementation Best Practices
 
-### 1. 段階的なパース
+### 1. Phased Parsing
 
-**推奨順序**:
-1. **Phase 1**: HEADER解析 → APバージョン確認
-2. **Phase 2**: インスタンスマップ構築（全インスタンスをハッシュマップに）
-3. **Phase 3**: PRODUCT → SHAPE_REPRESENTATION のコアパス
-4. **Phase 4**: アセンブリツリー構築（必要に応じて）
-5. **Phase 5**: 色・PMI（オプション）
+**Recommended Order**:
+1. **Phase 1**: HEADER Analysis → Confirm AP Version.
+2. **Phase 2**: Build Instance Map (All instances in a hash map).
+3. **Phase 3**: Core Path (PRODUCT → SHAPE_REPRESENTATION).
+4. **Phase 4**: Build Assembly Tree (As needed).
+5. **Phase 5**: Colors & PMI (Optional).
 
-</ 2. エラーハンドリング
+### 2. Error Handling
 
 ```python
 def safe_traverse(instance, target_type, attribute_name=None):
     """
-    安全なトラバーサル（参照が存在しない場合にNoneを返す）
+    Safe traversal (Returns None if reference does not exist).
     """
     try:
         if attribute_name:
@@ -420,35 +407,33 @@ def safe_traverse(instance, target_type, attribute_name=None):
         return None
 ```
 
-### 3. パフォーマンス最適化
+### 3. Performance Optimization
 
-| 手法 | 効果 | 実装難度 |
+| Method | Effect | Complexity |
 |------|------|----------|
-| インスタンスマップ（ハッシュマップ） | ◎ | 低 |
-| 参照の逆引きマップ | ◎ | 中 |
-| メモ化（キャッシュ） | ○ | 低 |
-| ストリーミングパース | △ | 高 |
+| Instance Map (Hash Map) | Best | Low |
+| Reverse Reference Map | Best | Medium |
+| Memoization (Caching) | Good | Low |
+| Streaming Parsing | Fair | High |
 
 ---
 
-## なぜこんなに複雑なのか
+## Why is it so complex?
 
-STEPは「単なる形状データ」ではなく、**「何が（Product）」「どのような文脈で（Definition）」「どのような形（Shape）をしているか」**を厳密に分離して管理するように設計されているためです。
+STEP is designed to strictly separate **"What (Product)"**, **"In what context (Definition)"**, and **"What shape (Shape)"** it has, rather than just being "geometric data."
 
-**メリット**:
-- 3D形状を変えずにリビジョンだけ上げられる
-- 同じ部品を複数のアセンブリで異なる位置に配置できる
-- 設計・解析・製造で同じモデルを文脈を変えて使える
+**Benefits**:
+- Revisions can be updated without changing the 3D geometry.
+- The same part can be placed in multiple locations in different assemblies.
+- The same model can be used across design, analysis, and manufacturing with different contexts.
 
-**実装者への影響**:
-- 最初は複雑に感じるが、パターンを理解すれば一貫性がある
-- 一度トラバーサル関数を実装すれば、他のケースにも応用可能
-
----
+**Impact on Implementers**:
+- It feels complex at first, but it's consistent once you understand the patterns.
+- Traversal functions developed for one case can be reused for others.
 
 ---
-## 📚 次のステップ
-- **[EXPRESS言語の基礎](./express-overview.md)** - スキーマの読み方を学ぶ
-- **[よくある落とし穴](../implementation/common-pitfalls.md)** - 実装時の注意点を確認
+## 📚 Next Steps
+- **[EXPRESS Language Basics](./express-overview.md)** - Learn how to read schemas.
+- **[Common Pitfalls](../implementation/common-pitfalls.md)** - Implementation warnings and solutions.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)

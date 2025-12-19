@@ -1,13 +1,13 @@
-# EXPRESS言語の概要 (EXPRESS Overview)
+# EXPRESS Overview
 
-STEPのデータモデルは、**EXPRESS** (ISO 10303-11) という情報モデリング言語で定義されています。
+The data models for STEP are defined using **EXPRESS** (ISO 10303-11), an information modeling language.
 
-## 1. EXPRESSとは
-* オブジェクト指向に近い特徴を持つデータ定義言語。
-* エンティティ（Entity）、型（Type）、関数（Function）、制約（Rule）を定義する。
-* STEP AP（例：AP214）は、このEXPRESSで書かれた巨大なスキーマです。
+## 1. What is EXPRESS?
+- A data definition language with object-oriented-like characteristics.
+- It defines Entities, Types, Functions, and Rules.
+- A STEP Application Protocol (e.g., AP214) is essentially a massive schema written in EXPRESS.
 
-## 2. スキーマの読み方
+## 2. How to Read the Schema
 ```express
 ENTITY product;
   id : identifier;
@@ -16,16 +16,16 @@ ENTITY product;
   frame_of_reference : SET [1:?] OF product_context;
 END_ENTITY;
 ```
-* `ENTITY`: クラスのようなもの。
-* `id`, `name`: 属性。
-* `OPTIONAL`: データがなくても良い。
-* `SET [1:?]`: 1つ以上の重複しないリスト。
+- `ENTITY`: Similar to a class.
+- `id`, `name`: Attributes.
+- `OPTIONAL`: The data value may be null.
+- `SET [1:?]`: A set of one or more unique items.
 
-## 3. 実装者が知っておくべきこと
-実装時、規格書の「どの属性が必須か」「どの型に変換可能か」はこのEXPRESS定義に基づいています。
+## 3. What Implementers Need to Know
+During implementation, rules like "which attributes are mandatory" and "which types are convertible" are all based on these EXPRESS definitions found in the standard.
 
 ---
-## 📚 次のステップ
-- **[よくある落とし穴](../implementation/common-pitfalls.md)** - 実装時に遭遇しやすい問題と対策
+## 📚 Next Steps
+- **[Common Pitfalls](../implementation/common-pitfalls.md)** - Problems often encountered during implementation and their solutions.
 
-[READMEに戻る](../README.md)
+[Back to README](../README.md)
