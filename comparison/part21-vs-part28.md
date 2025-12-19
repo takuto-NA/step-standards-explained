@@ -130,6 +130,24 @@ ugopen -import file.stpx
 
 ## 📚 Technical Background: Part 21 vs Part 28
 
+### Visual Comparison of Encoding
+```mermaid
+graph LR
+    subgraph Part21 ["Part 21 (ASCII)"]
+        direction TB
+        P21_H[HEADER]
+        P21_D[DATA]
+        P21_ID["#10=PRODUCT(...)"]
+    end
+    subgraph Part28 ["Part 28 (XML)"]
+        direction TB
+        P28_Root["&lt;iso_10303_28&gt;"]
+        P28_Header["&lt;header&gt;"]
+        P28_Data["&lt;data&gt;"]
+        P28_Entity["&lt;product id='...'&gt;"]
+    end
+```
+
 ### Differences in File Structure
 
 **Part 21 (ASCII)**:

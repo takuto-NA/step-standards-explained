@@ -36,6 +36,17 @@ This document explains problems frequently encountered during STEP implementatio
 
 ### ✅ Solutions
 
+#### Unit Normalization Flow
+Implementers should normalize all incoming data to a single internal unit system (typically mm).
+
+```mermaid
+graph LR
+    FILE["STEP File<br/>(#500 SI_UNIT)"] --> PARSE[Parse Units]
+    PARSE --> SCALE["Calculate Factor<br/>(e.g., .MILLI. -> 0.001)"]
+    SCALE --> COORDS["Multiply Coordinates<br/>(x * factor * 1000)"]
+    COORDS --> INT["Internal Geometry<br/>(Normalized mm)"]
+```
+
 #### 1. Always Verify UNIT_CONTEXT
 
 ```step
@@ -507,7 +518,25 @@ for line in step_file:
 
 ### ✅ Solutions
 
-**Two-Pass Parser**:
+#### Two-Pass Parser Strategy
+To handle forward references correctly, a "Two-Pass" approach is required.
+
+```mermaid
+flowchart TD
+    Start([Open File]) --> Pass1[Pass 1: Scan & Map]
+    Pass1 --> Scan[Read Line by Line]
+    Scan --> Map["Store in Map<br/>(ID -> Raw Entity)"]
+    Map --> EOF1{End of File?}
+    EOF1 -- No --> Scan
+    EOF1 -- Yes --> Pass2[Pass 2: Resolve References]
+    Pass2 --> Traverse[Iterate through Map]
+    Traverse --> Resolve["Replace #ID Strings<br/>with Object Pointers"]
+    Resolve --> AllDone{All Resolved?}
+    AllDone -- No --> Traverse
+    AllDone -- Yes --> End([Ready for Use])
+```
+
+**Two-Pass Parser Implementation**:
 ```python
 # ✅ Correct: Two-pass processing
 # Pass 1: Load all instances

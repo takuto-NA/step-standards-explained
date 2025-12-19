@@ -2,6 +2,14 @@
 
 A detailed look at the attributes required to correctly define product information in a STEP file (Part 21).
 
+### Hierarchy Overview
+```mermaid
+graph TD
+    P[PRODUCT] ---|"of_product"| PDF[PRODUCT_DEFINITION_FORMATION]
+    PDF ---|"formation"| PD[PRODUCT_DEFINITION]
+    PD ---|"definition"| PDS[PRODUCT_DEFINITION_SHAPE]
+```
+
 ## 1. PRODUCT
 The top-level element defining the part or assembly itself.
 

@@ -10,6 +10,28 @@ This document explains the mechanisms for ensuring the quality of STEP data and 
 * A mechanism to verify that geometric data has been transmitted correctly.
 * Geometric information such as volume, surface area, and center of mass is embedded within the STEP data. The receiver can then recalculate these values and compare them to detect conversion errors.
 
+### GVP Workflow
+```mermaid
+flowchart LR
+    subgraph Sender ["Sender (CAD Exporter)"]
+        S_GEO[Original Geometry] --> S_CALC[Calculate Volume/Area]
+        S_CALC --> S_EMBED["Embed GVP Entities<br/>(GEOMETRIC_VALIDATION_PROPERTY)"]
+        S_EMBED --> S_STEP[Output STEP File]
+    end
+    
+    S_STEP --> Receiver
+    
+    subgraph Receiver ["Receiver (CAD Importer)"]
+        R_STEP[Read STEP File] --> R_GEO[Imported Geometry]
+        R_STEP --> R_VAL["Read Embedded GVP"]
+        R_GEO --> R_RECALC[Recalculate Volume/Area]
+        R_RECALC --> COMP{Compare}
+        R_VAL --> COMP
+        COMP -->|Match| Success([Success])
+        COMP -->|Mismatch| Warn([Warning: Data Corrupted])
+    end
+```
+
 ## 3. Recommended Resources
 * [CAx-IF Recommended Practices](https://www.cax-if.org/joint_testing_info.html) - Guidelines for implementation.
 * [MBx Interoperability Forum](https://www.mbx-if.org/) - Latest interoperability information.

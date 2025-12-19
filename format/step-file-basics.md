@@ -5,6 +5,17 @@ STEP files (`*.stp`, `*.step`) are plain text files specified by ISO 10303-21.
 ## 1. File Structure
 The file is broadly divided into three sections.
 
+```mermaid
+graph TD
+    ISO["ISO-10303-21;"] --> HEADER["HEADER;<br/>(Metadata)"]
+    HEADER --> H_SEC["FILE_NAME, FILE_SCHEMA..."]
+    H_SEC --> H_END["ENDSEC;"]
+    H_END --> DATA["DATA;<br/>(Geometry & Structures)"]
+    DATA --> D_SEC["#10=PRODUCT, #20=..."]
+    D_SEC --> D_END["ENDSEC;"]
+    D_END --> ISO_END["END-ISO-10303-21;"]
+```
+
 ```text
 ISO-10303-21;
 HEADER;

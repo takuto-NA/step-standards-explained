@@ -41,6 +41,19 @@ This guide is a super-intro for implementers who have CAD experience but are new
 
 The STEP standard (ISO 10303) is a massive collection of hundreds of "parts":
 
+#### Relationship Map of Major Parts
+```mermaid
+graph TD
+    P11[Part 11: EXPRESS] -->|Defines Schema| APs
+    APs[Application Protocols]
+    APs --- AP203[Part 203: AP203]
+    APs --- AP214[Part 214: AP214]
+    APs --- AP242[Part 242: AP242]
+    
+    P21[Part 21: Text Format] -->|Encodes Data| P21_File["*.step File"]
+    APs -->|Structured via| P21_File
+```
+
 #### List of Major Parts
 
 **Parts 1-20s: Fundamentals & Shared Specifications**

@@ -4,6 +4,20 @@ When creating (implementing) a STEP file from scratch, you don't need to include
 
 ## 1. Shortest Path to Success
 
+```mermaid
+flowchart TD
+    H[1. HEADER Section] --> P[2. PRODUCT Structure]
+    P --> C[3. Context & Units]
+    C --> G[4. Basic Geometry]
+    G --> V[5. Verification]
+    
+    subgraph P_Detail [Structure Detail]
+        direction LR
+        PR[PRODUCT] --> PD[PROD_DEFINITION]
+        PD --> PDS[PROD_DEF_SHAPE]
+    end
+```
+
 1. **Prepare the HEADER Section**: Specify the correct AP name.
 2. **Minimal PRODUCT Configuration**:
    - `PRODUCT`

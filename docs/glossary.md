@@ -15,6 +15,14 @@ The five core concepts that every implementer should understand first.
 
 A subset of the standard defined for a specific industry or application.
 
+**AP Evolution**:
+```mermaid
+graph TD
+    AP203["AP203<br/>(Aerospace/Legacy)"] --> AP242["AP242<br/>(Modern Unified)"]
+    AP214["AP214<br/>(Automotive/Mainstream)"] --> AP242
+    style AP242 stroke-width:4px
+```
+
 **What Implementers Need to Know**:
 - AP203, AP214, and AP242 are the major versions.
 - Different APs support different entities (data structures).
@@ -33,6 +41,21 @@ FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF { 1 0 10303 442 1 
 ### 2. Entity ★★★
 
 The building blocks of STEP data. Equivalent to a "Class" in Object-Oriented Programming.
+
+**Relationship Concept**:
+```mermaid
+classDiagram
+    class Entity {
+        <<Schema Definition>>
+        Attribute1
+        Attribute2
+    }
+    class Instance {
+        <<Data in File>>
+        #ID = Entity(Value1, Value2)
+    }
+    Entity <|-- Instance : Instantiates
+```
 
 **What Implementers Need to Know**:
 - Written in all **UPPERCASE** (e.g., `PRODUCT`, `SHAPE_REPRESENTATION`).
@@ -68,13 +91,14 @@ A method of defining shapes by their boundaries: faces, edges, and vertices.
 | Editability | Parametrically editable | Difficult |
 
 **B-rep Hierarchy in STEP**:
-```
-MANIFOLD_SOLID_BREP
-  └─ CLOSED_SHELL
-      └─ ADVANCED_FACE (Face)
-          └─ EDGE_LOOP (Edge Loop)
-              └─ ORIENTED_EDGE (Directional Edge)
-                  └─ VERTEX_POINT (Vertex)
+```mermaid
+graph TD
+    MSB[MANIFOLD_SOLID_BREP] --> CS[CLOSED_SHELL]
+    CS --> AF[ADVANCED_FACE]
+    AF --> EL[EDGE_LOOP]
+    EL --> OE[ORIENTED_EDGE]
+    OE --> EC[EDGE_CURVE]
+    OE --> VP[VERTEX_POINT]
 ```
 
 **Related Terms**: [NURBS](#nurbs), [Tessellation](#tessellation)

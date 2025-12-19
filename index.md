@@ -26,6 +26,24 @@ Engineers and developers often don’t have the context they need to implement S
 
 The STEP standard is supported by all major CAD and simulation tools. Understanding which version (AP) to use is critical for interoperability.
 
+### The Big Picture: How it fits together
+```mermaid
+graph LR
+    CAD1[CAD System A] -- "Export" --> STEP_FILE[".step File<br/>(Part 21 Encoding)"]
+    STEP_FILE -- "Import" --> CAD2[CAD System B]
+    
+    subgraph Standard [ISO 10303 Standard]
+        direction TB
+        P11[Part 11: EXPRESS Schema] --> APs[Application Protocols]
+        APs --- AP203
+        APs --- AP214
+        APs --- AP242
+        P21[Part 21: Text Encoding]
+    end
+    
+    Standard -.->|Governs| STEP_FILE
+```
+
 | Application Protocol | Primary Focus | Use Case |
 | :--- | :--- | :--- |
 | **AP203** | Configuration Controlled Design | Legacy systems, basic geometry |

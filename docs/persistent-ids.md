@@ -15,6 +15,14 @@ For "Persistent IDs" that survive re-exports and work in tools like Ansys, the s
 
 To name a face, the STEP file creates a link between the geometric face and a "Shape Aspect" entity.
 
+### Visual Relationship
+```mermaid
+graph LR
+    SA["#200 SHAPE_ASPECT<br/>'Inlet'"] ---|"of_shape"| AF["#100 ADVANCED_FACE"]
+    AF ---|"face_geometry"| P["#120 PLANE"]
+    AF ---|"bounds"| BO["#110 FACE_OUTER_BOUND"]
+```
+
 ### STEP Code Snippet
 Here is how a named face looks inside a Part 21 file:
 

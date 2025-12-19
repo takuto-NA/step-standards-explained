@@ -4,6 +4,19 @@ While many Application Protocols (APs) exist in STEP, three are primarily used i
 
 ## 1. Quick Diagnosis Flow
 
+```mermaid
+flowchart TD
+    Start([Start]) --> PMI{Need PMI?}
+    PMI -- Yes --> AP242[AP242]
+    PMI -- No --> Aero{Aerospace/Defense?}
+    Aero -- Yes --> AP242
+    Aero -- No --> Auto{Automotive/Colors?}
+    Auto -- Yes --> AP214[AP214]
+    Auto -- No --> Simple[Simple Geometry?]
+    Simple -- Yes --> AP203[AP203]
+    Simple -- No --> AP214
+```
+
 1. **Do you need to include PMI (dimensions and geometric tolerances) in the data?**
    - **Yes** → **AP242** is your only choice.
    - **No** → Next

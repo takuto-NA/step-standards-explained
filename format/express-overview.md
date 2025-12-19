@@ -7,6 +7,15 @@ The data models for STEP are defined using **EXPRESS** (ISO 10303-11), an inform
 - It defines Entities, Types, Functions, and Rules.
 - A STEP Application Protocol (e.g., AP214) is essentially a massive schema written in EXPRESS.
 
+### Relationship: Schema vs. Data
+```mermaid
+graph TD
+    ISO["ISO 10303 Standard"] --> EXP["EXPRESS Schema<br/>(Part 11)"]
+    EXP --> ENT["ENTITY Definition<br/>(The 'Class')"]
+    ENT -->|Defines Structure| P21["Part 21 File<br/>(The 'Data')"]
+    P21 --> INST["#ID = Instance<br/>(The 'Object')"]
+```
+
 ## 2. How to Read the Schema
 ```express
 ENTITY product;
