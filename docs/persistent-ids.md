@@ -23,11 +23,13 @@ Here is how a named face looks inside a Part 21 file:
 #100 = ADVANCED_FACE('', (#110), #120, .T.);
 
 /* 2. The Semantic Label (The "Persistent ID") */
-#200 = SHAPE_ASPECT('Inlet', 'Description', #300, .T.);
+/* SHAPE_ASPECT(name, description, of_shape, product_definitional) */
+#200 = SHAPE_ASPECT('Inlet', 'Description', #100, .T.);
 
-/* 3. The link: SHAPE_ASPECT references the geometry via PRODUCT_DEFINITION_SHAPE */
+/* 3. The link: SHAPE_ASPECT.of_shape directly references the ADVANCED_FACE */
 /* Note: The actual linking mechanism varies by CAD implementation */
-/* Some CAD systems use PRODUCT_DEFINITION_SHAPE.of_shape to link SHAPE_ASPECT to ADVANCED_FACE */
+/* Some CAD systems may use intermediate entities, but the standard specifies */
+/* that SHAPE_ASPECT.of_shape should reference GEOMETRIC_REPRESENTATION_ITEM (like ADVANCED_FACE) */
 ```
 
 ## 3. Rhino 8 / Grasshopper Workflow
