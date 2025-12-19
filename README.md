@@ -18,7 +18,7 @@
 ## 🗺 リポジトリ構成 (Navigation Map)
 
 - `versions/`: [AP242 ed3 (最新)](./versions/ap242-ed3.md), AP242 ed2, AP214, AP203 等の主要バージョン別解説。
-- `comparison/`: 機能マトリックスやPMIサポートの比較表。
+- `comparison/`: [機能マトリックス](./comparison/capability-matrix.md), [PMIサポート](./comparison/pmi-support.md), [CAD対応状況マトリックス](./comparison/cad-support-matrix.md) の比較表。
 - `format/`: STEPファイルの基本・データ構造の解説。
 - `implementation/`: 実装上のテクニックや注意点。
 - `examples/`: [最小構成のSTEPファイル](./examples/minimal-product.step.md) 等のサンプル。
