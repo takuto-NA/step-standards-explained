@@ -1,0 +1,10 @@
+# Reference data
+reference/
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# IDEs
+.vscode/
+.idea/
