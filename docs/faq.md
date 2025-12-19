@@ -220,9 +220,11 @@ Detail: [Which AP should I use?](../decision-guides/which-ap-should-i-use.md)
 ### Q14: Can I assign persistent IDs or names to faces?
 
 **A: Yes**, but not using the `#123` instance IDs. You must use **`SHAPE_ASPECT`** (labels).
-- **AP242**: Full support for semantic face/edge naming.
-- **AP214**: Partial support (depends on CAD implementation).
+- **AP242**: Standard support for semantic face/edge naming via `SHAPE_ASPECT`.
+- **AP214**: Vendor-dependent support (some CAD systems may export face names, but it's not standardized).
 - **AP203**: Generally not supported for user-defined names.
+
+**Important**: Even with AP242, the actual implementation depends on your CAD software's export capabilities.
 
 Detailed guide: [Persistent IDs and Face Naming](./persistent-ids.md)
 
@@ -230,10 +232,11 @@ Detailed guide: [Persistent IDs and Face Naming](./persistent-ids.md)
 
 ### Q15: Does Ansys Workbench read face names?
 
-**A: Yes**, it can import them as **Named Selections**.
-- Ensure the STEP file is exported as **AP242**.
-- In Ansys Geometry import settings, set "Named Selections" to `On`.
-- Use a consistent naming convention in CAD to help Ansys filter the selections.
+**A: Yes**, it can import them as **Named Selections**, but the exact method varies by Ansys version.
+- Ensure the STEP file is exported as **AP242** (best compatibility).
+- In Ansys Geometry import settings (DesignModeler or SpaceClaim), enable "Import Named Selections" or similar option.
+- Ansys typically reads `SHAPE_ASPECT` entity names from the STEP file.
+- If names don't appear, verify: (1) AP242 export, (2) Face names were exported, (3) Import settings are correct.
 
 ---
 

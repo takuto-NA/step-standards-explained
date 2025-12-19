@@ -20,14 +20,14 @@ Here is how a named face looks inside a Part 21 file:
 
 ```step
 /* 1. The geometric face */
-#100 = ADVANCED_FACE('Face_Name_Internal', (#110), #120, .T.);
+#100 = ADVANCED_FACE('', (#110), #120, .T.);
 
 /* 2. The Semantic Label (The "Persistent ID") */
 #200 = SHAPE_ASPECT('Inlet', 'Description', #300, .T.);
 
-/* 3. The link between the name and the geometry */
-#400 = ( SHAPE_ASPECT_RELATIONSHIP('','',#200,#500) );
-/* ... simplified for readability ... */
+/* 3. The link: SHAPE_ASPECT references the geometry via PRODUCT_DEFINITION_SHAPE */
+/* Note: The actual linking mechanism varies by CAD implementation */
+/* Some CAD systems use PRODUCT_DEFINITION_SHAPE.of_shape to link SHAPE_ASPECT to ADVANCED_FACE */
 ```
 
 ## 3. Rhino 8 / Grasshopper Workflow
@@ -36,34 +36,35 @@ Rhino 8 significantly improved the export of these attributes.
 
 ### Rhino 8 Manual Export
 1. Select the face (Sub-object selection: `Ctrl+Shift+Click`).
-2. In the **Properties** panel, set the **Object Name**.
+2. In the **Properties** panel, set the **Object Name** (or use **User Text** field).
 3. When exporting as STEP, select **AP242**.
-4. Ensure "Export object names" or similar is checked in the options.
+4. In the export options, ensure that object names/text are exported (this may be enabled by default in Rhino 8).
 
 ### Grasshopper (Rhino 8)
-1. Use the **Model Object** components to assign attributes to geometry.
-2. Use the **Bake** component with the attributes set.
-3. The names assigned to faces in Grasshopper will now carry through to the STEP export if AP242 is used.
+1. Use **User Data** components or **Object Attributes** to assign names/text to geometry.
+2. Use the **Bake** component to create Rhino objects with these attributes.
+3. The names assigned to faces will carry through to the STEP export if AP242 is selected and the export settings preserve object names.
 
 ## 4. Ansys Workbench Integration
 
 Ansys Workbench can read these labels and automatically convert them into **Named Selections**.
 
 ### Required Settings in Ansys
-1. **Geometry Import Options**:
-   - Set **Named Selections** to `On`.
-   - **Named Selection Key**: This is a filter prefix. If you leave it blank, Ansys will try to import all compatible labels. If you set it to `NS`, it will only import labels starting with `NS`.
-2. **Filtering**:
-   - Ansys looks for `SHAPE_ASPECT` labels (and sometimes `GEOMETRIC_SET` names) and maps them to its internal selection system.
-   - If names don't appear, check if the export was **AP242** (best) or **AP214** (standard for colors/layers).
+1. **Geometry Import Options** (in DesignModeler or SpaceClaim):
+   - Enable **"Import Named Selections"** or similar option (exact menu name varies by Ansys version).
+   - **Named Selection Key/Filter**: Optional prefix filter. If left blank, Ansys attempts to import all compatible labels from the STEP file.
+2. **How Ansys Reads Names**:
+   - Ansys typically looks for `SHAPE_ASPECT` entity names in AP242 files.
+   - Some versions may also recognize `GEOMETRIC_SET` names or other entity labels.
+   - If names don't appear, verify: (1) Export was **AP242**, (2) Face names were actually exported, (3) Import settings are correct.
 
 ## 5. Summary Table
 
 | Feature | AP203 | AP214 | AP242 |
 | :--- | :---: | :---: | :---: |
 | Instance IDs (#) | Volatile | Volatile | Volatile |
-| Face Names (Labels) | ❌ Poor | ⚠ Partial | ✅ Robust |
-| Persistence | ❌ No | ⚠ Manual | ✅ Semantic |
+| Face Names (Labels) | ❌ Not Standard | ⚠ Vendor-Dependent | ✅ Standard (SHAPE_ASPECT) |
+| Persistence | ❌ No | ⚠ Limited | ✅ Semantic |
 
 ---
 [Back to README](../README.md)
