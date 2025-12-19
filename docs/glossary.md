@@ -276,5 +276,7 @@ CADベンダー間でのSTEP実装ガイドラインを策定する団体。
 - **EXPRESSスキーマ**: 各AP規格書の付録に記載
 
 ---
+## 📚 次のステップ
+- **[スタートガイド](./getting-started.md)** - STEPの全体像を把握
 
 [READMEに戻る](../README.md)

@@ -1,6 +1,7 @@
 # 最小構成のSTEPファイル解析 (Minimal STEP Analysis)
 
 実ファイル (.stp) を読み解くためのガイドです。ここでは「1つの部品」を定義する最小構成を分解します。
+実際のファイルはこちらからダウンロードできます: **[minimal_part.step](./minimal_part.step)**
 
 ## 1. ヘッダー部分 (Header)
 ```step

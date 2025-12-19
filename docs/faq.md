@@ -526,5 +526,7 @@ with open('output.step', 'w') as f:
 4. **[Common Pitfalls](../implementation/common-pitfalls.md)** で実装の注意点を確認
 
 ---
+## 📚 次のステップ
+- **[どのAPを使うべきか？](../decision-guides/which-ap-should-i-use.md)** - プロジェクトに最適なAPを選択
 
 [READMEに戻る](../README.md)

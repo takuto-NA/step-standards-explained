@@ -446,14 +446,9 @@ STEPは「単なる形状データ」ではなく、**「何が（Product）」�
 
 ---
 
-## 📚 次のステップ
-
-データモデルを理解したら:
-
-1. **[STEPファイル完全解説](../examples/step-file-walkthrough.md)** - 実ファイルで確認
-2. **[よくある落とし穴](../implementation/common-pitfalls.md)** - 実装の注意点
-3. **[EXPRESS言語](./express-overview.md)** - スキーマの読み方
-
 ---
+## 📚 次のステップ
+- **[EXPRESS言語の基礎](./express-overview.md)** - スキーマの読み方を学ぶ
+- **[よくある落とし穴](../implementation/common-pitfalls.md)** - 実装時の注意点を確認
 
 [READMEに戻る](../README.md)

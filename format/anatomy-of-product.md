@@ -45,5 +45,8 @@ END_ENTITY;
 - **Contextの使い回し**: `#1=PRODUCT_CONTEXT(...)` のように定義したコンテキストを、複数の `PRODUCT` から参照するのが標準的な書き方です。
 
 ---
+## 📚 次のステップ
+- **[データモデル・マップ](./data-model-map.md)** - 各エンティティがどのように繋がるかを確認する
+
 [READMEに戻る](../README.md)
 | [データモデル・マップに戻る](./data-model-map.md)

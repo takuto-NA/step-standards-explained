@@ -8,7 +8,8 @@
 
 ## 📦 サンプルファイル: Simple Cube (立方体)
 
-以下は、一辺10mmの立方体を表現する完全なSTEPファイルです。コピー&ペーストして`.step`で保存すれば、CADソフトで開けます。
+以下は、一辺10mmの立方体を表現する完全なSTEPファイルです。
+実際のファイルはこちらからダウンロードできます: **[cube.step](./cube.step)**
 
 ```step
 ISO-10303-21;
@@ -654,12 +655,7 @@ graph TD
     SHELL --> F6[#290 Face6]
     F1 --> E1[#300 Edge1]
     E1 --> V1[#500 Vertex1]
-    V1 --> P1[#700 Point<br/>0,0,0]
-    
-    style P fill:#e1f5ff
-    style PDS fill:#fff3cd
-    style SR fill:#d4edda
-    style BREP fill:#fce4ec
+    V1 --> P1["#700 Point (0,0,0)"]
 ```
 
 ---
@@ -742,5 +738,7 @@ mmからmに変更:
 3. **実際のパーサー実装**: Pythonでこのファイルをパースしてみる
 
 ---
+## 📚 次のステップ
+- **[データモデル・マップ](../format/data-model-map.md)** - エンティティの階層構造を把握する
 
 [READMEに戻る](../README.md)

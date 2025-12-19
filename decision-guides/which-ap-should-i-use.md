@@ -32,4 +32,7 @@ STEPには多くのAP（Application Protocol）が存在しますが、現代の
 * **長期保存 (Archiving)**: AP242 + LOTAR
 
 ---
+## 📚 次のステップ
+- **[機能マトリックス](../comparison/capability-matrix.md)** - 各APの機能差を詳細に比較
+
 [READMEに戻る](../README.md)

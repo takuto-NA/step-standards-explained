@@ -311,5 +311,8 @@ graph LR
 ```
 
 ---
+## 📚 次のステップ
+- **[FAQ](./faq.md)** - よくある疑問を解消
+- **[どのAPを使うべきか？](../decision-guides/which-ap-should-i-use.md)** - 実際に使用するAPを選択
 
 [READMEに戻る](../README.md)

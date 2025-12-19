@@ -1,6 +1,6 @@
 # STEP規格解説 (STEP Standards Explained)
 
-> Practical guide to STEP (ISO 10303): versions, capabilities, and implementation.
+> STEP規格（ISO 10303）の実践ガイド：バージョン、機能、および実装方法の解説。
 
 ---
 
@@ -147,7 +147,10 @@ step-standards-explained/
 └─ examples/           ← 💡 サンプルファイル・解説
 ```
 
-**推奨**: まず`docs/`で基礎を固め、`decision-guides/`でAPを選び、`format/`と`implementation/`で実装を進める。
+**クイックリンク**:
+- 🛠️ **[よくある落とし穴 (Common Pitfalls)](./implementation/common-pitfalls.md)** - 実装で詰まったらここ
+- 📐 **[AP242 ed2 詳細](./versions/ap242-ed2.md)** - 最新の主流規格
+- 📖 **[用語集](./docs/glossary.md)** - 迷ったら用語を確認
 
 ---
 

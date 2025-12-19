@@ -25,4 +25,7 @@ END_ENTITY;
 実装時、規格書の「どの属性が必須か」「どの型に変換可能か」はこのEXPRESS定義に基づいています。
 
 ---
+## 📚 次のステップ
+- **[よくある落とし穴](../implementation/common-pitfalls.md)** - 実装時に遭遇しやすい問題と対策
+
 [READMEに戻る](../README.md)

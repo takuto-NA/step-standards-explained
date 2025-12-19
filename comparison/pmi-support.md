@@ -48,4 +48,7 @@ graph TD
 - **CAx-IF推奨**: セマンティック情報をやり取りするには、CAx-IFの `Recommended Practices for PMI` に厳密に従い、`SHAPE_ASPECT` を正しく構成する必要があります。
 
 ---
+## 📚 次のステップ
+- **[CADサポートマトリックス](./cad-support-matrix.md)** - 各CADでのPMI対応状況を確認
+
 [READMEに戻る](../README.md)
