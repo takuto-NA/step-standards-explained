@@ -20,20 +20,32 @@ PMI (Product Manufacturing Information) のSTEPにおける扱いは、実装上
 | **AP214** | ✅ | ❌ | `DRAUGHTING_CALLOUT` |
 | **AP242** | ✅ | ✅ | `GEOMETRIC_TOLERANCE`, `SHAPE_ASPECT` |
 
-## 3. 実装の構造 (Semantic PMI)
+## 3. 実装の構造 (PMI Linkage)
 
-AP242における公差情報の紐付け構造です。
+PMIが「どこにあるか（プレゼンテーション）」と「何を表すか（セマンティック）」がどのように紐付くかの全体図です。
 
 ```mermaid
 graph TD
-    Face[ADVANCED_FACE] -- "Linked by" --> SA[SHAPE_ASPECT]
-    SA -- "Definition for" --> GT[GEOMETRIC_TOLERANCE]
-    GT -- "Uses" --> DS[DIMENSIONAL_SIZE / LOCATION]
-    GT -- "Refers to" --> DR[DATUM_REFERENCE]
+    subgraph Presentation ["プレゼンテーション (表示)"]
+        DC[DRAUGHTING_CALLOUT] --> ANN_REP[ANNOTATION_OCCURRENCE]
+        ANN_REP --> GRAPH_ITEM[GRAPHICAL_REPRESENTATION_ITEM]
+    end
+
+    subgraph Semantic ["セマンティック (データ)"]
+        GT[GEOMETRIC_TOLERANCE] --> SA[SHAPE_ASPECT]
+        SA --> AF[ADVANCED_FACE]
+    end
+
+    DC -- "Links to" --> GT
 ```
 
+### 重要なリンク
+- **SHAPE_ASPECT_RELATIONSHIP**: 2つの面（データムAとデータムB）の間の公差（直角度など）を定義する際に使用。
+- **REPRESENTATION_ITEM**: ここに実際の文字データ（Text）やポリラインが格納されます。
+
 ## 4. 実装の壁
-「AP242で出したのにPMIが消えた」原因のほとんどは、受信側CADの実装不足、または送信側が「グラフィカル」のみで出力していることにあります。セマンティック情報をやり取りするには、CAx-IF などの実装ガイドラインに厳密に従う必要があります。
+「AP242で出したのにPMIが消えた」原因のほとんどは、受信側CADの実装不足、または送信側が「グラフィカル」のみで出力していることにあります。
+- **CAx-IF推奨**: セマンティック情報をやり取りするには、CAx-IFの `Recommended Practices for PMI` に厳密に従い、`SHAPE_ASPECT` を正しく構成する必要があります。
 
 ---
 [READMEに戻る](../README.md)

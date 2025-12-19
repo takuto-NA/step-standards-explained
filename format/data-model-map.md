@@ -16,10 +16,12 @@ graph TD
     RI --> AF[ADVANCED_FACE / GEOM_REP_ITEM]
 ```
 
-- **PRODUCT**: 部品そのものを表すトップレベルオブジェクト。
-- **PRODUCT_DEFINITION_FORMATION**: バージョン/リビジョンを管理。
-- **PRODUCT_DEFINITION**: 設計、解析などのコンテキスト定義。
-- **PRODUCT_DEFINITION_SHAPE**: 管理データと形状データの「橋渡し」役。
+- **PRODUCT**: 部品そのものを表すトップレベルオブジェクト。 (id, name, description, frame_of_reference)
+- **PRODUCT_DEFINITION_FORMATION**: バージョン/リビジョンを管理。 (id, description, of_product)
+- **PRODUCT_DEFINITION**: 設計、解析などのコンテキスト定義。 (id, description, formation, frame_of_reference)
+- **PRODUCT_DEFINITION_SHAPE**: 管理データと形状データの「橋渡し」役。 (name, description, definition)
+
+👉 詳細: [プロダクト・エンティティの解剖図](./anatomy-of-product.md)
 
 ---
 
@@ -33,8 +35,10 @@ graph LR
     NAUO -- "Points to" --> Child[Child PRODUCT_DEFINITION]
 ```
 
-- **NEXT_ASSEMBLY_USAGE_OCCURRENCE**: 子部品が親アセンブリ内で一回使用されることを定義。
-- **CONTEXT_DEPENDENT_SHAPE_REPRESENTATION**: 配置情報（座標変換行列）を形状モデルに紐付けます。
+- **NEXT_ASSEMBLY_USAGE_OCCURRENCE**: 子部品が親アセンブリ内で一回使用されることを定義。 (id, name, description, relating_PD, related_PD, reference_designator)
+- **CONTEXT_DEPENDENT_SHAPE_REPRESENTATION**: 配置情報（座標変換行列）を形状モデルに紐付けます。 (representation_relation, representation_conformance)
+
+👉 詳細: [アセンブリ構造の解説 (比較ページ)](../comparison/assembly-support.md)
 
 ---
 
