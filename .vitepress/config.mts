@@ -8,6 +8,7 @@ export default withMermaid(defineConfig({
   srcDir: '.',
   cleanUrls: true,
   ignoreDeadLinks: true,
+  appearance: 'dark',
   
   // Mermaid support is handled by withMermaid
   markdown: {

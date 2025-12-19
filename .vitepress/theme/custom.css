@@ -1,0 +1,21 @@
+/**
+ * Customize the default theme's colors to look more like the reference site (agentskills.io).
+ */
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
+}
+
+/* Dark mode specific tweaks */
+.dark {
+  --vp-c-bg: #0b0b0b;
+  --vp-c-bg-alt: #161616;
+  --vp-c-bg-elv: #1d1d1d;
+  --vp-c-bg-soft: #161616;
+  
+  --vp-c-brand-1: #3451b2;
+  --vp-c-brand-2: #3a5ccc;
+  --vp-c-brand-3: #5672cd;
+  --vp-c-brand-soft: rgba(52, 81, 178, 0.14);
+}
+
