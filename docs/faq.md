@@ -13,7 +13,8 @@ Answers to common questions from STEP beginners and implementers, covering **30+
 5. [Implementation](#implementation)
 6. [Troubleshooting](#troubleshooting)
 7. [Geometry and Topology](#geometry-and-topology)
-8. [Tools and Resources](#tools-and-resources)
+8. [T-Splines](#t-splines)
+9. [Tools and Resources](#tools-and-resources)
 
 ---
 
@@ -412,9 +413,10 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ### Q26: How are fillets and complex blends represented?
 
-**A:** In most STEP files exported from CAD, fillets and complex blends are converted into **NURBS patches** (`B_SPLINE_SURFACE`). 
-- Simple circular fillets might use `CYLINDRICAL_SURFACE` or `TOROIDAL_SURFACE`.
-- Complex blends (variable radius) are always NURBS.
+**A:** It depends on the complexity of the fillet and the CAD system's export settings:
+- **Elementary Surfaces**: Simple, constant-radius fillets are often represented as `CYLINDRICAL_SURFACE` (for straight edges) or `TOROIDAL_SURFACE` (for circular edges).
+- **NURBS**: Complex blends, variable-radius fillets, or corner transitions are represented as **NURBS patches** (`B_SPLINE_SURFACE`).
+- **Standardization**: Many modern exporters convert all complex transitions to NURBS to ensure maximum compatibility, even if they could technically be represented as elementary surfaces.
 
 ---
 
@@ -443,9 +445,19 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
+## T-Splines
+
+### Q30: Does STEP support T-Splines?
+
+**A: No, not natively.** The STEP standard (ISO 10303) is built on NURBS and B-Splines.
+- When you export a T-Spline model to STEP, the CAD software converts the T-Spline mesh into multiple **standard NURBS patches** (`B_SPLINE_SURFACE`).
+- This conversion ensures that the file can be opened in any CAD system, but you lose the "T-junction" editability of the original T-Spline model.
+
+---
+
 ## Tools and Resources
 
-### Q30: Are there free STEP viewers?
+### Q31: Are there free STEP viewers?
 
 **A:**
 
@@ -460,7 +472,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q31: Where can I get a validator?
+### Q32: Where can I get a validator?
 
 **A:**
 
@@ -475,7 +487,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q32: Where is the official documentation?
+### Q33: Where is the official documentation?
 
 **A:**
 
@@ -489,7 +501,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q33: What is CAx-IF?
+### Q34: What is CAx-IF?
 
 **A:** **CAD-CAx Implementor Forum**: An international group that establishes STEP implementation guidelines between CAD vendors.
 
@@ -507,7 +519,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q34: What is LOTAR?
+### Q35: What is LOTAR?
 
 **A:** **Long Term Archiving and Retrieval**: A standard for long-term preservation and retrieval of digital STEP data.
 
@@ -519,7 +531,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q35: What is MBD?
+### Q36: What is MBD?
 
 **A:** **Model Based Definition**: A practice where the 3D model is the only "source of truth" (Master), containing all design and manufacturing information.
 
@@ -531,7 +543,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q36: Should I build my own parser or use a library?
+### Q37: Should I build my own parser or use a library?
 
 **A:**
 
@@ -550,7 +562,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q37: How do I generate STEP files programmatically?
+### Q38: How do I generate STEP files programmatically?
 
 **A:**
 
@@ -577,7 +589,7 @@ with open('output.step', 'w') as f:
 
 ---
 
-### Q38: What are the best sample files for learning?
+### Q39: What are the best sample files for learning?
 
 **A:**
 

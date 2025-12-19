@@ -12,6 +12,24 @@ This page provides a deep dive into the mathematical and structural representati
 
 NURBS (Non-Uniform Rational B-Splines) are the mathematical backbone of STEP B-rep.
 
+### Relationships: Bézier, B-Spline, and NURBS
+
+Think of these as a hierarchy of increasing control and mathematical complexity:
+
+| Curve Type | Hierarchy | Key Characteristics |
+| :--- | :--- | :--- |
+| **Bézier Curve** | Base | The simplest form. A single polynomial segment. Moving one control point affects the **entire curve**. |
+| **B-Spline** | Extension | A sequence of Bézier curves joined together. Moving a control point only affects a **local segment** (Local Control). |
+| **NURBS** | Final Form | Adds **Weights** (Rational) and **Non-Uniform** knots. Can perfectly represent **circles and ellipses**, which regular B-splines cannot. |
+
+**The "NURBS" Name Breakdown**:
+*   **Non-Uniform**: Knots don't have to be equally spaced (allows for varying "speed" along the parameter $u$).
+*   **Rational**: Uses **Weights**. This is required to define exact conic sections (circles, ellipses, hyperbolas).
+*   **B-Spline**: Basis-Spline. A method of joining multiple polynomial segments with a specific level of continuity.
+
+**Note on T-Splines**:
+Standard STEP (ISO 10303) **does not natively support T-Splines** as a distinct mathematical entity. When CAD systems (like Fusion 360 or Rhino) export T-Spline models to STEP, they are automatically **converted into a collection of standard NURBS patches**. This ensures compatibility with all STEP-compliant software but may result in a higher number of faces.
+
 ### Key Components
 
 | Term | Meaning | Impact on Shape |
@@ -135,8 +153,13 @@ While STEP is primarily B-rep, it supports "Primitives" which can be used in CSG
 
 ### Complex Surfaces & Fillets
 
-*   **Toroidal Surface**: Used for doughnuts or circular fillets.
-*   **Fillets and Blends**: These are almost always represented as **NURBS patches** (`B_SPLINE_SURFACE`) in modern CAD exports.
+CAD kernels prioritize using the simplest mathematical definition (**Elementary Surfaces**) to keep files lightweight and precise before falling back to **NURBS**.
+
+*   **Elementary Surfaces for Fillets**:
+    *   `CYLINDRICAL_SURFACE`: Often used for constant-radius fillets along straight edges.
+    *   `TOROIDAL_SURFACE` / `SPHERICAL_SURFACE`: Used for fillets at corners or along circular edges.
+*   **NURBS (`B_SPLINE_SURFACE`)**: Used for **Variable Radius Fillets** or complex "blends" where multiple surfaces meet.
+*   **Note**: Many CAD systems offer an "Export all surfaces as NURBS" option. While this increases file size, it is sometimes used to improve compatibility between systems that might struggle to interpret complex elementary surface intersections.
 *   **Offset Surface**: A surface defined at a constant distance from a base surface (`OFFSET_SURFACE`).
 
 ---
