@@ -251,7 +251,7 @@ Detailed guide: [Persistent IDs and Face Naming](./persistent-ids.md)
 
 ## Implementation
 
-### Q14: What is the recommended parser library?
+### Q17: What is the recommended parser library?
 
 **A:**
 
@@ -268,7 +268,7 @@ Detailed guide: [Persistent IDs and Face Naming](./persistent-ids.md)
 
 ---
 
-### Q15: How do I traverse entities?
+### Q18: How do I traverse entities?
 
 **A:** Basic pattern:
 
@@ -292,7 +292,7 @@ Detail: [Data Model Map](../format/data-model-map.md)
 
 ---
 
-### Q16: How are units handled?
+### Q19: How are units handled?
 
 **A:** Defined in the `GEOMETRIC_REPRESENTATION_CONTEXT` within the STEP file:
 
@@ -313,24 +313,25 @@ Detail: [Common Pitfalls - Units](../implementation/common-pitfalls.md)
 
 ---
 
-### Q17: How is precision handled?
+### Q20: How is precision handled?
 
 **A:** Defined by `UNCERTAINTY_MEASURE_WITH_UNIT`:
 
 ```step
 #600 = UNCERTAINTY_MEASURE_WITH_UNIT(1.0E-6,(#500),'distance_accuracy_value','...');
 ```
-→ Precision is 10^-6 mm.
+→ Precision is 10^-6 (unit depends on #500; if #500 is mm, then 10^-6 mm = 1 μm).
 
 **Implementation Note**:
 - Use as the tolerance for geometric operations.
 - Differences in precision between sender and receiver can lead to "gaps" in geometry.
+- Recommended values: mm-based systems use `1.0E-3` (0.001 mm = 1 μm), m-based systems use `1.0E-6` (1 μm).
 
 ---
 
 ## Troubleshooting
 
-### Q18: How do I check if a file is corrupted?
+### Q21: How do I check if a file is corrupted?
 
 **A:**
 
@@ -351,7 +352,7 @@ Detail: [Common Pitfalls - Units](../implementation/common-pitfalls.md)
 
 ---
 
-### Q19: Why are colors disappearing?
+### Q22: Why are colors disappearing?
 
 **A:** Common causes:
 
@@ -365,7 +366,7 @@ Detail: [Common Pitfalls - Units](../implementation/common-pitfalls.md)
 
 ---
 
-### Q20: Why is the assembly structure breaking?
+### Q23: Why is the assembly structure breaking?
 
 **A:**
 
@@ -382,7 +383,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q21: Why is PMI missing or unreadable?
+### Q24: Why is PMI missing or unreadable?
 
 **A:**
 
@@ -399,7 +400,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ## Tools and Resources
 
-### Q22: Are there free STEP viewers?
+### Q25: Are there free STEP viewers?
 
 **A:**
 
@@ -414,7 +415,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q23: Where can I get a validator?
+### Q26: Where can I get a validator?
 
 **A:**
 
@@ -429,7 +430,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q24: Where is the official documentation?
+### Q27: Where is the official documentation?
 
 **A:**
 
@@ -443,7 +444,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q25: What is CAx-IF?
+### Q28: What is CAx-IF?
 
 **A:** **CAD-CAx Implementor Forum**: An international group that establishes STEP implementation guidelines between CAD vendors.
 
@@ -461,7 +462,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q26: What is LOTAR?
+### Q29: What is LOTAR?
 
 **A:** **Long Term Archiving and Retrieval**: A standard for long-term preservation and retrieval of digital STEP data.
 
@@ -473,7 +474,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q27: What is MBD?
+### Q30: What is MBD?
 
 **A:** **Model Based Definition**: A practice where the 3D model is the only "source of truth" (Master), containing all design and manufacturing information.
 
@@ -485,7 +486,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q28: Should I build my own parser or use a library?
+### Q31: Should I build my own parser or use a library?
 
 **A:**
 
@@ -504,7 +505,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q29: How do I generate STEP files programmatically?
+### Q32: How do I generate STEP files programmatically?
 
 **A:**
 
@@ -531,7 +532,7 @@ with open('output.step', 'w') as f:
 
 ---
 
-### Q30: What are the best sample files for learning?
+### Q33: What are the best sample files for learning?
 
 **A:**
 
