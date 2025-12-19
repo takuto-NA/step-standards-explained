@@ -91,7 +91,11 @@ STEP規格（ISO 10303）は、数百のパートに分かれた巨大な規格�
 > 
 > - **Part 21**: SolidWorks, CATIA, NX, Creo, Inventor, Fusion360等、**ほぼ全てのCADが対応**
 > - **Part 28**: 一部の専用ツールのみ対応。**主要CADは非対応または限定的**
+>   - ✅ 対応: Siemens NX, Kubotek Kosmos, STEP Tools
+>   - ❌ 非対応: SolidWorks, Creo, Inventor, Fusion360, FreeCAD
 > - 実務では **Part 21 (`.step`) を使うのが標準**
+> 
+> **詳細**: [Part 21 vs Part 28 完全比較](../comparison/part21-vs-part28.md)
 
 **実務**: 99%以上のSTEPファイルがPart 21形式です。Part 28は学術・研究用途が中心で、実際のCADデータ交換では使われません。
 
