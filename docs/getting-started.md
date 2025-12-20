@@ -18,6 +18,26 @@ This guide is a super-intro for implementers who have CAD experience but are new
 
 ## 1. What is STEP? (Implementer's Perspective)
 
+### Core Mental Model
+
+Before diving into the syntax, it is helpful to understand the relationship between the file structure and the data objects.
+
+```mermaid
+graph LR
+    subgraph File_Structure [File Structure]
+        Header[HEADER Section<br/>Metadata/Schema]
+        Data[DATA Section<br/>Entities]
+    end
+    
+    subgraph Object_Graph [Object Graph]
+        Product[#10 PRODUCT] -->|Version info| Def[#50 PRODUCT_DEFINITION]
+        Def -->|Shape link| Shape[#90 SHAPE_REPRESENTATION]
+        Shape -->|Contains| Geom[#100 FACE/SOLID]
+    end
+    
+    Data -->|"Parsed into"| Object_Graph
+```
+
 ### Core Properties
 
 **STEP** (Standard for the Exchange of Product model data, ISO 10303) is:

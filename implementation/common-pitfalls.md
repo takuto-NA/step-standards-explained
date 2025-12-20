@@ -30,6 +30,24 @@ This document explains problems frequently encountered during STEP implementatio
 - Definitions like "length in mm, angles in Radians" are not correctly specified in the file.
 - **Implementer's Blind Spot**: Missing the interpretation of SI prefixes (kilo, milli).
 
+#### The Unit Mismatch Disaster
+
+```mermaid
+graph TD
+    Actual["Actual Part (10mm)"]
+    Error1["Error: mm as m (10,000mm)"]
+    Error2["Error: mm as inch (254mm)"]
+
+    Actual -->|"x1000"| Error1
+    Actual -->|"x25.4"| Error2
+
+    subgraph Comparison [Size Comparison]
+        ActualSize[.]
+        Error1Size[........................................]
+        Error2Size[........]
+    end
+```
+
 **Examples**:
 - Interpreting mm as meters → Geometry becomes 1000x larger.
 - Misidentifying an Inch file as mm → ~4% error (or 25.4x depending on the direction).

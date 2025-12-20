@@ -8,6 +8,33 @@
 
 **STEP** is an international standard (ISO 10303) for exchanging 3D CAD data between different CAD systems.
 
+### B-rep vs. Mesh: Why STEP is different
+
+Unlike STL files which only describe the *surface* as a collection of triangles, STEP describes geometry using exact mathematical formulas (B-rep).
+
+```mermaid
+graph LR
+    subgraph STL_Mesh [STL (Mesh)]
+        direction TB
+        M1((Triangle 1))
+        M2((Triangle 2))
+        M3((Triangle 3))
+        M1 --- M2 --- M3 --- M1
+        Text1[Approximated surface]
+    end
+
+    subgraph STEP_B_rep [STEP (B-rep)]
+        direction TB
+        S1[[Surface Equation]]
+        E1[Exact Edge/Curve]
+        S1 --- E1
+        Text2[Mathematically exact]
+    end
+
+    STL_Mesh -->|"Conversion (Lossy)"| Lossy["Loss of precision"]
+    STEP_B_rep -->|"Conversion (Exact)"| Exact["Preserves precision"]
+```
+
 - **File Formats**: `.stp` / `.step` (text files)
 - **Primary Uses**: CAD data exchange, long-term archiving
 - **Difference from STL**: STL only contains geometry (triangular mesh), while STEP can preserve colors, assemblies, and PMI (Product and Manufacturing Information/tolerances).

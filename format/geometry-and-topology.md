@@ -116,7 +116,33 @@ Robust geometry kernels use `PCURVE` to ensure that the boundary of a face (the 
 
 ## 2. Topology and B-rep Types
 
-STEP differentiates between "Solid" (Closed) and "Surface" (Open) models.
+STEP strictly separates **Topology** (connectivity) from **Geometry** (mathematical shape).
+
+### Geometry vs. Topology Separation
+
+```mermaid
+graph LR
+    subgraph Topology [Topology: How is it connected?]
+        Edge[EDGE_CURVE]
+        Vertex1[VERTEX_POINT A]
+        Vertex2[VERTEX_POINT B]
+        Edge --> Vertex1
+        Edge --> Vertex2
+    end
+
+    subgraph Geometry [Geometry: What is the shape?]
+        Line[LINE / CIRCLE / B_SPLINE]
+        Point1[CARTESIAN_POINT A]
+        Point2[CARTESIAN_POINT B]
+    end
+
+    Edge -.->|"References shape"| Line
+    Vertex1 -.->|"References pos"| Point1
+    Vertex2 -.->|"References pos"| Point2
+```
+
+*   **Topology**: Defines the "skeleton" of the model (who is next to whom).
+*   **Geometry**: Defines the "meat" of the model (the exact coordinates and formulas).
 
 ### Closed vs. Open Shells
 
@@ -168,7 +194,30 @@ CAD kernels prioritize using the simplest mathematical definition (**Elementary 
 
 ### Geometric Continuity (G0, G1, G2)
 
-When two surfaces or curves meet, their "smoothness" is defined by continuity:
+When two surfaces or curves meet, their "smoothness" is defined by continuity.
+
+```mermaid
+graph LR
+    G0[G0: Positional] --> G1[G1: Tangential] --> G2[G2: Curvature]
+
+    subgraph G0_Desc [Touch]
+        direction TB
+        L0_1[Line A] --- L0_2[Line B]
+        T0[Visible Crease]
+    end
+
+    subgraph G1_Desc [Smooth]
+        direction TB
+        L1_1[Curve A] --- L1_2[Curve B]
+        T1[Tangent Match]
+    end
+
+    subgraph G2_Desc [Perfect]
+        direction TB
+        L2_1[Blend A] --- L2_2[Blend B]
+        T2[Flowing Reflections]
+    end
+```
 
 | Type | Name | Visual Result |
 | :--- | :--- | :--- |

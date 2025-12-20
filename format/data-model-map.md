@@ -26,16 +26,18 @@ The four primary hierarchies in a STEP file:
 
 The link from "Management Data" to "Geometry" that forms the foundation of every STEP file.
 
-### Entity Hierarchy Diagram
+### B-rep Topology Hierarchy
+
+Once you reach the `REPRESENTATION_ITEM` level, the geometry is organized as a nested hierarchy of topological elements.
 
 ```mermaid
 graph TD
-    P["PRODUCT<br/>(Part Info)"] -->|"of_product"| PDF["PRODUCT_DEFINITION_FORMATION<br/>(Version Management)"]
-    PDF -->|"formation"| PD["PRODUCT_DEFINITION<br/>(Design Context)"]
-    PD -->|"definition"| PDS["PRODUCT_DEFINITION_SHAPE<br/>(Bridge)"]
-    PDS -->|"shape_representation"| SR["SHAPE_REPRESENTATION<br/>(Geometry Container)"]
-    SR -->|"items"| RI["REPRESENTATION_ITEM<br/>(Geometry Elements)"]
-    RI --> AF["ADVANCED_FACE / EDGE / VERTEX"]
+    Solid[MANIFOLD_SOLID_BREP<br/>'The Solid'] -->|"outer"| Shell[CLOSED_SHELL<br/>'The Skin']
+    Shell -->|"cfs_faces"| Face[ADVANCED_FACE<br/>'The Surface Patch']
+    Face -->|"bounds"| Loop[FACE_OUTER_BOUND<br/>'The Perimeter']
+    Loop -->|"bound"| Edge[ORIENTED_EDGE<br/>'The Segment']
+    Edge -->|"edge_element"| EC[EDGE_CURVE<br/>'The Shared Edge']
+    EC -->|"edge_start/end"| Vertex[VERTEX_POINT<br/>'The Corner']
 ```
 
 ### Entity Details
@@ -132,10 +134,16 @@ Assemblies are defined as "usage relationships" between product definitions.
 
 ```mermaid
 graph TD
-    ParentPD["Parent PRODUCT_DEFINITION"] -->|"relating_product_definition"| NAUO["NEXT_ASSEMBLY_USAGE_OCCURRENCE<br/>(Usage Relationship)"]
-    NAUO -->|"related_product_definition"| ChildPD["Child PRODUCT_DEFINITION"]
-    NAUO -->|"via RR"| CDSR["CONTEXT_DEPENDENT_SHAPE_REPRESENTATION<br/>(Placement Info)"]
-    CDSR --> IT["ITEM_DEFINED_TRANSFORMATION<br/>(Coordinate Matrix)"]
+    ParentPD["Parent Part"] -->|"uses"| NAUO["NAUO<br/>(Usage)"]
+    NAUO -->|"child"| ChildPD["Child Part"]
+    NAUO -.-> CDSR["CDSR<br/>(Placement Link)"]
+    CDSR -->|"defines"| Trans["Transformation Matrix<br/>(Rotation + Translation)"]
+    
+    subgraph Conceptual_View [Conceptual View]
+        P_Coord["Assembly Origin (0,0,0)"]
+        C_Coord["Child Placement (x,y,z)"]
+        P_Coord -->|"Matrix Applied"| C_Coord
+    end
 ```
 
 ### Entity Details

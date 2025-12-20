@@ -2,18 +2,38 @@
 
 STEP files (`*.stp`, `*.step`) are plain text files specified by ISO 10303-21.
 
-## 1. File Structure
-The file is broadly divided into three sections.
+## 1. File Structure (Anatomy)
+
+A STEP file is a collection of "Instances" that reference each other. Visually, you can think of it as a book where each page (Instance) can point to other pages.
 
 ```mermaid
 graph TD
-    ISO["ISO-10303-21;"] --> HEADER["HEADER;<br/>(Metadata)"]
-    HEADER --> H_SEC["FILE_NAME, FILE_SCHEMA..."]
-    H_SEC --> H_END["ENDSEC;"]
-    H_END --> DATA["DATA;<br/>(Geometry & Structures)"]
-    DATA --> D_SEC["#10=PRODUCT, #20=..."]
-    D_SEC --> D_END["ENDSEC;"]
-    D_END --> ISO_END["END-ISO-10303-21;"]
+    subgraph File_Skeleton [File Skeleton]
+        ISO["ISO-10303-21;"]
+        HEADER_START["HEADER;"]
+        HEADER_DATA["FILE_NAME, FILE_SCHEMA..."]
+        HEADER_END["ENDSEC;"]
+        DATA_START["DATA;"]
+        DATA_ENTITIES["#10=PRODUCT(...)<br/>#20=PRODUCT_CONTEXT(...)<br/>#30=..."]
+        DATA_END["ENDSEC;"]
+        ISO_END["END-ISO-10303-21;"]
+    end
+
+    ISO --> HEADER_START
+    HEADER_START --> HEADER_DATA
+    HEADER_DATA --> HEADER_END
+    HEADER_END --> DATA_START
+    DATA_START --> DATA_ENTITIES
+    DATA_ENTITIES --> DATA_END
+    DATA_END --> ISO_END
+
+    subgraph Logical_View [Logical View]
+        H[Header: Metadata]
+        D[Data: Graph of Entities]
+    end
+    
+    HEADER_DATA -.-> H
+    DATA_ENTITIES -.-> D
 ```
 
 ```text
