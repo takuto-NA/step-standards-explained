@@ -6,6 +6,8 @@ title: STEP Standards Explained
 
 A simple, open guide for understanding and implementing the STEP standard (ISO 10303).
 
+**Links**: [🌐 Guide](https://takuto-na.github.io/step-standards-explained/) | [📂 GitHub](https://github.com/takuto-NA/step-standards-explained)
+
 STEP (Standard for the Exchange of Product model data) is an international standard for the computer-interpretable representation and exchange of industrial product data. While powerful, it is notoriously complex. This guide provides the procedural knowledge and context needed to work with STEP files accurately and efficiently.
 
 ## Why this guide?
@@ -62,6 +64,8 @@ graph LR
 ### Step 2: Strategy
 * **[Which AP should I use?](./decision-guides/which-ap-should-i-use)** - Choose the right standard for your project.
 * **[Capability Matrix](./comparison/capability-matrix)** - Compare functional support across APs.
+* **[Format Comparison](./comparison/format-comparison)** - STEP vs IGES, Parasolid, etc.
+* **[Deep Dive: STEP vs. 3D PDF](./comparison/step-vs-3dpdf)** - When to use document-based exchange.
 
 ### Step 3: Data & Geometry
 * **[File Basics](./format/step-file-basics)** - Syntax and structure fundamentals.

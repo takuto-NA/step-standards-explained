@@ -2,6 +2,10 @@
 
 > A practical guide to the STEP standard (ISO 10303): Explaining versions, capabilities, and implementation methods.
 
+**Links**: 
+- 🌐 **[Live Guide (GitHub Pages)](https://takuto-na.github.io/step-standards-explained/)**
+- 📂 **[Source Repository (GitHub)](https://github.com/takuto-NA/step-standards-explained)**
+
 ---
 
 ## 🚀 STEP in 30 Seconds
@@ -61,7 +65,9 @@ Designed for implementers new to STEP to learn efficiently.
 
 5. **[Which AP should I use?](./decision-guides/which-ap-should-i-use.md)** - Decision guide
 6. **[Capability Matrix](./comparison/capability-matrix.md)** - Check detailed functional differences
-7. **[Part 21 vs Part 28](./comparison/part21-vs-part28.md)** - Why .step is the standard
+7. **[STEP vs. Other Formats](./comparison/format-comparison.md)** - Comparison with IGES, Parasolid, etc.
+8. **[Deep Dive: STEP vs. 3D PDF](./comparison/step-vs-3dpdf.md)** - Document-based exchange.
+9. **[Part 21 vs Part 28](./comparison/part21-vs-part28.md)** - Why .step is the standard
 
 ### Step 3: Understand Data Structures (Time: 1-2 hours)
 

@@ -18,6 +18,12 @@ This guide is a super-intro for implementers who have CAD experience but are new
 
 ## 1. What is STEP? (Implementer's Perspective)
 
+### History & Background
+
+- **Who created it**: Developed by **ISO TC 184/SC 4** (Industrial data).
+- **Historical context**: Development started in **1984** as a successor to IGES (Initial Graphics Exchange Specification), aiming to overcome its limitations in data consistency and completeness.
+- **Why it was created**: To provide a single, vendor-neutral, and computer-interpretable international standard that covers the entire life cycle of a product, from design to manufacturing and disposal. The first version was published in **1994**.
+
 ### Core Mental Model
 
 Before diving into the syntax, it is helpful to understand the relationship between the file structure and the data objects.
@@ -44,6 +50,23 @@ graph LR
 - A **text-based** CAD data exchange format.
 - A way to represent 3D geometry using **B-rep** (Boundary Representation).
 - Capable of storing not just geometry, but also **management information** (Products, Assemblies) and **PMI** (Product and Manufacturing Information/Tolerances).
+
+### Why Choose STEP? (Strengths & Weaknesses)
+
+#### ✅ Strengths
+- **International Standard**: Widely supported by all major CAD vendors (ISO 10303).
+- **High Precision**: Uses B-rep (mathematically exact formulas) instead of mesh approximation.
+- **Rich Data**: Supports assemblies, colors, layers, and semantic PMI (AP242).
+- **Long-term Archiving**: Supported by LOTAR for 50+ year data preservation.
+
+#### ❌ Weaknesses
+- **Large File Size**: Being a text-based (ASCII) format, files can be significantly larger than proprietary binary formats.
+- **Lack of Design History**: Does not preserve the "feature tree" or parametric constraints from the source CAD (e.g., "Extrude 10mm").
+- **Implementation Complexity**: The standard is massive (hundreds of parts), making full implementation difficult.
+
+> [!TIP]
+> **Alternative formats?**
+> For cases where you need both high-fidelity visualization and exact geometry (B-rep) but don't want to use a raw STEP file, **3D PDF (PRC format)** is a common alternative. See the [Format Comparison](../comparison/format-comparison.md) for details.
 
 ---
 

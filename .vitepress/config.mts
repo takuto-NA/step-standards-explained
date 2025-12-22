@@ -41,7 +41,8 @@ export default withMermaid(defineConfig({
             text: '2. Select the Right AP',
             items: [
               { text: 'Which AP should I use?', link: '/decision-guides/which-ap-should-i-use' },
-              { text: 'Capability Matrix', link: '/comparison/capability-matrix' }
+              { text: 'Capability Matrix', link: '/comparison/capability-matrix' },
+              { text: 'Format Comparison', link: '/comparison/format-comparison' }
             ]
           },
           {
@@ -93,6 +94,8 @@ export default withMermaid(defineConfig({
             items: [
               { text: 'Assembly Support', link: '/comparison/assembly-support' },
               { text: 'CAD Support Matrix', link: '/comparison/cad-support-matrix' },
+              { text: 'Format Comparison', link: '/comparison/format-comparison' },
+              { text: 'STEP vs. 3D PDF', link: '/comparison/step-vs-3dpdf' },
               { text: 'Part 21 vs Part 28', link: '/comparison/part21-vs-part28' },
               { text: 'PMI Support', link: '/comparison/pmi-support' }
             ]
