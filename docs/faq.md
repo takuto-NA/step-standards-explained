@@ -9,9 +9,12 @@ Answers to common questions from STEP beginners and implementers, covering **30+
 1. [Basic Concepts](#basic-concepts)
 2. [File Operations](#file-operations)
 3. [AP Selection](#ap-selection)
-4. [Implementation](#implementation)
-5. [Troubleshooting](#troubleshooting)
-6. [Tools and Resources](#tools-and-resources)
+4. [Persistence and Simulation (IDs/Names)](#persistence-and-simulation-idsnames)
+5. [Implementation](#implementation)
+6. [Troubleshooting](#troubleshooting)
+7. [Geometry and Topology](#geometry-and-topology)
+8. [T-Splines](#t-splines)
+9. [Tools and Resources](#tools-and-resources)
 
 ---
 
@@ -214,9 +217,43 @@ Detail: [Which AP should I use?](../decision-guides/which-ap-should-i-use.md)
 
 ---
 
+## Persistence and Simulation (IDs/Names)
+
+### Q14: Can I assign persistent IDs or names to faces?
+
+**A: Yes**, but not using the `#123` instance IDs. You must use **`SHAPE_ASPECT`** (labels).
+- **AP242**: Standard support for semantic face/edge naming via `SHAPE_ASPECT`.
+- **AP214**: Vendor-dependent support (some CAD systems may export face names, but it's not standardized).
+- **AP203**: Generally not supported for user-defined names.
+
+**Important**: Even with AP242, the actual implementation depends on your CAD software's export capabilities.
+
+Detailed guide: [Persistent IDs and Face Naming](./persistent-ids.md)
+
+---
+
+### Q15: Does Ansys Workbench read face names?
+
+**A: Yes**, it can import them as **Named Selections**, but the exact method varies by Ansys version.
+- Ensure the STEP file is exported as **AP242** (best compatibility).
+- In Ansys Geometry import settings (DesignModeler or SpaceClaim), enable "Import Named Selections" or similar option.
+- Ansys typically reads `SHAPE_ASPECT` entity names from the STEP file.
+- If names don't appear, verify: (1) AP242 export, (2) Face names were exported, (3) Import settings are correct.
+
+---
+
+### Q16: Why do my face names disappear in simulation?
+
+**A:** Common reasons:
+1. **Topology Change**: If you modify the geometry significantly, the CAD system might "lose" the link between the name and the new face.
+2. **AP Version**: Exporting as AP203 will strip all name labels.
+3. **Export Settings**: Many CAD tools have "Export names" disabled by default.
+
+---
+
 ## Implementation
 
-### Q14: What is the recommended parser library?
+### Q17: What is the recommended parser library?
 
 **A:**
 
@@ -233,7 +270,7 @@ Detail: [Which AP should I use?](../decision-guides/which-ap-should-i-use.md)
 
 ---
 
-### Q15: How do I traverse entities?
+### Q18: How do I traverse entities?
 
 **A:** Basic pattern:
 
@@ -257,7 +294,7 @@ Detail: [Data Model Map](../format/data-model-map.md)
 
 ---
 
-### Q16: How are units handled?
+### Q19: How are units handled?
 
 **A:** Defined in the `GEOMETRIC_REPRESENTATION_CONTEXT` within the STEP file:
 
@@ -278,24 +315,25 @@ Detail: [Common Pitfalls - Units](../implementation/common-pitfalls.md)
 
 ---
 
-### Q17: How is precision handled?
+### Q20: How is precision handled?
 
 **A:** Defined by `UNCERTAINTY_MEASURE_WITH_UNIT`:
 
 ```step
 #600 = UNCERTAINTY_MEASURE_WITH_UNIT(1.0E-6,(#500),'distance_accuracy_value','...');
 ```
-→ Precision is 10^-6 mm.
+→ Precision is 10^-6 (unit depends on #500; if #500 is mm, then 10^-6 mm = 1 μm).
 
 **Implementation Note**:
 - Use as the tolerance for geometric operations.
 - Differences in precision between sender and receiver can lead to "gaps" in geometry.
+- Recommended values: mm-based systems use `1.0E-3` (0.001 mm = 1 μm), m-based systems use `1.0E-6` (1 μm).
 
 ---
 
 ## Troubleshooting
 
-### Q18: How do I check if a file is corrupted?
+### Q21: How do I check if a file is corrupted?
 
 **A:**
 
@@ -316,7 +354,7 @@ Detail: [Common Pitfalls - Units](../implementation/common-pitfalls.md)
 
 ---
 
-### Q19: Why are colors disappearing?
+### Q22: Why are colors disappearing?
 
 **A:** Common causes:
 
@@ -330,7 +368,7 @@ Detail: [Common Pitfalls - Units](../implementation/common-pitfalls.md)
 
 ---
 
-### Q20: Why is the assembly structure breaking?
+### Q23: Why is the assembly structure breaking?
 
 **A:**
 
@@ -347,7 +385,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q21: Why is PMI missing or unreadable?
+### Q24: Why is PMI missing or unreadable?
 
 **A:**
 
@@ -362,9 +400,64 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
+## Geometry and Topology
+
+### Q25: How do I check if a model is "water-tight" (closed)?
+
+**A:** A model is "water-tight" (a solid) if it uses `MANIFOLD_SOLID_BREP` and its `CLOSED_SHELL` is topologically sound.
+- Every **Edge** must be shared by exactly **two Faces**.
+- There are no "naked edges" (edges with only one face).
+- The orientation of faces must consistently point "out" from the volume.
+
+---
+
+### Q26: How are fillets and complex blends represented?
+
+**A:** It depends on the complexity of the fillet and the CAD system's export settings:
+- **Elementary Surfaces**: Simple, constant-radius fillets are often represented as `CYLINDRICAL_SURFACE` (for straight edges) or `TOROIDAL_SURFACE` (for circular edges).
+- **NURBS**: Complex blends, variable-radius fillets, or corner transitions are represented as **NURBS patches** (`B_SPLINE_SURFACE`).
+- **Standardization**: Many modern exporters convert all complex transitions to NURBS to ensure maximum compatibility, even if they could technically be represented as elementary surfaces.
+
+---
+
+### Q27: Does STEP support CSG (primitives like Blocks and Spheres)?
+
+**A:** **Yes**. STEP supports CSG (Constructive Solid Geometry) via entities like `BLOCK`, `CYLINDER`, `SPHERE`, and `TORUS`. 
+- However, most modern CAD systems export everything as **B-rep** (faces/edges) for maximum compatibility.
+- If you need CSG, check your CAD system's export settings for "Keep primitives".
+
+---
+
+### Q28: How do I handle doughnuts or "inverted" shapes?
+
+**A:** These use `TOROIDAL_SURFACE`.
+- A **Doughnut** is a torus where the major radius is larger than the minor radius.
+- **Inverted/Spindle Torus**: If the minor radius is larger, the shape self-intersects.
+- The orientation (normal) of the face determines which side is "solid".
+
+---
+
+### Q29: What is G2 continuity and does STEP support it?
+
+**A:** **G2 (Curvature) Continuity** means that at the junction of two surfaces, not only the tangent but also the curvature is identical.
+- STEP supports this by explicitly declaring continuity in `B_SPLINE_CURVE` or `B_SPLINE_SURFACE` entities.
+- Maintaining G2 is critical for high-end styling (Class-A surfaces) in automotive design.
+
+---
+
+## T-Splines
+
+### Q30: Does STEP support T-Splines?
+
+**A: No, not natively.** The STEP standard (ISO 10303) is built on NURBS and B-Splines.
+- When you export a T-Spline model to STEP, the CAD software converts the T-Spline mesh into multiple **standard NURBS patches** (`B_SPLINE_SURFACE`).
+- This conversion ensures that the file can be opened in any CAD system, but you lose the "T-junction" editability of the original T-Spline model.
+
+---
+
 ## Tools and Resources
 
-### Q22: Are there free STEP viewers?
+### Q31: Are there free STEP viewers?
 
 **A:**
 
@@ -379,7 +472,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q23: Where can I get a validator?
+### Q32: Where can I get a validator?
 
 **A:**
 
@@ -394,7 +487,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q24: Where is the official documentation?
+### Q33: Where is the official documentation?
 
 **A:**
 
@@ -408,7 +501,7 @@ Detail: [Common Pitfalls - Assembly](../implementation/common-pitfalls.md)
 
 ---
 
-### Q25: What is CAx-IF?
+### Q34: What is CAx-IF?
 
 **A:** **CAD-CAx Implementor Forum**: An international group that establishes STEP implementation guidelines between CAD vendors.
 
@@ -426,7 +519,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q26: What is LOTAR?
+### Q35: What is LOTAR?
 
 **A:** **Long Term Archiving and Retrieval**: A standard for long-term preservation and retrieval of digital STEP data.
 
@@ -438,7 +531,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q27: What is MBD?
+### Q36: What is MBD?
 
 **A:** **Model Based Definition**: A practice where the 3D model is the only "source of truth" (Master), containing all design and manufacturing information.
 
@@ -450,7 +543,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q28: Should I build my own parser or use a library?
+### Q37: Should I build my own parser or use a library?
 
 **A:**
 
@@ -469,7 +562,7 @@ Website: https://www.cax-if.org/
 
 ---
 
-### Q29: How do I generate STEP files programmatically?
+### Q38: How do I generate STEP files programmatically?
 
 **A:**
 
@@ -496,7 +589,7 @@ with open('output.step', 'w') as f:
 
 ---
 
-### Q30: What are the best sample files for learning?
+### Q39: What are the best sample files for learning?
 
 **A:**
 

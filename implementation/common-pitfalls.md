@@ -14,6 +14,7 @@ This document explains problems frequently encountered during STEP implementatio
 6. [Missing Colors and Layers](#6-missing-colors-and-layers)
 7. [Encoding Issues](#7-encoding-issues)
 8. [Improper Forward Reference Handling](#8-improper-forward-reference-handling)
+9. [Persistence and Topology Risks](#9-persistence-and-topology-risks)
 
 ---
 
@@ -29,11 +30,40 @@ This document explains problems frequently encountered during STEP implementatio
 - Definitions like "length in mm, angles in Radians" are not correctly specified in the file.
 - **Implementer's Blind Spot**: Missing the interpretation of SI prefixes (kilo, milli).
 
+#### The Unit Mismatch Disaster
+
+```mermaid
+graph TD
+    Actual["Actual Part (10mm)"]
+    Error1["Error: mm as m (10,000mm)"]
+    Error2["Error: mm as inch (254mm)"]
+
+    Actual -->|"x1000"| Error1
+    Actual -->|"x25.4"| Error2
+
+    subgraph Comparison [Size Comparison]
+        ActualSize[.]
+        Error1Size[........................................]
+        Error2Size[........]
+    end
+```
+
 **Examples**:
 - Interpreting mm as meters → Geometry becomes 1000x larger.
 - Misidentifying an Inch file as mm → ~4% error (or 25.4x depending on the direction).
 
 ### ✅ Solutions
+
+#### Unit Normalization Flow
+Implementers should normalize all incoming data to a single internal unit system (typically mm).
+
+```mermaid
+graph LR
+    FILE["STEP File<br/>(#500 SI_UNIT)"] --> PARSE[Parse Units]
+    PARSE --> SCALE["Calculate Factor<br/>(e.g., .MILLI. -> 0.001)"]
+    SCALE --> COORDS["Multiply Coordinates<br/>(x * factor * 1000)"]
+    COORDS --> INT["Internal Geometry<br/>(Normalized mm)"]
+```
 
 #### 1. Always Verify UNIT_CONTEXT
 
@@ -506,7 +536,25 @@ for line in step_file:
 
 ### ✅ Solutions
 
-**Two-Pass Parser**:
+#### Two-Pass Parser Strategy
+To handle forward references correctly, a "Two-Pass" approach is required.
+
+```mermaid
+flowchart TD
+    Start([Open File]) --> Pass1[Pass 1: Scan & Map]
+    Pass1 --> Scan[Read Line by Line]
+    Scan --> Map["Store in Map<br/>(ID -> Raw Entity)"]
+    Map --> EOF1{End of File?}
+    EOF1 -- No --> Scan
+    EOF1 -- Yes --> Pass2[Pass 2: Resolve References]
+    Pass2 --> Traverse[Iterate through Map]
+    Traverse --> Resolve["Replace #ID Strings<br/>with Object Pointers"]
+    Resolve --> AllDone{All Resolved?}
+    AllDone -- No --> Traverse
+    AllDone -- Yes --> End([Ready for Use])
+```
+
+**Two-Pass Parser Implementation**:
 ```python
 # ✅ Correct: Two-pass processing
 # Pass 1: Load all instances
@@ -539,6 +587,38 @@ def validate_all_references(instance_map):
 - **Always implement two-pass processing.**
 - Check for duplicate instance IDs.
 - Detect cyclic references (rare but possible).
+
+---
+
+## 9. Persistence and Topology Risks
+
+**Difficulty**: ★★★ (Advanced)  
+**Frequency**: ★★☆ (Common in Simulation)  
+**Impact**: 🔴 High (Breakdown of automated simulation pipelines)
+
+### ❌ The Problem
+
+"Persistent IDs" (face names) assigned in CAD are lost or shifted when the model is modified and re-exported.
+
+**Example**:
+1. You name a face "Inlet" in Rhino and set up an Ansys simulation.
+2. You change the geometry (e.g., move a hole) and re-export the STEP.
+3. The new STEP file labels a **different face** as "Inlet" or the label disappears entirely.
+
+### ✅ Solutions
+
+#### 1. Use Semantic Labeling (SHAPE_ASPECT)
+Ensure you are using **AP242** for export, as it has the most robust support for attaching names to geometry.
+
+#### 2. Avoid Reliance on Instance IDs (#)
+Never write simulation scripts that rely on `#10`, `#500`, etc. These numbers are recalculated every time a file is saved.
+
+#### 3. Best Practices for Stability
+- **Name faces as late as possible** in the design process.
+- Use CAD-specific "Named Selection" or "Attribute" features that are known to map to `SHAPE_ASPECT`.
+
+### 🔍 Detection Methods
+- **Compare two versions of the STEP file**: Check if the `SHAPE_ASPECT` entity still points to the same `ADVANCED_FACE` (by checking its relative position or bounding box).
 
 ---
 

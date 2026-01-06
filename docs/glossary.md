@@ -15,6 +15,14 @@ The five core concepts that every implementer should understand first.
 
 A subset of the standard defined for a specific industry or application.
 
+**AP Evolution**:
+```mermaid
+graph TD
+    AP203["AP203<br/>(Aerospace/Legacy)"] --> AP242["AP242<br/>(Modern Unified)"]
+    AP214["AP214<br/>(Automotive/Mainstream)"] --> AP242
+    style AP242 stroke-width:4px
+```
+
 **What Implementers Need to Know**:
 - AP203, AP214, and AP242 are the major versions.
 - Different APs support different entities (data structures).
@@ -33,6 +41,21 @@ FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF { 1 0 10303 442 1 
 ### 2. Entity ★★★
 
 The building blocks of STEP data. Equivalent to a "Class" in Object-Oriented Programming.
+
+**Relationship Concept**:
+```mermaid
+classDiagram
+    class Entity {
+        <<Schema Definition>>
+        Attribute1
+        Attribute2
+    }
+    class Instance {
+        <<Data in File>>
+        #ID = Entity(Value1, Value2)
+    }
+    Entity <|-- Instance : Instantiates
+```
 
 **What Implementers Need to Know**:
 - Written in all **UPPERCASE** (e.g., `PRODUCT`, `SHAPE_REPRESENTATION`).
@@ -68,14 +91,56 @@ A method of defining shapes by their boundaries: faces, edges, and vertices.
 | Editability | Parametrically editable | Difficult |
 
 **B-rep Hierarchy in STEP**:
+```mermaid
+graph TD
+    MSB[MANIFOLD_SOLID_BREP] --> CS[CLOSED_SHELL]
+    CS --> AF[ADVANCED_FACE]
+    AF --> EL[EDGE_LOOP]
+    EL --> OE[ORIENTED_EDGE]
+    OE --> EC[EDGE_CURVE]
+    OE --> VP[VERTEX_POINT]
 ```
-MANIFOLD_SOLID_BREP
-  └─ CLOSED_SHELL
-      └─ ADVANCED_FACE (Face)
-          └─ EDGE_LOOP (Edge Loop)
-              └─ ORIENTED_EDGE (Directional Edge)
-                  └─ VERTEX_POINT (Vertex)
+
+**Detailed B-rep Structure**:
+
+The following diagram shows how B-rep elements connect to form a complete solid:
+
+```mermaid
+graph TD
+    MSB["MANIFOLD_SOLID_BREP<br/>(Solid)"]
+    MSB -->|"outer"| CS["CLOSED_SHELL<br/>(Boundary)"]
+    CS -->|"cfs_faces"| AF1["ADVANCED_FACE 1"]
+    CS -->|"cfs_faces"| AF2["ADVANCED_FACE 2"]
+    CS -->|"cfs_faces"| AF3["ADVANCED_FACE 3"]
+    
+    AF1 -->|"bounds"| FOB1["FACE_OUTER_BOUND"]
+    AF1 -->|"face_geometry"| SURF1["SURFACE<br/>(PLANE, etc.)"]
+    FOB1 -->|"bound"| EL1["EDGE_LOOP"]
+    EL1 -->|"edge_list"| OE1["ORIENTED_EDGE 1"]
+    EL1 -->|"edge_list"| OE2["ORIENTED_EDGE 2"]
+    
+    OE1 -->|"edge_element"| EC1["EDGE_CURVE"]
+    OE1 -->|"edge_start"| VP1["VERTEX_POINT"]
+    OE1 -->|"edge_end"| VP2["VERTEX_POINT"]
+    
+    EC1 -->|"edge_geometry"| CURVE1["CURVE<br/>(LINE, etc.)"]
+    EC1 -->|"edge_start"| VP1
+    EC1 -->|"edge_end"| VP2
+    
+    VP1 -->|"vertex_geometry"| CP1["CARTESIAN_POINT<br/>(x, y, z)"]
+    VP2 -->|"vertex_geometry"| CP2["CARTESIAN_POINT<br/>(x, y, z)"]
 ```
+
+**Connection Flow**:
+- **Solid** → **Shell**: A solid is bounded by a closed shell
+- **Shell** → **Faces**: A shell contains multiple faces
+- **Face** → **Edge Loop**: A face is bounded by edge loops
+- **Edge Loop** → **Oriented Edges**: An edge loop is a sequence of oriented edges
+- **Oriented Edge** → **Edge Curve**: References the geometric edge
+- **Edge Curve** → **Vertices**: Connects two vertices
+- **Vertex** → **Point**: Contains the actual 3D coordinates
+
+**Key Insight**: B-rep separates **topology** (how elements connect) from **geometry** (the actual shapes). This allows the same topology to represent different geometric shapes.
 
 **Related Terms**: [NURBS](#nurbs), [Tessellation](#tessellation)
 
@@ -179,6 +244,21 @@ Concrete data with specific values for an entity. In `#10 = PRODUCT(...)`, `#10`
 #### NURBS (Non-Uniform Rational B-Spline)
 A mathematical way to represent complex curves and surfaces. Extensively used in STEP B-rep.
 
+#### PCurve
+A 2D curve defined in the parameter space (UV) of a surface. Critical for mapping topology to geometry accurately.
+
+#### Knot Vector
+A sequence of parameter values that control the distribution of a spline. Used in NURBS to define segment boundaries and continuity.
+
+#### G1/G2 Continuity
+Measures of smoothness between geometric elements. G1 (Tangential) ensures no sharp creases; G2 (Curvature) ensures perfectly smooth transitions for reflections.
+
+#### Manifold
+A geometric property where every edge is shared by exactly two faces. "Non-manifold" geometry (e.g., three faces meeting at one edge) is harder for CAD systems to process.
+
+#### CSG (Constructive Solid Geometry)
+A method of building complex shapes using Boolean operations (Union, Subtract, Intersect) on primitives like blocks and spheres. STEP supports both CSG and B-rep.
+
 #### Tessellation
 Approximating a surface with a mesh of triangles or polygons. Standardized in AP242.
 
@@ -278,5 +358,6 @@ A group that establishes STEP implementation guidelines among CAD vendors.
 ---
 ## 📚 Next Steps
 - **[Getting Started Guide](./getting-started.md)** - Grasp the overall picture of STEP.
+- **[Geometry and Topology](../format/geometry-and-topology.md)** - Deep dive into mathematical representation.
 
 [Back to README](../README.md)

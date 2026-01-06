@@ -2,11 +2,42 @@
 
 > A practical guide to the STEP standard (ISO 10303): Explaining versions, capabilities, and implementation methods.
 
+**Links**: 
+- 🌐 **[Live Guide (GitHub Pages)](https://takuto-na.github.io/step-standards-explained/)**
+- 📂 **[Source Repository (GitHub)](https://github.com/takuto-NA/step-standards-explained)**
+
 ---
 
 ## 🚀 STEP in 30 Seconds
 
 **STEP** is an international standard (ISO 10303) for exchanging 3D CAD data between different CAD systems.
+
+### B-rep vs. Mesh: Why STEP is different
+
+Unlike STL files which only describe the *surface* as a collection of triangles, STEP describes geometry using exact mathematical formulas (B-rep).
+
+```mermaid
+graph LR
+    subgraph STL_Mesh [STL (Mesh)]
+        direction TB
+        M1((Triangle 1))
+        M2((Triangle 2))
+        M3((Triangle 3))
+        M1 --- M2 --- M3 --- M1
+        Text1[Approximated surface]
+    end
+
+    subgraph STEP_B_rep [STEP (B-rep)]
+        direction TB
+        S1[[Surface Equation]]
+        E1[Exact Edge/Curve]
+        S1 --- E1
+        Text2[Mathematically exact]
+    end
+
+    STL_Mesh -->|"Conversion (Lossy)"| Lossy["Loss of precision"]
+    STEP_B_rep -->|"Conversion (Exact)"| Exact["Preserves precision"]
+```
 
 - **File Formats**: `.stp` / `.step` (text files)
 - **Primary Uses**: CAD data exchange, long-term archiving
@@ -26,24 +57,31 @@ Designed for implementers new to STEP to learn efficiently.
 ### Step 1: Establish Foundational Knowledge (Time: 30 mins)
 
 1. **[⭐ Glossary](./docs/glossary.md)** - Understand STEP-specific terminology (Crucial!)
-2. **[Getting Started Guide for Implementers](./docs/getting-started.md)** - Quickly grasp the big picture
-3. **[FAQ](./docs/faq.md)** - Resolve common questions
+2. **[Persistent IDs and Face Naming](./docs/persistent-ids.md)** - Critical for simulation (Ansys/Rhino)
+3. **[Getting Started Guide for Implementers](./docs/getting-started.md)** - Quickly grasp the big picture
+4. **[FAQ](./docs/faq.md)** - Resolve common questions
 
 ### Step 2: Select the Right AP for Your Project (Time: 15 mins)
 
-4. **[Which AP should I use?](./decision-guides/which-ap-should-i-use.md)** - Decision guide
-5. **[Capability Matrix](./comparison/capability-matrix.md)** - Check detailed functional differences
+5. **[Which AP should I use?](./decision-guides/which-ap-should-i-use.md)** - Decision guide
+6. **[Capability Matrix](./comparison/capability-matrix.md)** - Check detailed functional differences
+7. **[STEP vs. Other Formats](./comparison/format-comparison.md)** - Comparison with IGES, Parasolid, etc.
+8. **[Deep Dive: STEP vs. 3D PDF](./comparison/step-vs-3dpdf.md)** - Document-based exchange.
+9. **[Part 21 vs Part 28](./comparison/part21-vs-part28.md)** - Why .step is the standard
 
 ### Step 3: Understand Data Structures (Time: 1-2 hours)
 
-6. **[STEP File Walkthrough](./examples/step-file-walkthrough.md)** - Understand real files line by line
-7. **[Data Model Map](./format/data-model-map.md)** - Grasp the entity hierarchy
-8. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
+8. **[STEP File Basics](./format/step-file-basics.md)** - Syntax and structure fundamentals
+9. **[STEP File Walkthrough](./examples/step-file-walkthrough.md)** - Understand real files line by line
+10. **[Data Model Map](./format/data-model-map.md)** - Grasp the entity hierarchy
+11. **[Geometry and Topology](./format/geometry-and-topology.md)** - Deep dive into mathematical representation
+12. **[Assembly Support](./comparison/assembly-support.md)** - Hierarchical structures and transformations
+13. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
 
 ### Step 4: Implementation & Troubleshooting (Reference as needed)
 
-9. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
-10. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
+14. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
+15. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
 
 ---
 
@@ -149,7 +187,7 @@ step-standards-explained/
 
 **Quick Links**:
 - 🛠️ **[Common Pitfalls](./implementation/common-pitfalls.md)** - Start here if you're stuck
-- 📐 **[AP242 ed2 Details](./versions/ap242-ed2.md)** - The current mainstream standard
+- 📐 **[AP242 ed3 Details](./versions/ap242-ed3.md)** - The latest version of the standard
 - 📖 **[Glossary](./docs/glossary.md)** - Check terminology if confused
 
 ---

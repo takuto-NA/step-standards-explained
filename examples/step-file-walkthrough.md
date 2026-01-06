@@ -208,6 +208,24 @@ END-ISO-10303-21;
 
 ---
 
+## 💡 Part 21 Syntax 101
+
+Before we dive into the line-by-line explanation, let's clarify the basic syntax of a STEP file (formally called "ISO 10303-21").
+
+### How to read `#10=PRODUCT(...);`
+
+Each line in the `DATA` section follows this basic pattern:
+**`#ID = ENTITY_NAME(Attribute1, Attribute2, ...);`**
+
+*   **`#` (Hash/Pound)**: The prefix for an **Instance ID**. It indicates that a unique ID follows.
+*   **`10` (The Number)**: A unique integer identifier for this specific piece of data in this file.
+    *   **Why "10, 20, 30..."?**: This is a legacy convention from when files were sometimes edited by hand (similar to BASIC line numbers). It allows for inserting entities later (e.g., `#15`) without renumbering. 
+    *   **Does the number matter?**: No. It only needs to be unique within the file. Tools use these to reference other entities (e.g., `#10` referencing `#20`).
+*   **`=` (Equals)**: The **Assignment Operator**. It means "The entity with ID #10 is defined as...".
+*   **`;` (Semicolon)**: Every statement in a STEP file must end with a semicolon.
+
+---
+
 ## 📖 Section-by-Section Explanation
 
 ### 1. File Header
@@ -401,6 +419,23 @@ DATA;
 **Interpretation**: `.MILLI.,.METRE.` = **mm (millimeters)**.
 
 **Implementer's Note**: Always check this value to calculate your unit conversion factors!
+
+**How Units Flow Through the File**:
+
+```mermaid
+graph TD
+    LU["#120 LENGTH_UNIT<br/>SI_UNIT(.MILLI.,.METRE.)<br/>Defines: mm"] -->|"assigned_unit"| GUAC["#100 GLOBAL_UNIT_ASSIGNED_CONTEXT<br/>Contains: #120, #130, #140"]
+    GUAC -->|"units"| GRC["#100 GEOMETRIC_REPRESENTATION_CONTEXT<br/>Applies units to geometry"]
+    GRC -->|"context_of_items"| SR["#210 SHAPE_REPRESENTATION<br/>All geometry uses these units"]
+    SR -->|"items"| CP["#700 CARTESIAN_POINT<br/>Coordinates: (0.0, 0.0, 0.0)<br/>Interpreted as: mm"]
+```
+
+**Key Points**:
+- Units are defined once (e.g., `#120` defines millimeters)
+- Units are assigned to `GEOMETRIC_REPRESENTATION_CONTEXT` (`#100`)
+- All geometry in `SHAPE_REPRESENTATION` (`#210`) inherits these units
+- All coordinate values (like `CARTESIAN_POINT`) are interpreted using these units
+- **Critical**: Always read the unit definition before interpreting coordinates!
 
 ---
 
@@ -667,6 +702,27 @@ graph TD
 1. **Two-Pass Processing is Mandatory**: Forward references exist (e.g., #10 referencing a later #20).
 2. **Confirm Units**: Apply the unit defined in #120 (mm) to all coordinates.
 3. **Reference Resolution**: Manage `#numbers` using a hash map.
+
+**Why Two-Pass Processing is Required**:
+
+```mermaid
+graph TD
+    START["Start Parsing"] --> PASS1["Pass 1: Build Instance Map<br/>Parse all lines:<br/>#10 = PRODUCT(...)<br/>#20 = PRODUCT_CONTEXT(...)<br/>#30 = APPLICATION_CONTEXT(...)"]
+    PASS1 --> MAP["Instance Map Created<br/>{#10: PRODUCT instance,<br/>#20: PRODUCT_CONTEXT instance,<br/>#30: APPLICATION_CONTEXT instance}"]
+    MAP --> PASS2["Pass 2: Resolve References<br/>Replace #ID with actual instances:<br/>#10.frame_of_reference = map[#20]<br/>#20.frame_of_reference = map[#30]"]
+    PASS2 --> RESOLVED["All References Resolved<br/>Complete data structure ready"]
+    RESOLVED --> TRAVERSE["Traverse Hierarchy<br/>PRODUCT → SHAPE_REPRESENTATION"]
+    TRAVERSE --> END["Extract Geometry"]
+```
+
+**Example of Forward Reference Problem**:
+```step
+#10 = PRODUCT('Part1', 'Part1', '', (#20));  ← References #20 (not defined yet!)
+#20 = PRODUCT_CONTEXT('', #30, 'mechanical'); ← References #30 (not defined yet!)
+#30 = APPLICATION_CONTEXT('automotive design');
+```
+
+**Solution**: First pass stores all instances, second pass resolves all references.
 
 ### Common Validation Checks
 

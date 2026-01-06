@@ -10,12 +10,39 @@ This guide is a super-intro for implementers who have CAD experience but are new
 
 1. What STEP is (from an implementer's perspective)
 2. First step: Reading a STEP file
-3. Recommended tools and resources
-4. What to read next
+3. **[STEP File Basics](../format/step-file-basics.md)**: Understanding syntax and structure fundamentals
+4. Recommended tools and resources
+5. What to read next
 
 ---
 
 ## 1. What is STEP? (Implementer's Perspective)
+
+### History & Background
+
+- **Who created it**: Developed by **ISO TC 184/SC 4** (Industrial data).
+- **Historical context**: Development started in **1984** as a successor to IGES (Initial Graphics Exchange Specification), aiming to overcome its limitations in data consistency and completeness.
+- **Why it was created**: To provide a single, vendor-neutral, and computer-interpretable international standard that covers the entire life cycle of a product, from design to manufacturing and disposal. The first version was published in **1994**.
+
+### Core Mental Model
+
+Before diving into the syntax, it is helpful to understand the relationship between the file structure and the data objects.
+
+```mermaid
+graph LR
+    subgraph File_Structure [File Structure]
+        Header[HEADER Section<br/>Metadata/Schema]
+        Data[DATA Section<br/>Entities]
+    end
+    
+    subgraph Object_Graph [Object Graph]
+        Product[#10 PRODUCT] -->|Version info| Def[#50 PRODUCT_DEFINITION]
+        Def -->|Shape link| Shape[#90 SHAPE_REPRESENTATION]
+        Shape -->|Contains| Geom[#100 FACE/SOLID]
+    end
+    
+    Data -->|"Parsed into"| Object_Graph
+```
 
 ### Core Properties
 
@@ -23,6 +50,23 @@ This guide is a super-intro for implementers who have CAD experience but are new
 - A **text-based** CAD data exchange format.
 - A way to represent 3D geometry using **B-rep** (Boundary Representation).
 - Capable of storing not just geometry, but also **management information** (Products, Assemblies) and **PMI** (Product and Manufacturing Information/Tolerances).
+
+### Why Choose STEP? (Strengths & Weaknesses)
+
+#### ✅ Strengths
+- **International Standard**: Widely supported by all major CAD vendors (ISO 10303).
+- **High Precision**: Uses B-rep (mathematically exact formulas) instead of mesh approximation.
+- **Rich Data**: Supports assemblies, colors, layers, and semantic PMI (AP242).
+- **Long-term Archiving**: Supported by LOTAR for 50+ year data preservation.
+
+#### ❌ Weaknesses
+- **Large File Size**: Being a text-based (ASCII) format, files can be significantly larger than proprietary binary formats.
+- **Lack of Design History**: Does not preserve the "feature tree" or parametric constraints from the source CAD (e.g., "Extrude 10mm").
+- **Implementation Complexity**: The standard is massive (hundreds of parts), making full implementation difficult.
+
+> [!TIP]
+> **Alternative formats?**
+> For cases where you need both high-fidelity visualization and exact geometry (B-rep) but don't want to use a raw STEP file, **3D PDF (PRC format)** is a common alternative. See the [Format Comparison](../comparison/format-comparison.md) for details.
 
 ---
 
@@ -40,6 +84,19 @@ This guide is a super-intro for implementers who have CAD experience but are new
 ### Why "Part 21"?
 
 The STEP standard (ISO 10303) is a massive collection of hundreds of "parts":
+
+#### Relationship Map of Major Parts
+```mermaid
+graph TD
+    P11[Part 11: EXPRESS] -->|Defines Schema| APs
+    APs[Application Protocols]
+    APs --- AP203[Part 203: AP203]
+    APs --- AP214[Part 214: AP214]
+    APs --- AP242[Part 242: AP242]
+    
+    P21[Part 21: Text Format] -->|Encodes Data| P21_File["*.step File"]
+    APs -->|Structured via| P21_File
+```
 
 #### List of Major Parts
 
@@ -197,6 +254,26 @@ SHAPE_REPRESENTATION (#90)
 REPRESENTATION_ITEM (#100-#500)  ← Geometry data is here
 ```
 
+**Visual Traversal Path**:
+
+```mermaid
+graph TD
+    P["#10 PRODUCT<br/>'Part_A'"] -->|"of_product"| PDF["#40 PRODUCT_DEFINITION_FORMATION"]
+    PDF -->|"formation"| PD["#50 PRODUCT_DEFINITION"]
+    PD -->|"definition"| PDS["#70 PRODUCT_DEFINITION_SHAPE"]
+    PDS -->|"definition"| SDR["#200 SHAPE_DEFINITION_REPRESENTATION"]
+    SDR -->|"used_representation"| SR["#210 SHAPE_REPRESENTATION"]
+    SR -->|"items"| RI["#220-#500 REPRESENTATION_ITEM<br/>ADVANCED_FACE, EDGE, VERTEX"]
+```
+
+**Traversal Steps**:
+1. Start with `PRODUCT` (#10) - the top-level part information
+2. Follow `PRODUCT_DEFINITION_FORMATION` to manage versions
+3. Follow `PRODUCT_DEFINITION` to get design context
+4. Follow `PRODUCT_DEFINITION_SHAPE` as the bridge to geometry
+5. Follow `SHAPE_REPRESENTATION` to reach the geometry container
+6. Extract `REPRESENTATION_ITEM` instances (faces, edges, vertices)
+
 See the [Data Model Map](../format/data-model-map.md) for details.
 
 ### Step 4: How to Reach Geometry Data (Overview)
@@ -218,11 +295,28 @@ shape_rep = traverse(product_def, 'SHAPE_REPRESENTATION')
 faces = filter_items(shape_rep.items, 'ADVANCED_FACE')
 ```
 
+**Parser Processing Flow**:
+
+```mermaid
+graph TD
+    START["Start: Read STEP File"] --> HEADER["Phase 1: Parse HEADER<br/>Extract FILE_SCHEMA<br/>Identify AP Version"]
+    HEADER --> MAP["Phase 2: Build Instance Map<br/>Parse all #ID = ENTITY(...)<br/>Store in hash map"]
+    MAP --> RESOLVE["Phase 3: Resolve References<br/>Replace #ID references<br/>with actual instances"]
+    RESOLVE --> TRAVERSE["Phase 4: Traverse Hierarchy<br/>PRODUCT → PRODUCT_DEFINITION<br/>→ SHAPE_REPRESENTATION"]
+    TRAVERSE --> EXTRACT["Phase 5: Extract Geometry<br/>Get ADVANCED_FACE, EDGE, VERTEX<br/>Build B-rep structure"]
+    EXTRACT --> END["End: Geometry Ready"]
+```
+
+**Why Two-Pass Processing?**
+- **Pass 1**: Build instance map (all `#ID = ENTITY(...)` entries)
+- **Pass 2**: Resolve references (replace `#ID` with actual instance objects)
+- Forward references require this approach - you cannot resolve references until all instances are parsed.
+
 See [Data Model Map](../format/data-model-map.md) for detailed implementation examples.
 
 ---
 
-## 3. Recommended Tools
+## 4. Recommended Tools
 
 ### STEP Viewers (Free)
 
@@ -247,14 +341,15 @@ See [Data Model Map](../format/data-model-map.md) for detailed implementation ex
 
 ---
 
-## 4. What to Read Next
+## 5. What to Read Next
 
 After understanding the basics, proceed in this order:
 
 ### ① Deepen Your Understanding
 
-1. **[Glossary](./glossary.md)** - Memorize the Top 5 important terms.
-2. **[FAQ](./faq.md)** - Resolve common questions.
+1. **[STEP File Basics](../format/step-file-basics.md)** - Syntax and structure fundamentals.
+2. **[Glossary](./glossary.md)** - Memorize the Top 5 important terms.
+3. **[FAQ](./faq.md)** - Resolve common questions.
 
 ### ② Select an AP
 

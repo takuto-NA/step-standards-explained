@@ -8,3 +8,11 @@ Desktop.ini
 # IDEs
 .vscode/
 .idea/
+
+# Node
+node_modules/
+.temp/
+.cache/
+dist/
+.vitepress/dist
+.vitepress/cache
