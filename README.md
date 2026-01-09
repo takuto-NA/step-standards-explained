@@ -74,14 +74,15 @@ Designed for implementers new to STEP to learn efficiently.
 8. **[STEP File Basics](./format/step-file-basics.md)** - Syntax and structure fundamentals
 9. **[STEP File Walkthrough](./examples/step-file-walkthrough.md)** - Understand real files line by line
 10. **[Data Model Map](./format/data-model-map.md)** - Grasp the entity hierarchy
-11. **[Geometry and Topology](./format/geometry-and-topology.md)** - Deep dive into mathematical representation
-12. **[Assembly Support](./comparison/assembly-support.md)** - Hierarchical structures and transformations
-13. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
+11. **[Styling and Colors](./format/styling-and-colors.md)** - Colors, transparency, and layers
+12. **[Geometry and Topology](./format/geometry-and-topology.md)** - Deep dive into mathematical representation
+13. **[Assembly Support](./comparison/assembly-support.md)** - Hierarchical structures and transformations
+14. **[EXPRESS Language Basics](./format/express-overview.md)** - Learn how to read schemas
 
 ### Step 4: Implementation & Troubleshooting (Reference as needed)
 
-14. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
-15. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
+15. **[Common Pitfalls](./implementation/common-pitfalls.md)** - Implementation warnings and solutions
+16. **[Validation and CAx-IF](./implementation/validation-and-caxif.md)** - Methods for quality assurance
 
 ---
 

@@ -15,7 +15,7 @@ The four primary hierarchies in a STEP file:
 1. **[Core Hierarchy](#1-core-hierarchy-from-product-to-geometry)**: From Product to Geometry.
 2. **[Assembly Structure](#2-assembly-structure)**: Parent-child relationships.
 3. **[PMI Hierarchy](#3-pmi-product-and-manufacturing-information-hierarchy)**: Dimensions and tolerances.
-4. **[Presentation](#4-presentation-colors-and-layers)**: Colors and layers.
+4. **[Styling and Colors](./styling-and-colors.md)**: Colors, transparency, and layers.
 
 ---
 
@@ -327,82 +327,21 @@ def extract_pmi_from_face(face_instance):
 **Difficulty**: ★★☆ (Intermediate)  
 **Importance**: ★★☆ (AP214 and later)
 
-Styles are assigned to geometry elements to represent colors and layers.
+Styles are assigned to geometry elements to represent colors, transparency, and layers.
 
-### Entity Hierarchy Diagram
+👉 Details: **[Styling and Colors](./styling-and-colors.md)**
+
+### Quick Reference Diagram
 
 ```mermaid
 graph TD
     GEOM["GEOMETRIC_REPRESENTATION_ITEM"] -->|"item"| SI["STYLED_ITEM"]
-    SI -->|"styles"| PSA["PRESENTATION_STYLE_ASSIGNMENT"]
-    PSA -->|"styles"| SSU["SURFACE_STYLE_USAGE"]
-    SSU -->|"style"| SSS["SURFACE_SIDE_STYLE"]
-    SSS -->|"styles"| SSR["SURFACE_STYLE_RENDERING"]
-    SSR -->|"surface_colour"| COLOUR["COLOUR_RGB<br/>(R,G,B: 0.0-1.0)"]
-    
-    GEOM -.->|"assigned_items"| PLA["PRESENTATION_LAYER_ASSIGNMENT<br/>(Layer)"]
+    SI --> PSA["PRESENTATION_STYLE_ASSIGNMENT"]
+    PSA --> SSU["SURFACE_STYLE_USAGE"]
+    SSU --> SSS["SURFACE_SIDE_STYLE"]
+    SSS --> SSR["SURFACE_STYLE_RENDERING"]
+    SSR --> COLOUR["COLOUR_RGB"]
 ```
-
-### Example in a Real File
-
-```step
-# Face
-#100 = ADVANCED_FACE(...);
-
-# Color Definition
-#200 = STYLED_ITEM('',(#210),#100);  # Apply style to #100 (Face)
-#210 = PRESENTATION_STYLE_ASSIGNMENT((#220));
-#220 = SURFACE_STYLE_USAGE(.BOTH.,#230);
-#230 = SURFACE_SIDE_STYLE('',(#240));
-#240 = SURFACE_STYLE_RENDERING(#250,.MATTE.);
-#250 = COLOUR_RGB('Red',1.0,0.0,0.0);  # RGB(1.0, 0.0, 0.0) = Red
-
-# Layer
-#300 = PRESENTATION_LAYER_ASSIGNMENT('Layer_1','',(#100));
-```
-
-### Tips for Parser Implementation
-
-**Extracting Colors (Python-style)**:
-
-```python
-def get_face_color(face_instance):
-    """
-    Retrieve the color of an ADVANCED_FACE.
-    Returns: (R, G, B) tuple (0.0-1.0) or None
-    """
-    # Find STYLED_ITEM referencing the face
-    styled_items = find_all_by_attr('STYLED_ITEM', 'item', face_instance)
-    
-    for si in styled_items:
-        for style in si.styles:
-            if style.entity_type == 'PRESENTATION_STYLE_ASSIGNMENT':
-                # Traverse the style hierarchy
-                for psa_style in style.styles:
-                    if psa_style.entity_type == 'SURFACE_STYLE_USAGE':
-                        side_style = psa_style.style
-                        for ss in side_style.styles:
-                            if ss.entity_type == 'SURFACE_STYLE_RENDERING':
-                                colour = ss.surface_colour
-                                if colour.entity_type == 'COLOUR_RGB':
-                                    return (colour.red, colour.green, colour.blue)
-    
-    return None  # No color defined
-
-def get_face_layer(face_instance):
-    """
-    Retrieve the layer name for an ADVANCED_FACE.
-    """
-    layers = find_all_referencing(face_instance, 'PRESENTATION_LAYER_ASSIGNMENT', 'assigned_items')
-    if layers:
-        return layers[0].name
-    return None
-```
-
-**Implementation Considerations**:
-- Colors are in the range 0.0 to 1.0 (convert to 0-255 via `int(value * 255)`).
-- Handle priority if multiple `STYLED_ITEM`s reference the same geometry.
-- Layers are strings; beware of reserved words like "HIDDEN".
 
 ---
 

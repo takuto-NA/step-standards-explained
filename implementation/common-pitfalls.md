@@ -401,6 +401,8 @@ def validate_pmi_linkage(step_file):
 - `PRESENTATION_STYLE_ASSIGNMENT` is not directly linked to geometry.
 - AP limitations (AP203 does not support colors).
 
+👉 Details: **[Styling and Colors](../format/styling-and-colors.md)**
+
 ### ✅ Solutions
 
 #### 1. Verify AP
