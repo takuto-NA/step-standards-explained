@@ -12,13 +12,13 @@ In STEP, visual representation (colors, layers, transparency) is decoupled from 
 
 Not all Application Protocols (APs) support visual styling. Choosing the right version is critical.
 
-| Feature | AP203 | AP214 | AP242 |
+| Feature | AP203 (Ed.2) | AP214 | AP242 |
 | :--- | :---: | :---: | :---: |
-| **Basic Colors (RGB)** | ❌ (No) | ✅ (Yes) | ✅ (Yes) |
-| **Layers** | ❌ (No) | ✅ (Yes) | ✅ (Yes) |
+| **Basic Colors (RGB)** | ✅ (Yes) | ✅ (Yes) | ✅ (Yes) |
+| **Layers** | ✅ (Yes) | ✅ (Yes) | ✅ (Yes) |
 | **Transparency** | ❌ (No) | ⚠ (Partial) | ✅ (Yes) |
 
-- **AP203**: The oldest standard. It does **not** store colors or layers. Any styling defined in CAD will be lost upon export to AP203.
+- **AP203**: The oldest standard. **Edition 1** does not store colors or layers. **Edition 2** added support for basic styling and layers to match AP214.
 - **AP214**: The most common standard for "colored" STEP files. Highly compatible with most CAD systems.
 - **AP242**: The modern standard. Supports everything in AP214 plus advanced transparency and PMI styling.
 
@@ -114,6 +114,16 @@ graph LR
 
 - **CURVE_STYLE**: Can define both color and line width.
 - Many CAD systems export edges as "Black" by default, even if the faces are colored.
+
+```step
+/* Example: Styling an Edge (Blue, 0.5mm width) */
+#100 = EDGE_CURVE('Edge_A',#110,#120,#130,.T.);
+#200 = STYLED_ITEM('',(#210),#100);
+#210 = PRESENTATION_STYLE_ASSIGNMENT((#220));
+#220 = CURVE_STYLE('',$,#230,#240);
+#230 = COLOUR_RGB('',0.0,0.0,1.0);  /* Blue */
+#240 = POSITIVE_LENGTH_MEASURE(0.5); /* 0.5mm Width */
+```
 
 ---
 
