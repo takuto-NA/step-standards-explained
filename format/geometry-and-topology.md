@@ -63,6 +63,10 @@ $$
 
 *(In plain text: Sum of (Basis_u * Basis_v * Weight * ControlPoint) / Sum of (Basis_u * Basis_v * Weight))*
 
+### Interactive NURBS Playground
+
+Use the viewer below to experiment with NURBS parameters. Switch between **Curve** and **Surface** modes to see how **Weights** (Rational) and **Knots** (Non-Uniform) influence the geometry.
+
 <NURBSViewer />
 
 Where:
