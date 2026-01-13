@@ -63,6 +63,8 @@ $$
 
 *(In plain text: Sum of (Basis_u * Basis_v * Weight * ControlPoint) / Sum of (Basis_u * Basis_v * Weight))*
 
+<NURBSViewer />
+
 Where:
 *   **$P$**: Control Points (grid for surfaces).
 *   **$w$**: Weights.
