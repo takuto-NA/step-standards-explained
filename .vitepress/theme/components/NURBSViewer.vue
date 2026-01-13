@@ -110,7 +110,7 @@ const renderCurve = () => {
   // Control polygon
   if (state.showPolygon) {
     const polyGeom = new THREE.BufferGeometry().setFromPoints(points.map(p => new THREE.Vector3(p.x, p.y, p.z)))
-    const polyMat = new THREE.LineBasicMaterial({ color: 0x64748b, dashSize: 0.2, gapSize: 0.1 }) // Slate 500
+    const polyMat = new THREE.LineBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.4 }) // Slate 500
     lineGroup = new THREE.Line(polyGeom, polyMat)
     scene.add(lineGroup)
   }
