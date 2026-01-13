@@ -275,51 +275,52 @@ const getStepSnippet = computed(() => {
     <div class="viewer-container">
       <div ref="container" class="canvas-container"></div>
       
-      <!-- Overlay controls -->
-      <div class="overlay-controls">
-        <div class="control-group tabs">
-          <button :class="{ active: state.mode === 'curve' }" @click="state.mode = 'curve'">Curve C(u)</button>
-          <button :class="{ active: state.mode === 'surface' }" @click="state.mode = 'surface'">Surface S(u,v)</button>
+      <!-- Settings & Data Sidebar -->
+      <div class="sidebar">
+        <div class="settings-panel">
+          <div class="control-group tabs">
+            <button :class="{ active: state.mode === 'curve' }" @click="state.mode = 'curve'">Curve C(u)</button>
+            <button :class="{ active: state.mode === 'surface' }" @click="state.mode = 'surface'">Surface S(u,v)</button>
+          </div>
+
+          <div class="control-group">
+            <label>Weight ($w_i$): {{ state.weight.toFixed(2) }}</label>
+            <input type="range" v-model.number="state.weight" min="0.1" max="5.0" step="0.1" />
+            <p class="desc">Shows "Rational" property (pulls toward point)</p>
+          </div>
+
+          <div class="control-group" v-if="state.mode === 'curve'">
+            <label>Knot ($u_i$): {{ state.knot.toFixed(2) }}</label>
+            <input type="range" v-model.number="state.knot" min="0.1" max="0.9" step="0.05" />
+            <p class="desc">Shows "Non-Uniform" property (parameter speed)</p>
+          </div>
+
+          <div class="control-group">
+            <label>Parameter $u$: {{ state.u.toFixed(2) }}</label>
+            <input type="range" v-model.number="state.u" min="0" max="1" step="0.01" />
+          </div>
+
+          <div class="control-group" v-if="state.mode === 'surface'">
+            <label>Parameter $v$: {{ state.v.toFixed(2) }}</label>
+            <input type="range" v-model.number="state.v" min="0" max="1" step="0.01" />
+          </div>
+
+          <div class="checkboxes">
+            <label><input type="checkbox" v-model="state.showPoints" /> Points</label>
+            <label><input type="checkbox" v-model="state.showPolygon" /> Polygon</label>
+            <label v-if="state.mode === 'surface'"><input type="checkbox" v-model="state.showMesh" /> Mesh</label>
+          </div>
         </div>
 
-        <div class="control-group">
-          <label>Weight ($w_i$): {{ state.weight.toFixed(2) }}</label>
-          <input type="range" v-model.number="state.weight" min="0.1" max="5.0" step="0.1" />
-          <p class="desc">Shows "Rational" property (pulls toward point)</p>
-        </div>
-
-        <div class="control-group" v-if="state.mode === 'curve'">
-          <label>Knot ($u_i$): {{ state.knot.toFixed(2) }}</label>
-          <input type="range" v-model.number="state.knot" min="0.1" max="0.9" step="0.05" />
-          <p class="desc">Shows "Non-Uniform" property (parameter speed)</p>
-        </div>
-
-        <div class="control-group">
-          <label>Parameter $u$: {{ state.u.toFixed(2) }}</label>
-          <input type="range" v-model.number="state.u" min="0" max="1" step="0.01" />
-        </div>
-
-        <div class="control-group" v-if="state.mode === 'surface'">
-          <label>Parameter $v$: {{ state.v.toFixed(2) }}</label>
-          <input type="range" v-model.number="state.v" min="0" max="1" step="0.01" />
-        </div>
-
-        <div class="checkboxes">
-          <label><input type="checkbox" v-model="state.showPoints" /> Points</label>
-          <label><input type="checkbox" v-model="state.showPolygon" /> Polygon</label>
-          <label v-if="state.mode === 'surface'"><input type="checkbox" v-model="state.showMesh" /> Mesh</label>
-        </div>
-      </div>
-
-      <!-- Data Panel -->
-      <div class="data-panel">
-        <div class="data-section">
-          <span class="label">Knot Vector:</span>
-          <pre>{{ getKnotVector }}</pre>
-        </div>
-        <div class="data-section">
-          <span class="label">STEP (Part 21) Preview:</span>
-          <pre class="step-code">{{ getStepSnippet }}</pre>
+        <div class="data-panel">
+          <div class="data-section">
+            <span class="label">Knot Vector:</span>
+            <pre>{{ getKnotVector }}</pre>
+          </div>
+          <div class="data-section">
+            <span class="label">STEP (Part 21) Preview:</span>
+            <pre class="step-code">{{ getStepSnippet }}</pre>
+          </div>
         </div>
       </div>
     </div>
@@ -338,39 +339,34 @@ const getStepSnippet = computed(() => {
 
 .viewer-container {
   display: grid;
-  grid-template-columns: 1fr 300px;
-  height: 500px;
+  grid-template-columns: 1fr 320px;
+  height: 600px;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 960px) {
   .viewer-container {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
+    grid-template-rows: 500px auto;
     height: auto;
-  }
-  .canvas-container {
-    height: 400px;
   }
 }
 
 .canvas-container {
   position: relative;
-  min-height: 400px;
+  background: #000;
 }
 
-.overlay-controls {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(8px);
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  width: 240px;
-  pointer-events: auto;
-  z-index: 20;
+.sidebar {
+  background: #1e293b;
+  border-left: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.settings-panel {
+  padding: 1.5rem;
+  border-bottom: 1px solid #334155;
 }
 
 .control-group {
@@ -435,13 +431,10 @@ const getStepSnippet = computed(() => {
 }
 
 .data-panel {
-  background: #1e293b;
   padding: 1.5rem;
-  border-left: 1px solid #334155;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  overflow-y: auto;
 }
 
 .data-section {
