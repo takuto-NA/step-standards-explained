@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, onBeforeUnmount, reactive, watch, nextTick } from 'vue'
+import { onMounted, ref, onBeforeUnmount, reactive, watch, nextTick, computed } from 'vue'
 
 const container = ref(null)
 const state = reactive({
