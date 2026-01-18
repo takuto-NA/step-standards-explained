@@ -71,6 +71,7 @@ graph LR
 * **[File Basics](./format/step-file-basics)** - Syntax and structure fundamentals.
 * **[File Walkthrough](./examples/step-file-walkthrough)** - Understand real STEP files line-by-line.
 * **[Data Model Map](./format/data-model-map)** - Grasp the entity hierarchy.
+* **[Styling and Colors](./format/styling-and-colors)** - Colors, transparency, and layers.
 * **[Geometry & Topology](./format/geometry-and-topology)** - Deep dive into mathematical representation.
 
 ### Step 4: Implementation
