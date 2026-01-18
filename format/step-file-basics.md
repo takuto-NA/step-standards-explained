@@ -14,7 +14,7 @@ graph TD
         HEADER_DATA["FILE_NAME, FILE_SCHEMA..."]
         HEADER_END["ENDSEC;"]
         DATA_START["DATA;"]
-        DATA_ENTITIES["#10=PRODUCT(...)<br/>#20=PRODUCT_CONTEXT(...)<br/>#30=..."]
+        DATA_ENTITIES["#10=PRODUCT(...)\n#20=PRODUCT_CONTEXT(...)\n#30=..."]
         DATA_END["ENDSEC;"]
         ISO_END["END-ISO-10303-21;"]
     end
@@ -81,7 +81,7 @@ The following diagram shows how entities reference each other using Instance IDs
 
 ```mermaid
 graph LR
-    P10["#10 PRODUCT<br/>'Part1'"] -->|"frame_of_reference"| PC20["#20 PRODUCT_CONTEXT"]
+    P10["#10 PRODUCT\n'Part1'"] -->|"frame_of_reference"| PC20["#20 PRODUCT_CONTEXT"]
     PC20 -->|"frame_of_reference"| AC30["#30 APPLICATION_CONTEXT"]
     PDF40["#40 PRODUCT_DEFINITION_FORMATION"] -->|"of_product"| P10
     PD50["#50 PRODUCT_DEFINITION"] -->|"formation"| PDF40
@@ -102,8 +102,8 @@ STEP files allow **forward references**, meaning an entity can reference another
 
 ```mermaid
 graph TD
-    P10["#10 PRODUCT<br/>References #20"] -->|"Forward Reference"| PC20["#20 PRODUCT_CONTEXT<br/>Defined Later"]
-    PC20 -->|"References #30"| AC30["#30 APPLICATION_CONTEXT<br/>Defined Even Later"]
+    P10["#10 PRODUCT\nReferences #20"] -->|"Forward Reference"| PC20["#20 PRODUCT_CONTEXT\nDefined Later"]
+    PC20 -->|"References #30"| AC30["#30 APPLICATION_CONTEXT\nDefined Even Later"]
 ```
 
 **Why This Matters**:

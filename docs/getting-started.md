@@ -31,8 +31,8 @@ Before diving into the syntax, it is helpful to understand the relationship betw
 ```mermaid
 graph LR
     subgraph File_Structure [File Structure]
-        Header[HEADER Section<br/>Metadata/Schema]
-        Data[DATA Section<br/>Entities]
+        Header["HEADER Section\nMetadata/Schema"]
+        Data["DATA Section\nEntities"]
     end
     
     subgraph Object_Graph [Object Graph]
@@ -258,12 +258,12 @@ REPRESENTATION_ITEM (#100-#500)  ← Geometry data is here
 
 ```mermaid
 graph TD
-    P["#10 PRODUCT<br/>'Part_A'"] -->|"of_product"| PDF["#40 PRODUCT_DEFINITION_FORMATION"]
+    P["#10 PRODUCT\n'Part_A'"] -->|"of_product"| PDF["#40 PRODUCT_DEFINITION_FORMATION"]
     PDF -->|"formation"| PD["#50 PRODUCT_DEFINITION"]
     PD -->|"definition"| PDS["#70 PRODUCT_DEFINITION_SHAPE"]
     PDS -->|"definition"| SDR["#200 SHAPE_DEFINITION_REPRESENTATION"]
     SDR -->|"used_representation"| SR["#210 SHAPE_REPRESENTATION"]
-    SR -->|"items"| RI["#220-#500 REPRESENTATION_ITEM<br/>ADVANCED_FACE, EDGE, VERTEX"]
+    SR -->|"items"| RI["#220-#500 REPRESENTATION_ITEM\nADVANCED_FACE, EDGE, VERTEX"]
 ```
 
 **Traversal Steps**:
@@ -299,11 +299,11 @@ faces = filter_items(shape_rep.items, 'ADVANCED_FACE')
 
 ```mermaid
 graph TD
-    START["Start: Read STEP File"] --> HEADER["Phase 1: Parse HEADER<br/>Extract FILE_SCHEMA<br/>Identify AP Version"]
-    HEADER --> MAP["Phase 2: Build Instance Map<br/>Parse all #ID = ENTITY(...)<br/>Store in hash map"]
-    MAP --> RESOLVE["Phase 3: Resolve References<br/>Replace #ID references<br/>with actual instances"]
-    RESOLVE --> TRAVERSE["Phase 4: Traverse Hierarchy<br/>PRODUCT → PRODUCT_DEFINITION<br/>→ SHAPE_REPRESENTATION"]
-    TRAVERSE --> EXTRACT["Phase 5: Extract Geometry<br/>Get ADVANCED_FACE, EDGE, VERTEX<br/>Build B-rep structure"]
+    START["Start: Read STEP File"] --> HEADER["Phase 1: Parse HEADER\nExtract FILE_SCHEMA\nIdentify AP Version"]
+    HEADER --> MAP["Phase 2: Build Instance Map\nParse all #ID = ENTITY(...)\nStore in hash map"]
+    MAP --> RESOLVE["Phase 3: Resolve References\nReplace #ID references\nwith actual instances"]
+    RESOLVE --> TRAVERSE["Phase 4: Traverse Hierarchy\nPRODUCT → PRODUCT_DEFINITION\n→ SHAPE_REPRESENTATION"]
+    TRAVERSE --> EXTRACT["Phase 5: Extract Geometry\nGet ADVANCED_FACE, EDGE, VERTEX\nBuild B-rep structure"]
     EXTRACT --> END["End: Geometry Ready"]
 ```
 
@@ -393,7 +393,7 @@ Before you start coding, ensure you:
 
 ```mermaid
 graph LR
-    A["Getting Started<br/>(This Page)"] --> B[Glossary]
+    A["Getting Started\n(This Page)"] --> B[Glossary]
     B --> C[FAQ]
     C --> D{What to Implement?}
     D -->|Parser| E[Data Model Map]

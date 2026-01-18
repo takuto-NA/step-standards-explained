@@ -54,14 +54,14 @@ Key milestones that significantly changed I/O capabilities.
 
 ## 4. Persistence and Simulation (Face Naming)
 
-Support for persistent face names (via `SHAPE_ASPECT`) which is critical for automated simulation workflows.
+Support for persistent “face naming” is critical for automated simulation workflows. In practice (especially in CAE toolchains), this often depends on how exporters emit **attributes** (e.g., layer/color/user-defined attributes) and how importers map those attributes into concepts like **Named Selections**. Avoid assuming a direct “reads `SHAPE_ASPECT` names” behavior unless you have verified it in your specific toolchain.
 
 | Software | Export Name | Import Name | Remarks |
 | :--- | :---: | :---: | :--- |
 | **Siemens NX** | ✅ | ✅ | Excellent support via AP242 and AP214. |
 | **SolidWorks** | ⚠ | ⚠ | Names often lost unless exported with specific "MBD" or "Face name" settings. |
 | **Rhino 8** | ✅ | ⚠ | Improved in Rhino 8; exports "Object Names" to AP242 `SHAPE_ASPECT`. |
-| **Ansys Workbench**| N/A | ✅ | Can import face labels as "Named Selections" (Requires AP242). |
+| **Ansys Workbench**| N/A | ✅ | Can create "Named Selections" on import via **Named Selection Processing + Attribute Processing**; behavior depends on the **Named Selections Key** (often Layer/Color) and what the exporter writes. |
 
 ---
 

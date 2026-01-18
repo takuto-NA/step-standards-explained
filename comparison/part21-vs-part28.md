@@ -2,13 +2,15 @@
 
 This document outlines the support status for STEP Part 21 (ASCII) and Part 28 (XML) across major CAD software.
 
+For CAE pipelines (including Ansys Workbench/SpaceClaim/Fluent workflows), **Part 21 remains the practical default** unless the receiver explicitly confirms Part 28 support.
+
 ---
 
 ## 📊 CAD Software Support Status
 
 ### Major CAD Software
 
-| CAD Software | Part 21<br/>(.stp, .step) | Part 28<br/>(.stpx, .stpZ) | Remarks |
+| CAD Software | Part 21 (.stp, .step) | Part 28 (.stpx, .stpZ) | Remarks |
 |----------------|---------------------------|---------------------------|------|
 | **SolidWorks** | ✅ Full Support | ❌ Not Supported | Part 21 only. AP203/214/242 support. |
 | **CATIA V5/V6** | ✅ Full Support | ⚠️ Limited | Part 21 is primary. AP214/242 support. No explicit Part 28 support. |
@@ -141,10 +143,10 @@ graph LR
     end
     subgraph Part28 ["Part 28 (XML)"]
         direction TB
-        P28_Root["&lt;iso_10303_28&gt;"]
-        P28_Header["&lt;header&gt;"]
-        P28_Data["&lt;data&gt;"]
-        P28_Entity["&lt;product id='...'&gt;"]
+        P28_Root["iso_10303_28 (root)"]
+        P28_Header["header"]
+        P28_Data["data"]
+        P28_Entity["product (id='...')"]
     end
 ```
 

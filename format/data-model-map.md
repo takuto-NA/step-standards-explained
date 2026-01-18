@@ -32,12 +32,12 @@ Once you reach the `REPRESENTATION_ITEM` level, the geometry is organized as a n
 
 ```mermaid
 graph TD
-    Solid[MANIFOLD_SOLID_BREP<br/>'The Solid'] -->|"outer"| Shell[CLOSED_SHELL<br/>'The Skin']
-    Shell -->|"cfs_faces"| Face[ADVANCED_FACE<br/>'The Surface Patch']
-    Face -->|"bounds"| Loop[FACE_OUTER_BOUND<br/>'The Perimeter']
-    Loop -->|"bound"| Edge[ORIENTED_EDGE<br/>'The Segment']
-    Edge -->|"edge_element"| EC[EDGE_CURVE<br/>'The Shared Edge']
-    EC -->|"edge_start/end"| Vertex[VERTEX_POINT<br/>'The Corner']
+    Solid["MANIFOLD_SOLID_BREP\n'The Solid'"] -->|"outer"| Shell["CLOSED_SHELL\n'The Skin'"]
+    Shell -->|"cfs_faces"| Face["ADVANCED_FACE\n'The Surface Patch'"]
+    Face -->|"bounds"| Loop["FACE_OUTER_BOUND\n'The Perimeter'"]
+    Loop -->|"bound"| Edge["ORIENTED_EDGE\n'The Segment'"]
+    Edge -->|"edge_element"| EC["EDGE_CURVE\n'The Shared Edge'"]
+    EC -->|"edge_start/end"| Vertex["VERTEX_POINT\n'The Corner'"]
 ```
 
 ### Entity Details
@@ -134,10 +134,10 @@ Assemblies are defined as "usage relationships" between product definitions.
 
 ```mermaid
 graph TD
-    ParentPD["Parent Part"] -->|"uses"| NAUO["NAUO<br/>(Usage)"]
+    ParentPD["Parent Part"] -->|"uses"| NAUO["NAUO\n(Usage)"]
     NAUO -->|"child"| ChildPD["Child Part"]
-    NAUO -.-> CDSR["CDSR<br/>(Placement Link)"]
-    CDSR -->|"defines"| Trans["Transformation Matrix<br/>(Rotation + Translation)"]
+    NAUO -.-> CDSR["CDSR\n(Placement Link)"]
+    CDSR -->|"defines"| Trans["Transformation Matrix\n(Rotation + Translation)"]
     
     subgraph Conceptual_View [Conceptual View]
         P_Coord["Assembly Origin (0,0,0)"]
@@ -229,14 +229,14 @@ def get_placement_transform(nauo):
 
 ```mermaid
 graph TD
-    ParentCS["Parent Coordinate System<br/>(Assembly Origin)"] -->|"relating_product_definition"| NAUO["NEXT_ASSEMBLY_USAGE_OCCURRENCE<br/>Defines: Parent uses Child"]
-    NAUO -->|"related_product_definition"| ChildCS["Child Coordinate System<br/>(Part Origin)"]
-    NAUO -->|"via CDSR"| CDSR["CONTEXT_DEPENDENT_SHAPE_REPRESENTATION<br/>Links transformation"]
-    CDSR -->|"representation_relation"| RRWT["REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION<br/>Contains transformation"]
-    RRWT -->|"transformation_operator"| IDT["ITEM_DEFINED_TRANSFORMATION<br/>Transformation Matrix"]
-    IDT -->|"transform_item_1"| SourceAP["AXIS2_PLACEMENT_3D<br/>Source: Parent CS"]
-    IDT -->|"transform_item_2"| TargetAP["AXIS2_PLACEMENT_3D<br/>Target: Child CS Position"]
-    TargetAP -->|"Applied to"| ChildGeom["Child Geometry<br/>Transformed coordinates"]
+    ParentCS["Parent Coordinate System\n(Assembly Origin)"] -->|"relating_product_definition"| NAUO["NEXT_ASSEMBLY_USAGE_OCCURRENCE\nDefines: Parent uses Child"]
+    NAUO -->|"related_product_definition"| ChildCS["Child Coordinate System\n(Part Origin)"]
+    NAUO -->|"via CDSR"| CDSR["CONTEXT_DEPENDENT_SHAPE_REPRESENTATION\nLinks transformation"]
+    CDSR -->|"representation_relation"| RRWT["REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION\nContains transformation"]
+    RRWT -->|"transformation_operator"| IDT["ITEM_DEFINED_TRANSFORMATION\nTransformation Matrix"]
+    IDT -->|"transform_item_1"| SourceAP["AXIS2_PLACEMENT_3D\nSource: Parent CS"]
+    IDT -->|"transform_item_2"| TargetAP["AXIS2_PLACEMENT_3D\nTarget: Child CS Position"]
+    TargetAP -->|"Applied to"| ChildGeom["Child Geometry\nTransformed coordinates"]
 ```
 
 **Transformation Process**:
@@ -263,56 +263,57 @@ graph TD
 **Difficulty**: ★★★ (Advanced)  
 **Importance**: ★☆☆ (AP242 only)
 
-PMI gives "Technical Meaning (Shape Aspect)" to geometry (Faces or Edges), linking them to tolerances and annotations.
+PMI gives “technical meaning” to a product’s shape and links that meaning to tolerances and annotations.
+
+Important: although it’s common to *talk* about “PMI on a face,” the ISO schemas typically define `SHAPE_ASPECT` **on the product’s shape definition** (`PRODUCT_DEFINITION_SHAPE`). Exporters then use additional associativity patterns to connect a given semantic element to specific faces/edges. Do not assume `SHAPE_ASPECT.of_shape` points directly to `ADVANCED_FACE`.
 
 ### Entity Hierarchy Diagram
 
 ```mermaid
 graph TD
-    GEOM["GEOMETRIC_REPRESENTATION_ITEM<br/>(Face/Edge)"] -->|"of_shape"| SA["SHAPE_ASPECT<br/>(Semantic Label)"]
-    SA -->|"element"| DA["DATUM_FEATURE / DATUM"]
-    SA -->|"element"| GT["GEOMETRIC_TOLERANCE<br/>(Tolerance)"]
-    GT --> PT["POSITION_TOLERANCE etc.<br/>(Specific Type)"]
-    GT -->|"datum"| DR["DATUM_REFERENCE<br/>(Datum Reference)"]
+    SA["SHAPE_ASPECT\n(Semantic handle)"] -->|"of_shape"| PDS["PRODUCT_DEFINITION_SHAPE"]
+    SA -. "associated to faces/edges (varies by exporter)" .-> GEOM["ADVANCED_FACE / EDGE\n(Representation items)"]
+
+    SA --> DA["DATUM_FEATURE / DATUM"]
+    SA --> GT["GEOMETRIC_TOLERANCE\n(Tolerance)"]
+    GT --> PT["POSITION_TOLERANCE etc.\n(Specific Type)"]
+    GT --> DR["DATUM_REFERENCE\n(Datum Reference)"]
 ```
 
 ### Tips for Parser Implementation
 
-**Extracting PMI (Python-style)**:
+**Extracting PMI (Python-style, high-level)**:
 
 ```python
-def extract_pmi_from_face(face_instance):
+def extract_pmi(step_file):
     """
-    Extract PMI information from an ADVANCED_FACE.
+    Extract PMI information.
+
+    Note: The exact mapping between semantic elements (e.g., SHAPE_ASPECT)
+    and specific faces/edges is exporter-dependent (CAx-IF patterns vary).
     """
-    pmi_list = []
-    
-    # 1. Find the SHAPE_ASPECT referencing this face
-    shape_aspects = find_all_referencing(face_instance, 'SHAPE_ASPECT', 'of_shape')
-    
+    pmi = []
+
+    # 1) Collect semantic handles (shape aspects) and tolerances/datums
+    shape_aspects = find_all_by_type(step_file, 'SHAPE_ASPECT')
+    tolerances = find_all_by_type(step_file, 'GEOMETRIC_TOLERANCE')
+
+    # 2) Link tolerances/datums to SHAPE_ASPECT (schema-dependent; may require reverse lookups)
     for sa in shape_aspects:
-        # 2. Find GEOMETRIC_TOLERANCE linked to this SHAPE_ASPECT
-        tolerances = find_all_referencing(sa, 'GEOMETRIC_TOLERANCE')
-        
-        for tol in tolerances:
-            pmi_info = {
-                'type': tol.entity_type,  # e.g., POSITION_TOLERANCE, FLATNESS_TOLERANCE
-                'value': tol.magnitude,
-                'shape_aspect': sa,
-                'datum_references': []
-            }
-            
-            # 3. Retrieve datum references
-            if hasattr(tol, 'datum_system'):
-                for datum_ref in tol.datum_system:
-                    pmi_info['datum_references'].append({
-                        'datum': datum_ref.referenced_datum,
-                        'modifiers': datum_ref.modifiers
-                    })
-            
-            pmi_list.append(pmi_info)
-    
-    return pmi_list
+        sa_tols = find_all_referencing(sa, 'GEOMETRIC_TOLERANCE')
+        sa_datums = find_all_referencing(sa, 'DATUM_FEATURE') + find_all_referencing(sa, 'DATUM')
+
+        # 3) Resolve targets (faces/edges) using exporter-specific associativity
+        targets = resolve_shape_targets(sa)  # exporter/CAx-IF pattern specific
+
+        pmi.append({
+            'shape_aspect': sa,
+            'tolerances': sa_tols,
+            'datums': sa_datums,
+            'targets': targets,
+        })
+
+    return pmi
 ```
 
 **Implementation Considerations**:
@@ -338,9 +339,9 @@ graph TD
     PSA -->|"styles"| SSU["SURFACE_STYLE_USAGE"]
     SSU -->|"style"| SSS["SURFACE_SIDE_STYLE"]
     SSS -->|"styles"| SSR["SURFACE_STYLE_RENDERING"]
-    SSR -->|"surface_colour"| COLOUR["COLOUR_RGB<br/>(R,G,B: 0.0-1.0)"]
+    SSR -->|"surface_colour"| COLOUR["COLOUR_RGB\n(R,G,B: 0.0-1.0)"]
     
-    GEOM -.->|"assigned_items"| PLA["PRESENTATION_LAYER_ASSIGNMENT<br/>(Layer)"]
+    GEOM -.->|"assigned_items"| PLA["PRESENTATION_LAYER_ASSIGNMENT\n(Layer)"]
 ```
 
 ### Example in a Real File

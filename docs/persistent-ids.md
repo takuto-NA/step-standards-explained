@@ -6,55 +6,50 @@ For simulation (CAE) and manufacturing, being able to identify specific faces or
 
 In the STEP file itself, every entity has an **Instance ID** (e.g., `#10`, `#500`). However, these are **not persistent**. If you re-save the file from your CAD software, these numbers will likely change.
 
-For "Persistent IDs" that survive re-exports and work in tools like Ansys, the standard uses **`SHAPE_ASPECT`**.
+To carry a **human-meaningful label** across systems (and *sometimes* across re-exports), STEP/AP242 commonly uses **`SHAPE_ASPECT`** as a semantic “handle” for a portion of the product’s shape. However, whether that label is preserved and usable in downstream tools (e.g., as Ansys Named Selections) depends heavily on the **CAD exporter** and the **import mapping/settings** in the receiver.
 
 - **Internal ID (#123)**: Volatile. Changes every time the file is saved.
-- **`SHAPE_ASPECT` Name**: Persistent. This is a string label (e.g., `'Inlet'`, `'FixedSupport'`) attached to the geometry.
+- **`SHAPE_ASPECT` name**: A semantic label (e.g., `'Inlet'`, `'FixedSupport'`). Often *more stable* than instance IDs, but **not guaranteed** to survive topology changes or vendor re-exports.
 
 **Instance ID Lifecycle**:
 
 ```mermaid
 graph LR
-    EXPORT1["CAD Export<br/>#100 = ADVANCED_FACE(...)<br/>#200 = SHAPE_ASPECT('Inlet', #100)"] --> FILE1["STEP File v1<br/>Face ID: #100<br/>Name: 'Inlet'"]
-    FILE1 -->|"Re-save in CAD"| EXPORT2["CAD Re-export<br/>#350 = ADVANCED_FACE(...)<br/>#200 = SHAPE_ASPECT('Inlet', #350)"]
-    EXPORT2 --> FILE2["STEP File v2<br/>Face ID: #350 (Changed!)<br/>Name: 'Inlet' (Same!)"]
+    EXPORT1["CAD Export\n#100 = ADVANCED_FACE(...)\n#200 = SHAPE_ASPECT('Inlet', ...)"] --> FILE1["STEP File v1\nFace instance ID: #100\nLabel: 'Inlet'"]
+    FILE1 -->|"Re-save in CAD"| EXPORT2["CAD Re-export\n#350 = ADVANCED_FACE(...)\n#200 = SHAPE_ASPECT('Inlet', ...)"]
+    EXPORT2 --> FILE2["STEP File v2\nFace instance ID: #350 (Changed)\nLabel: 'Inlet' (May or may not survive)"]
     
-    VOLATILE["Instance ID (#100 → #350)<br/>❌ Volatile<br/>Changes on re-save"]
-    PERSISTENT["SHAPE_ASPECT Name ('Inlet')<br/>✅ Persistent<br/>Survives re-save"]
+    VOLATILE["Instance ID (#100 → #350)\nVolatile\nChanges on re-save"]
+    PERSISTENT["Semantic label (e.g. 'Inlet')\nOften stable\nNot guaranteed"]
 ```
 
 **Key Insight**:
 - **Instance IDs** (`#100`, `#350`) are **file-internal references** that can change arbitrarily
-- **SHAPE_ASPECT names** (`'Inlet'`) are **semantic labels** that remain constant
-- For simulation tools (Ansys), always use `SHAPE_ASPECT` names, never Instance IDs
+- **`SHAPE_ASPECT` names** (`'Inlet'`) are **semantic labels** intended to be stable identifiers for “portions of shape,” but the *actual persistence* depends on exporters and model changes
+- For CAE automation, **never rely on Instance IDs**; prefer a stable *labeling strategy* that your toolchain demonstrably preserves
 
 ## 2. Technical Implementation (AP242)
 
-To name a face, the STEP file creates a link between the geometric face and a "Shape Aspect" entity.
+In the ISO definition, `SHAPE_ASPECT` is defined “on” the product’s shape definition (`PRODUCT_DEFINITION_SHAPE`). Exporters then use additional associativity structures to connect that semantic label to specific faces/edges. The exact linking pattern varies by CAD and by the CAx-IF Recommended Practices being followed.
 
 ### Visual Relationship
 ```mermaid
 graph LR
-    SA["#200 SHAPE_ASPECT<br/>'Inlet'"] ---|"of_shape"| AF["#100 ADVANCED_FACE"]
-    AF ---|"face_geometry"| P["#120 PLANE"]
-    AF ---|"bounds"| BO["#110 FACE_OUTER_BOUND"]
+    SA["#200 SHAPE_ASPECT\nname='Inlet'"] ---|"of_shape"| PDS["#70 PRODUCT_DEFINITION_SHAPE"]
+    PDS -. "via exporter-specific associativity" .-> AF["ADVANCED_FACE / EDGE (targets)"]
 ```
 
 ### STEP Code Snippet
-Here is how a named face looks inside a Part 21 file:
+Here is a **schema-aligned** minimal example showing where the label lives:
 
 ```step
-/* 1. The geometric face */
-#100 = ADVANCED_FACE('', (#110), #120, .T.);
-
-/* 2. The Semantic Label (The "Persistent ID") */
+/* The label (semantic handle) */
 /* SHAPE_ASPECT(name, description, of_shape, product_definitional) */
-#200 = SHAPE_ASPECT('Inlet', 'Description', #100, .T.);
+#70  = PRODUCT_DEFINITION_SHAPE('','',#50);
+#200 = SHAPE_ASPECT('Inlet', 'Label for a portion of the shape', #70, .T.);
 
-/* 3. The link: SHAPE_ASPECT.of_shape directly references the ADVANCED_FACE */
-/* Note: The actual linking mechanism varies by CAD implementation */
-/* Some CAD systems may use intermediate entities, but the standard specifies */
-/* that SHAPE_ASPECT.of_shape should reference GEOMETRIC_REPRESENTATION_ITEM (like ADVANCED_FACE) */
+/* The target face/edge is linked via additional entities (varies by exporter). */
+/* For interoperability, rely on CAx-IF Recommended Practices and test your toolchain. */
 ```
 
 ## 3. Rhino 8 / Grasshopper Workflow
@@ -74,24 +69,27 @@ Rhino 8 significantly improved the export of these attributes.
 
 ## 4. Ansys Workbench Integration
 
-Ansys Workbench can read these labels and automatically convert them into **Named Selections**.
+Ansys Workbench can generate **Named Selections** from STEP imports, but it is typically driven by **attribute processing** and a **mapping key** (e.g., color/layer/user-defined attributes), not simply “any `SHAPE_ASPECT` name in the file.”
 
 ### Required Settings in Ansys
-1. **Geometry Import Options** (in DesignModeler or SpaceClaim):
-   - Enable **"Import Named Selections"** or similar option (exact menu name varies by Ansys version).
-   - **Named Selection Key/Filter**: Optional prefix filter. If left blank, Ansys attempts to import all compatible labels from the STEP file.
-2. **How Ansys Reads Names**:
-   - Ansys typically looks for `SHAPE_ASPECT` entity names in AP242 files.
-   - Some versions may also recognize `GEOMETRIC_SET` names or other entity labels.
-   - If names don't appear, verify: (1) Export was **AP242**, (2) Face names were actually exported, (3) Import settings are correct.
+1. **Geometry import preferences** (Workbench/Geometry interface; exact UI differs by version):
+   - Enable **Named Selection Processing**
+   - Enable **Attribute Processing**
+   - Set the **Named Selections Key** to match what your exporter emits (commonly **Layer** or **Color**)
+2. **What to verify after import**:
+   - Do Named Selections exist and scope the expected faces?
+   - If not: confirm the CAD export actually wrote the attributes, and confirm the “key” matches
+
+Reference (Ansys Help): STEP interface mentions **Named Selection Processing** and **Attribute Processing** for STEP imports.
+- `https://ansyshelp.ansys.com/public/Views/Secured/corp/v252/en/ref_cad/cadSTEP.html`
 
 ## 5. Summary Table
 
 | Feature | AP203 | AP214 | AP242 |
 | :--- | :---: | :---: | :---: |
 | Instance IDs (#) | Volatile | Volatile | Volatile |
-| Face Names (Labels) | ❌ Not Standard | ⚠ Vendor-Dependent | ✅ Standard (SHAPE_ASPECT) |
-| Persistence | ❌ No | ⚠ Limited | ✅ Semantic |
+| Face/selection labeling strategy | ❌ Not Standard | ⚠ Vendor-Dependent | ✅ Best available (semantic constructs + CAx-IF practices) |
+| “Persistence” across re-export | ❌ No | ⚠ Limited | ⚠ Depends on CAD/export + topology stability |
 
 ---
 [Back to README](../README.md)

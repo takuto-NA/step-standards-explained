@@ -59,10 +59,10 @@ Implementers should normalize all incoming data to a single internal unit system
 
 ```mermaid
 graph LR
-    FILE["STEP File<br/>(#500 SI_UNIT)"] --> PARSE[Parse Units]
-    PARSE --> SCALE["Calculate Factor<br/>(e.g., .MILLI. -> 0.001)"]
-    SCALE --> COORDS["Multiply Coordinates<br/>(x * factor * 1000)"]
-    COORDS --> INT["Internal Geometry<br/>(Normalized mm)"]
+    FILE["STEP File\n(#500 SI_UNIT)"] --> PARSE[Parse Units]
+    PARSE --> SCALE["Calculate Factor\n(e.g., .MILLI. -> 0.001)"]
+    SCALE --> COORDS["Multiply Coordinates\n(x * factor * 1000)"]
+    COORDS --> INT["Internal Geometry\n(Normalized mm)"]
 ```
 
 #### 1. Always Verify UNIT_CONTEXT
@@ -136,6 +136,11 @@ def get_si_prefix_scale(prefix):
 - Automatically convert all coordinates upon retrieval (e.g., unifying internal data to mm).
 - Explicitly specify units during export (e.g., `SI_UNIT(.MILLI.,.METRE.)`).
 
+#### Ansys Notes (Workbench / SpaceClaim / Fluent / Meshing)
+- Ansys geometry workflows commonly behave as if the geometry kernel is **meter-based internally**, so a “mm ↔ m” mismatch can look like a \( \times 1000 \) scale error.
+- Treat “display units” as separate from **actual imported scale**; always validate by measuring a known dimension right after import.
+- If you must standardize: standardize in the CAD export (consistent units + AP) and validate on the receiving side.
+
 ---
 
 ## 2. Precision (Tolerance) Issues
@@ -191,6 +196,11 @@ def get_geometric_tolerance(step_file):
 - Use this value to set tolerances in geometric libraries (like OpenCascade).
 - Always set an appropriate precision value during export.
 - Warn if the precision is excessively large (e.g., > 1mm).
+
+#### Ansys Notes (Import / Healing / Stitching)
+- Import “heal/stitch” tolerances are often **absolute values in meters**. If your model is authored in mm, a tolerance like \(1\times10^{-7}\,\text{m}\) is \(1\times10^{-4}\,\text{mm}\).
+- Too-large tolerance can remove small features (slivers, thin gaps); too-small tolerance can cause sewing/stitching to fail.
+- For CAE robustness, record and control the import tolerance used for each dataset (so results are reproducible).
 
 ---
 
@@ -543,12 +553,12 @@ To handle forward references correctly, a "Two-Pass" approach is required.
 flowchart TD
     Start([Open File]) --> Pass1[Pass 1: Scan & Map]
     Pass1 --> Scan[Read Line by Line]
-    Scan --> Map["Store in Map<br/>(ID -> Raw Entity)"]
+    Scan --> Map["Store in Map\n(ID -> Raw Entity)"]
     Map --> EOF1{End of File?}
     EOF1 -- No --> Scan
     EOF1 -- Yes --> Pass2[Pass 2: Resolve References]
     Pass2 --> Traverse[Iterate through Map]
-    Traverse --> Resolve["Replace #ID Strings<br/>with Object Pointers"]
+    Traverse --> Resolve["Replace #ID Strings\nwith Object Pointers"]
     Resolve --> AllDone{All Resolved?}
     AllDone -- No --> Traverse
     AllDone -- Yes --> End([Ready for Use])
@@ -608,17 +618,19 @@ def validate_all_references(instance_map):
 ### ✅ Solutions
 
 #### 1. Use Semantic Labeling (SHAPE_ASPECT)
-Ensure you are using **AP242** for export, as it has the most robust support for attaching names to geometry.
+Use **AP242** where possible, and prefer exporter/tooling combinations that follow CAx-IF practices.
+
+In many CAE pipelines (including Ansys), practical “face naming” often comes through as **attributes** (e.g., layers/colors/user-defined attributes) that are mapped into the solver/pre-processor as “Named Selections,” rather than a guaranteed, direct consumption of raw `SHAPE_ASPECT` names.
 
 #### 2. Avoid Reliance on Instance IDs (#)
 Never write simulation scripts that rely on `#10`, `#500`, etc. These numbers are recalculated every time a file is saved.
 
 #### 3. Best Practices for Stability
 - **Name faces as late as possible** in the design process.
-- Use CAD-specific "Named Selection" or "Attribute" features that are known to map to `SHAPE_ASPECT`.
+- Use CAD-specific **Named Selection / Attribute** features that your toolchain demonstrably preserves (and keep the import mapping key consistent in Ansys).
 
 ### 🔍 Detection Methods
-- **Compare two versions of the STEP file**: Check if the `SHAPE_ASPECT` entity still points to the same `ADVANCED_FACE` (by checking its relative position or bounding box).
+- **Compare two versions of the model by behavior**: re-import and confirm that the same Named Selections still scope the intended faces (area/centroid checks are often more robust than entity-level assumptions).
 
 ---
 

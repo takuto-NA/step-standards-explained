@@ -44,6 +44,12 @@ flowchart TD
 * **Legacy System Compatibility**: AP203
 * **Long-Term Archiving (LOTAR)**: AP242 + LOTAR
 
+### CAE / Ansys-Oriented Notes
+- **If you need “face names” for automation** (e.g., mapping boundary conditions via Ansys Named Selections), prioritize a workflow that preserves **attributes** (layers/colors/user-defined attributes) end-to-end and configure the importer’s mapping accordingly.
+  - In many practical pipelines, this matters more than the presence of a particular entity name.
+- **AP242 is usually the safest default** for modern CAE exchange (PMI + best available semantic structures), but **AP214 can still be a pragmatic choice** when you mainly need robust geometry + colors/layers and maximum compatibility.
+- Regardless of AP, always validate: **units**, **healing/stitch tolerances**, and that key selections (inlet/outlet/walls) scope correctly after import.
+
 ---
 ## 📚 Next Steps
 - **[Capability Matrix](../comparison/capability-matrix.md)** - Detailed functional comparison between APs.

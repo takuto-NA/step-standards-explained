@@ -221,10 +221,13 @@ Detail: [Which AP should I use?](../decision-guides/which-ap-should-i-use.md)
 
 ### Q14: Can I assign persistent IDs or names to faces?
 
-**A: Yes**, but not using the `#123` instance IDs. You must use **`SHAPE_ASPECT`** (labels).
-- **AP242**: Standard support for semantic face/edge naming via `SHAPE_ASPECT`.
-- **AP214**: Vendor-dependent support (some CAD systems may export face names, but it's not standardized).
-- **AP203**: Generally not supported for user-defined names.
+**A: Yes**, but not using the `#123` instance IDs.
+
+In STEP, “persistence” is achieved by using **semantic constructs** (AP242 is the best option), but the **exact linkage to faces/edges and what downstream tools can consume** depends on the CAD exporter and the receiver.
+
+- **AP242**: Best available support (semantic labeling + CAx-IF recommended practices). In practice, exporters may use `SHAPE_ASPECT` and/or other identification/attribute mechanisms.
+- **AP214**: Vendor-dependent (some exporters preserve names/attributes, but it is not standardized for robust CAE automation).
+- **AP203**: Generally not supported for user-defined face/edge labels.
 
 **Important**: Even with AP242, the actual implementation depends on your CAD software's export capabilities.
 
@@ -237,8 +240,11 @@ Detailed guide: [Persistent IDs and Face Naming](./persistent-ids.md)
 **A: Yes**, it can import them as **Named Selections**, but the exact method varies by Ansys version.
 - Ensure the STEP file is exported as **AP242** (best compatibility).
 - In Ansys Geometry import settings (DesignModeler or SpaceClaim), enable "Import Named Selections" or similar option.
-- Ansys typically reads `SHAPE_ASPECT` entity names from the STEP file.
+- In many workflows, Ansys creates Named Selections via **Named Selection Processing + Attribute Processing**, driven by a **key** such as **Layer** or **Color** (i.e., it is an *attribute-to-named-selection mapping*, not a guaranteed “read any `SHAPE_ASPECT` name” behavior).
 - If names don't appear, verify: (1) AP242 export, (2) Face names were exported, (3) Import settings are correct.
+
+Reference (Ansys Help, STEP import preferences):
+- `https://ansyshelp.ansys.com/public/Views/Secured/corp/v252/en/ref_cad/cadSTEP.html`
 
 ---
 
