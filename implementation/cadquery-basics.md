@@ -123,6 +123,48 @@ assy.add(cq.Workplane("XY").circle(2).extrude(10).translate((0, 0, 2.5)), name="
 assy.export("assembly.step")
 ```
 
+## Face-level colors in STEP (color only specific faces)
+
+CadQuery’s plain `shape.export("x.step")` is great for geometry, but **face-level colors** are typically handled via **Assembly metadata**.
+
+If you want to color a specific face (e.g. the `+Z` face) and export that metadata into STEP, use:
+
+- `Assembly.addSubshape(...)` to attach a color to a face/edge/etc.
+- `exportStepMeta(...)` to write STEP including that metadata
+
+```python
+import cadquery as cq
+from cadquery.occ_impl.exporters.assembly import exportStepMeta
+
+cube = cq.Workplane("XY").box(10, 10, 10)
+
+assy = cq.Assembly(name="colored_face_test")
+assy.add(cube, name="cube_body", color=cq.Color("lightgray"))
+
+top_face = cube.faces(">Z").val()
+assy.addSubshape(top_face, name="top_face", color=cq.Color("red"))
+
+exportStepMeta(assy, "colored_face.step", write_pcurves=True)
+```
+
+> [!NOTE]
+> - Not all CAD viewers/importers display **per-face colors** consistently.
+> - `exportStepMeta` may flatten some assembly structure depending on how you use it.
+> - **CadQuery version matters**: `exportStepMeta` is available in newer CadQuery (e.g. 2.6.x). Older versions may not expose it.
+> - **Environment matters**: mixing CadQuery/build123d in one environment can cause `cadquery-ocp` conflicts; prefer separate venvs.
+
+### Verified in this repo (and the lessons learned)
+
+This repo includes a script that generates a face-colored STEP artifact:
+
+- `tests/python_step_export/generate_cadquery_face_colored_step.py`
+- output: `tests/python_step_export/output/cq_face_colored_top_red.step`
+
+**Lessons learned / pitfalls**:
+
+- **Don’t mix OCCT stacks**: build123d and cadquery may require different `cadquery-ocp` versions → create separate virtualenvs.
+- **VTK can silently be “half installed”**: if you see `ModuleNotFoundError: vtkmodules.vtkCommonDataModel`, reinstall `vtk` cleanly (remove stale `vtkmodules/` first) inside the venv.
+
 ## Notes (pip-only stability)
 
 - If `pip install cadquery` fails, it is usually a **wheel availability** issue (Python version / OS / architecture).

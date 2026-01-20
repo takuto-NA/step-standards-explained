@@ -29,6 +29,22 @@ part = Box(10, 20, 30)
 export_step(part, "box_build123d.step")
 ```
 
+## Verify the examples in this repo
+
+This repository includes a small runner that exports the “basics” examples into:
+
+- `tests/python_step_export/output/`
+
+Run:
+
+```bash
+python tests/python_step_export/run_build123d_basics_examples.py
+```
+
+It should generate:
+
+- `tests/python_step_export/output/b3d_basics_box.step`
+
 ## Subtractive feature (simple “hole” via boolean cut)
 
 The exact boolean API can differ by version and style, so the most robust pattern is:
@@ -50,6 +66,7 @@ Because selectors are version-sensitive, this guide keeps examples minimal and p
 ## STEP export notes
 
 - If your environment has both CadQuery and build123d installed, their STEP outputs may differ in schema defaults and entity ordering.
+- Some versions may also **conflict on `cadquery-ocp` requirements**. If you hit that, use separate virtualenvs.
 - For “generate and compare” in this repo, run:
 
 ```bash

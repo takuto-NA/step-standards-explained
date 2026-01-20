@@ -62,6 +62,21 @@ It writes (depending on what is installed):
 - `tests/python_step_export/output/box_cadquery.step`
 - `tests/python_step_export/output/box_build123d.step`
 
+## Generate a face-colored STEP (CadQuery)
+
+This repo includes a script that exports a box where only the **top face is red**:
+
+```bash
+python tests/python_step_export/generate_cadquery_face_colored_step.py
+```
+
+Output:
+
+- `tests/python_step_export/output/cq_face_colored_top_red.step`
+
+> [!NOTE]
+> If your environment has conflicting OCCT stacks (CadQuery/build123d), run CadQuery in a separate venv.
+
 ## Notes / Lessons learned
 
 - **Artifacts location**: pytest itself writes to a temp dir, so we copy `.step` files into `tests/python_step_export/output/` for easy inspection.

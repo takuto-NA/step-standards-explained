@@ -227,12 +227,28 @@ To keep artifact generation reliable, this repo’s generator script runs export
 
 - `tests/python_step_export/generate_step_examples.py`
 
+#### 2.1) CadQuery vs build123d dependency conflicts (`cadquery-ocp`)
+
+CadQuery and build123d can require **different `cadquery-ocp` version ranges**. If you install both into the same Python environment, you may break one of them.
+
+**Recommended practice**:
+
+- Use **separate virtualenvs** for CadQuery and build123d when you need both.
+
 #### 3) Windows path resolution can break VitePress builds
 
 On Windows, drive-letter casing / realpath resolution can cause VitePress to miss page chunks and fail during render.
 This repo sets:
 
 - `.vitepress/config.mts`: `vite.resolve.preserveSymlinks = true`
+
+#### 4) CadQuery face-level colors: use `exportStepMeta` + separate venv
+
+Face-level colors require writing STEP with metadata (see **CadQuery basics**). In this repo we generate:
+
+- `tests/python_step_export/output/cq_face_colored_top_red.step`
+
+If your main Python environment is “dirty” (mixed CAD kernels), run CadQuery in an isolated venv.
 
 ---
 
