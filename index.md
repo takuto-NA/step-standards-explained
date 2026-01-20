@@ -76,6 +76,7 @@ graph LR
 
 ### Step 4: Implementation
 * **[Common Pitfalls](./implementation/common-pitfalls)** - Implementation warnings and solutions.
+* **[Export STEP from Python (pip-only)](./implementation/python-step-export)** - Practical ways to generate STEP using pip-only Python setups.
 * **[Validation and CAx-IF](./implementation/validation-and-caxif)** - Methods for quality assurance.
 
 ## Key Resources

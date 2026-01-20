@@ -1,0 +1,30 @@
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Callable
+
+import pytest
+
+
+def test_cadquery_export_step_smoke(
+    tmp_path: Path,
+    copy_artifact: Callable[[Path, str], Path],
+) -> None:
+    if os.environ.get("STEP_EXPORT_INTEGRATION") != "1":
+        pytest.skip("Set STEP_EXPORT_INTEGRATION=1 to run OCCT integration tests.")
+
+    cq = pytest.importorskip("cadquery")
+
+    part = cq.Workplane("XY").box(10, 20, 30)
+    out = tmp_path / "box_cadquery.step"
+    part.export(str(out))
+
+    text = out.read_text(encoding="utf-8", errors="replace")
+    assert text.startswith("ISO-10303-21;")
+    assert "HEADER;" in text
+    assert "DATA;" in text
+    assert "END-ISO-10303-21;" in text
+
+    copy_artifact(out, "box_cadquery.step")
+

@@ -10,6 +10,13 @@ export default withMermaid(defineConfig({
   cleanUrls: true,
   ignoreDeadLinks: true,
   appearance: 'dark',
+  vite: {
+    // Windows can have inconsistent drive-letter casing in resolved paths.
+    // Avoid realpath-based resolution during build to prevent missing page chunks.
+    resolve: {
+      preserveSymlinks: true,
+    },
+  },
   
   // Mermaid support is handled by withMermaid
   markdown: {
@@ -59,6 +66,9 @@ export default withMermaid(defineConfig({
         text: '4. Implementation',
         items: [
           { text: 'Minimal Export Template', link: '/implementation/minimal-export' },
+          { text: 'Export STEP from Python (pip-only)', link: '/implementation/python-step-export' },
+          { text: 'CadQuery basics', link: '/implementation/cadquery-basics' },
+          { text: 'build123d basics', link: '/implementation/build123d-basics' },
           { text: 'Common Pitfalls', link: '/implementation/common-pitfalls' },
           { text: 'Validation and CAx-IF', link: '/implementation/validation-and-caxif' }
         ]

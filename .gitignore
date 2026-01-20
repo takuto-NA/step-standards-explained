@@ -16,3 +16,16 @@ node_modules/
 dist/
 .vitepress/dist
 .vitepress/cache
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.coverage
+.venv/
+venv/
+
+# Python STEP export test artifacts
+tests/python_step_export/output/*.step
+tests/python_step_export/output/*.stp
