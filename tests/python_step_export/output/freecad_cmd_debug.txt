@@ -1,0 +1,2 @@
+ran
+argv=['C:\\Program Files\\FreeCAD 1.0\\bin\\FreeCADCmd.exe', 'tests/python_step_export/freecad_cmd_debug.py']

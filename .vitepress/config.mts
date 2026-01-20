@@ -67,6 +67,7 @@ export default withMermaid(defineConfig({
         items: [
           { text: 'Minimal Export Template', link: '/implementation/minimal-export' },
           { text: 'Export STEP from Python (pip-only)', link: '/implementation/python-step-export' },
+          { text: 'Export STEP from Python (FreeCAD)', link: '/implementation/freecad-step-export' },
           { text: 'CadQuery basics', link: '/implementation/cadquery-basics' },
           { text: 'build123d basics', link: '/implementation/build123d-basics' },
           { text: 'Common Pitfalls', link: '/implementation/common-pitfalls' },

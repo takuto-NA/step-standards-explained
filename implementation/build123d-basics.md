@@ -80,5 +80,6 @@ Generated files go to:
 ## See also
 
 - **[Exporting STEP from Python (pip-only)](./python-step-export.md)**
+- **[Exporting STEP from Python (FreeCAD)](./freecad-step-export.md)**
 - build123d docs: `https://build123d.readthedocs.io/`
 

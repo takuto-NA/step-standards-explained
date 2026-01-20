@@ -77,6 +77,7 @@ graph LR
 ### Step 4: Implementation
 * **[Common Pitfalls](./implementation/common-pitfalls)** - Implementation warnings and solutions.
 * **[Export STEP from Python (pip-only)](./implementation/python-step-export)** - Practical ways to generate STEP using pip-only Python setups.
+* **[Export STEP from Python (FreeCAD)](./implementation/freecad-step-export)** - Use FreeCAD 1.0’s Python API as an external, robust exporter.
 * **[Validation and CAx-IF](./implementation/validation-and-caxif)** - Methods for quality assurance.
 
 ## Key Resources

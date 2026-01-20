@@ -174,5 +174,6 @@ This repo includes a script that generates a face-colored STEP artifact:
 ## See also
 
 - **[Exporting STEP from Python (pip-only)](./python-step-export.md)**
+- **[Exporting STEP from Python (FreeCAD)](./freecad-step-export.md)**
 - CadQuery docs: `https://cadquery.readthedocs.io/`
 

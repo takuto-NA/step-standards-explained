@@ -43,6 +43,7 @@ For production export, use a CAD kernel (OpenCASCADE) via Python bindings.
 | **CadQuery + OCP** | High-level CAD scripting + solid STEP export | ✅ Usually good (if wheels exist for your Python/OS) | Most users, parametric parts, basic assemblies |
 | **build123d + OCP** | Modern Pythonic CAD scripting + STEP export | ✅ Usually good (same wheel constraints) | Clean code, newer API preference |
 | **OCP direct** | Low-level OpenCASCADE API access | ⚠️ Medium (harder API, same wheel constraints) | When you need a feature not exposed by higher-level libs |
+| **FreeCAD (external)** | FreeCAD Python API + STEP export | ❌ Not pip-only | When you can install FreeCAD and want a robust exporter |
 | **Text / Part 21 by hand** | Full control, no native deps | ✅ Installs anywhere | Educational, fixed tiny templates only |
 | pythonOCC-core | Another OCCT binding | ⚠️ Often problematic with pip-only | Only if your environment already supports it |
 
@@ -189,6 +190,14 @@ STEP_EXPORT_INTEGRATION=1 python -m pytest -q tests/python_step_export
 ```
 
 ---
+
+## Path C (External install): FreeCAD → STEP
+
+If you can install FreeCAD, you can export STEP via FreeCAD’s Python API (typically through `FreeCADCmd`).
+
+See:
+
+- **[Export STEP from Python using FreeCAD 1.0](./freecad-step-export.md)**
 
 ## Troubleshooting (pip-only)
 

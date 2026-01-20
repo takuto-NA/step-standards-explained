@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import shutil
 from pathlib import Path
 from typing import Sequence
 
@@ -71,6 +72,41 @@ def try_export_build123d(out: Path) -> bool:
     return True
 
 
+def _find_freecad_cmd() -> str | None:
+    """
+    Prefer explicit configuration, otherwise try PATH.
+    """
+    env = os.environ.get("FREECAD_CMD")
+    if env:
+        return env
+    for name in ("FreeCADCmd", "FreeCADCmd.exe"):
+        p = shutil.which(name)
+        if p:
+            return p
+    return None
+
+
+def try_export_freecad(out: Path) -> bool:
+    """
+    Export STEP via FreeCAD's Python runtime (FreeCADCmd).
+
+    This is not "pip-only", but it can be very reliable if FreeCAD is installed.
+    """
+    freecad_cmd = _find_freecad_cmd()
+    if not freecad_cmd:
+        print("[freecad] skip: set FREECAD_CMD=... (or put FreeCADCmd in PATH)")
+        return False
+
+    script = Path(__file__).resolve().parent / "generate_freecad_step.py"
+    cp = subprocess.run([freecad_cmd, str(script), str(out)], text=True)
+    if cp.returncode != 0:
+        print(f"[freecad] failed: exit={cp.returncode}")
+        return False
+
+    print(f"[freecad] wrote: {out}")
+    return True
+
+
 def _run_isolated(args: Sequence[str]) -> int:
     """
     Run an exporter in a subprocess so that native cleanup crashes (rare on some
@@ -91,6 +127,7 @@ def main() -> int:
     # Run each exporter in an isolated subprocess to avoid interpreter-exit crashes.
     _run_isolated(["--cadquery", str(out_dir / "box_cadquery.step")])
     _run_isolated(["--build123d", str(out_dir / "box_build123d.step")])
+    try_export_freecad(out_dir / "box_freecad.step")
 
     print(f"Done. Output dir: {out_dir}")
     return 0

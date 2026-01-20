@@ -50,7 +50,7 @@ STEP_EXPORT_OUTPUT_DIR=/some/path python -m pytest -q tests/python_step_export
 
 ## Generate both CadQuery and build123d outputs (recommended)
 
-If you want **both exporters** to run and leave artifacts you can inspect, use the generator script:
+If you want **multiple exporters** to run and leave artifacts you can inspect, use the generator script:
 
 ```bash
 python tests/python_step_export/generate_step_examples.py
@@ -61,6 +61,47 @@ It writes (depending on what is installed):
 - `tests/python_step_export/output/minimal.step`
 - `tests/python_step_export/output/box_cadquery.step`
 - `tests/python_step_export/output/box_build123d.step`
+- `tests/python_step_export/output/box_freecad.step` (if FreeCAD is installed)
+
+## Optional: export via FreeCAD (external install)
+
+If you have FreeCAD installed, you can export STEP using its Python API via `FreeCADCmd`.
+
+### One-off generation
+
+Run the FreeCAD generator script directly:
+
+```bash
+FreeCADCmd tests/python_step_export/generate_freecad_step.py tests/python_step_export/output/box_freecad.step
+```
+
+Or run the repo generator and let it pick FreeCAD up (recommended if you also want CadQuery/build123d artifacts):
+
+```bash
+python tests/python_step_export/generate_step_examples.py
+```
+
+If `FreeCADCmd` is not on your PATH, set it explicitly:
+
+- Windows PowerShell:
+
+```powershell
+$env:FREECAD_CMD="C:\Program Files\FreeCAD 1.0\bin\FreeCADCmd.exe"; python tests/python_step_export/generate_step_examples.py
+```
+
+- bash:
+
+```bash
+FREECAD_CMD="/path/to/FreeCADCmd" python tests/python_step_export/generate_step_examples.py
+```
+
+### pytest integration test
+
+FreeCAD export is also covered by an opt-in test:
+
+```bash
+STEP_EXPORT_INTEGRATION=1 FREECAD_CMD=/path/to/FreeCADCmd python -m pytest -q tests/python_step_export -k freecad
+```
 
 ## Generate a face-colored STEP (CadQuery)
 
